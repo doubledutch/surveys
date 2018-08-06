@@ -1,0 +1,292 @@
+/*
+ * Copyright 2018 DoubleDutch, Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+/* 
+ .App{
+   width: 1000px;
+ } */
+ .App-intro {
+  font-size: large;
+  text-align: center;
+}
+
+.avatar {
+  width: 40px;
+}
+
+.tableContainer {
+  /* height: 300px; */
+  flex: 1;
+  box-sizing: border-box;
+  font-size: 14; 
+  margin: 20px 0px;
+  padding: 20px 20px 20px 20px;
+  border-radius: 5px;
+  border: 1px solid #E3ECF8;
+  background-color: #FFFFFF;
+}
+
+.leftMargin {
+  margin-left: 10px;
+}
+
+.displayButton {
+  border: none;
+  color: #73aaf3;
+  font-size: 14px;
+  margin: 0;
+  background-color: transparent;
+  font-weight: 300;
+}
+
+button.displayButton:focus, button.displayButton:active {
+  border: none;
+}
+
+.floatRight {
+  flex: 1;
+  display: flex;
+  justify-content: flex-end;
+}
+.headerRow {
+  display: flex;
+  flex-flow: nowrap;
+  margin: 0px;
+  padding: 0px;
+}
+
+.buttonRow {
+  flex: 1;
+  display: flex;
+  flex-flow: nowrap;
+}
+
+.buttonRow {
+  flex: 1;
+  display: flex;
+  flex-flow: nowrap;
+}
+
+.subCell {
+  height: 30px;
+  flex: 1;
+  display: flex;
+  border-bottom: 1px solid #E3ECF8;
+  padding: 0px 20px;
+  align-items: center;
+}
+
+.subCellText {
+  margin-top: 15px;
+}
+
+
+.csvButton{
+  text-decoration: none;
+  background-color: #FFFFFF;
+  border: 1px solid #4A90E2;
+  border-radius: 5px;
+  text-align: center;
+  color: #4A90E2;
+  font-size: 14px;
+  margin: 100px 25px 0px 0px;
+  padding: 10px;
+  width: 140px;
+}
+
+.rightButtonCell {
+  border: none;
+  border-bottom: 1px solid #E3ECF8;
+  color: #73aaf3;
+  margin: 0px;
+  height: 40px;
+  width: 11%;
+  background-color: white;
+  text-align: center
+}
+
+.grayRightButtonCell {
+  border: none;
+  border-bottom: 1px solid #E3ECF8;
+  color: #73aaf3;
+  margin: 0px;
+  height: 40px;
+  width: 11%;
+  background-color: #E2E2E2;
+  text-align: center
+}
+
+.rightButtonCellSmall {
+  border: none;
+  border-bottom: 1px solid #E3ECF8;
+  color: #73aaf3;
+  margin: 0px;
+  height: 40px;
+  width: 40px;
+  background-color: white;
+  text-align: center
+}
+
+.grayRightButtonCellSmall {
+  border: none;
+  border-bottom: 1px solid #E3ECF8;
+  color: #73aaf3;
+  margin: 0px;
+  height: 40px;
+  width: 40px;
+  background-color: #E2E2E2;
+  text-align: center
+}
+
+.buttonCell {
+  border: none;
+  border-bottom: 1px solid #E3ECF8;
+  flex: 1;
+  display: flex;
+  padding: 0px;
+  margin: 0px;
+  height: 40px;
+  background-color: white;
+}
+
+.grayButtonCell {
+  border: none;
+  border-bottom: 1px solid #E3ECF8;
+  flex: 1;
+  display: flex;
+  padding: 0px;
+  margin: 0px;
+  height: 40px;
+  background-color: #E2E2E2;
+}
+
+.buttonText {
+  margin-top: 10px;
+  margin-left: 20px;
+}
+
+.surveyTable {
+  height: 200px;
+  background-color: #FFFFFF;
+  margin: 20px 0px;
+  padding: 0px;
+  border: 1px solid #E3ECF8;
+}
+
+.helpText {
+  text-align: center;
+  margin-top: 90px;
+  font-size: 18px;
+
+}
+
+.btn-green {
+    background-color: #009DCD;
+    padding: 5px;
+    color: #fff;
+    border-radius: 3px;
+}
+.btn-green:focus,
+.btn-green:hover {
+    background-color: #009DCD;
+    color: #fff;
+}
+.panel-footer {
+    padding: 0 15px;
+    border: none;
+    text-align: right;
+    background-color: #fff;
+}
+
+input:focus, textarea:focus  { 
+    outline: none !important;
+    border-color: #009DCD!important;
+    box-shadow: 0 0 10px #009DCD;
+    padding: 5px;
+}
+
+.nav-link {
+  color: #009DCD !important;
+  border-radius: 3px;
+}
+
+.btn-primary {
+  background-color: #009DCD !important;
+  color: #fff;
+  border-radius: 3px;
+  border-color: #009DCD!important;
+  padding: 10px 20px !important
+}
+
+.btn-primary:hover, .btn-primary:focus {
+    background-color: #009DCD;
+    color: #fff;
+    border-color: gray important;
+}
+
+.btn-secondary {
+  padding: 10px 20px !important
+}
+
+.sjs-cb-container input:checked ~ .checkmark {
+    background-color: #009DCD !important;
+}
+
+.svd_custom_select, .svd_property_editor_dropdown, .svd_editor_control {
+    color: #009DCD !important;
+    border: 1px solid #009DCD !important;
+    border-bottom-color: #009DCD !important;
+}
+
+.svd_container .editor-tabs > li.active > a {
+    background-color: #f3f3f4 !important;
+    border: 1px solid #e7eaec;
+    border-bottom-color: #f3f3f4;
+    color: #fff;
+}
+
+.svd_container .svd_content .svd_survey_designer .svd_editors .svd_questions_editor .panel-body .svd_question .svd_question_menu .glyphicon-option-horizontal, .svd_container .svd_content .svd_survey_designer .svd_editors .svd_questions_editor .card-block .svd_question .svd_question_menu .glyphicon-option-horizontal .btn-green {
+    color: #009DCD !important;
+}
+
+.svd_container .glyphicon.glyphicon-plus::before {
+    font-weight: normal;
+    font-size: 20px;
+    color: #009DCD !important;
+    content: "+";
+}
+
+.svd_container .svd_content .svd_survey_designer .svd_editors .svd_questions_editor .panel-body .svd_question_container .svd_question.svd_q_selected,
+.svd_container .svd_content .svd_survey_designer .svd_editors .svd_questions_editor .card-block .svd_question_container .svd_question.svd_q_selected {
+  /* doesn't work b/c surveyeditor.css has this marked as important! */
+    border: 1px solid #009DCD !important; 
+}
+
+.sv_qstn, .svd_question_menu {
+  color: #111111;
+}
+
+.sv_complete_btn {
+  color: #009DCD;
+  background-color: white;
+}
+
+.svd_custom_select:before  {
+  background-color: #009DCD !important;
+}
+
+.svd_container .svd_q_selected {
+    border: 1px solid #009DCD !important;
+}
