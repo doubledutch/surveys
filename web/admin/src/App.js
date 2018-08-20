@@ -15,9 +15,8 @@
  */
 
 import React, { Component } from 'react'
-import { render } from 'react-dom';
 import './App.css'
-import '@doubledutch/react-components/lib/base.css'
+import moment from 'moment'
 import client from '@doubledutch/admin-client'
 import FirebaseConnector from '@doubledutch/firebase-connector'
 import { mapPerUserPrivateAdminablePushedDataToStateObjects } from "@doubledutch/firebase-connector"
@@ -28,6 +27,7 @@ import SurveyWrapper from './SurveyWrapper';
 import SurveyEditor from "./SurveyEditor";
 import SurveyResults from "./SurveyResults";
 import * as Survey from "survey-react";
+import '@doubledutch/react-components/lib/base.css'
 import "survey-react/survey.css";
 import "./App.css";
 import "bootstrap/dist/css/bootstrap.css";
