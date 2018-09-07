@@ -68,7 +68,7 @@ export default class HomeView extends Component {
       <KeyboardAvoidingView style={s.container} behavior={Platform.select({ios: "padding", android: null})}>
         <TitleBar title="Surveys" client={client} signin={this.signin} />
         {this.state.showTable ? <SurveyTable surveys={this.state.surveys} closeSurveyModal={this.closeSurveyModal} selectSurvey={this.selectSurvey} configKey={this.state.configKey} disable={this.state.disable}/>
-        : <View style={{flex: 1}}><WebView ref={input => this.webview = input} style={s.web} source={{uri: "https://react-barrating-widget-cxgvnp.stackblitz.io/"}} injectedJavaScript={injectedJavaScript} onMessage={e => this.saveResults(e.nativeEvent.data)} onLoad={this.sendInfo}/><Button onPress={()=>this.setState({showTable: true, config: "", configKey: ""})} title=""/></View> 
+        : <View style={{flex: 1}}><WebView ref={input => this.webview = input} style={s.web} source={{uri: "https://react-barrating-widget-5cpyxw.stackblitz.io/"}} injectedJavaScript={injectedJavaScript} onMessage={e => this.saveResults(e.nativeEvent.data)} onLoad={this.sendInfo}/><Button onPress={()=>this.setState({showTable: true, config: "", configKey: ""})} title=""/></View> 
         }
       </KeyboardAvoidingView>
     )
@@ -79,12 +79,16 @@ export default class HomeView extends Component {
   }
 
   closeSurveyModal = () => {
-    console.log(this.state.config)
     this.setState({showTable: false})
   }
 
   saveResults = (resultsString) => {
+    console.log(resultsString)
     const results = JSON.parse(resultsString)
+    const parseResults = Object.values(results).map((item, index) => {
+
+      return 
+    })
     fbc.database.private.adminableUserRef('results').child(this.state.configKey).push({
       results, creator: client.currentUser, timeTaken: new Date().getTime()
       })

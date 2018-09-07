@@ -84,6 +84,7 @@ class SurveyResults extends Component {
           <button className="grayRightButtonCell" onClick={() => this.loadExpandedCell(item)}>Hide Results</button>      
         </div>
         {results.map(question => {
+          console.log(item.results)
           return (
             <div className="subCell">
               <p className="subCellText">{question + ": " +item.results[question]}</p>
@@ -100,7 +101,6 @@ class SurveyResults extends Component {
       let newItem = {...item.results, firstName: item.creator.firstName, lastName: item.creator.lastName, email: item.creator.email, timeTaken: item.timeTaken}
       parsedResults.push(newItem)
     })
-    console.log(parsedResults)
     return parsedResults
   }
 

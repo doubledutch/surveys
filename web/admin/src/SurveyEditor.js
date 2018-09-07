@@ -34,15 +34,39 @@ widgets.ckeditor(SurveyKo);
 widgets.autocomplete(SurveyKo, $);
 widgets.bootstrapslider(SurveyKo)
 
+
 class SurveyEditor extends Component {
   editor;
+  // SurveyEditor.StylesManager.applyTheme("winterstone"); 
+  constructor() {
+    super()
+    var mainColor = "#73aaf3";
+    var mainHoverColor = "#73aaf3";
+    var textColor = "#4a4a4a";
+    var headerColor = "#73aaf3";
+    var headerBackgroundColor = "#4a4a4a";
+    var bodyContainerBackgroundColor = "#f8f8f8";
+
+    var defaultThemeColorsEditor = SurveyJSEditor
+        .StylesManager
+        .ThemeColors["default"];
+    defaultThemeColorsEditor["$primary-color"] = mainColor;
+    defaultThemeColorsEditor["$secondary-color"] = mainColor;
+    defaultThemeColorsEditor["$primary-hover-color"] = mainHoverColor;
+    defaultThemeColorsEditor["$primary-text-color"] = textColor;
+    defaultThemeColorsEditor["$selection-border-color"] = mainColor;
+    SurveyJSEditor.StylesManager.applyTheme();        
+  }
+  
   componentDidMount() {
-    let editorOptions = { showEmbededSurveyTab: false, showPropertyGrid: true, showPagesToolbox: false, useTabsInElementEditor: false};
+    let editorOptions = { showEmbededSurveyTab: false, showPropertyGrid: false, showPagesToolbox: false, useTabsInElementEditor: true, showJSONEditorTab: false};
 
     this.editor = new SurveyJSEditor.SurveyEditor(
       "editorElement",
       editorOptions
     );
+
+    // this.editor.StylesManager.applyTheme("winterstone"); 
     this.editor.saveSurveyFunc = this.saveMySurvey;
 
     this.editor.text = this.props.config || ""

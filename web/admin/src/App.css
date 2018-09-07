@@ -191,7 +191,7 @@ button.displayButton:focus, button.displayButton:active {
   font-size: 18px;
 
 }
-
+/* 
 .btn-green {
     background-color: #009DCD;
     padding: 5px;
@@ -231,7 +231,7 @@ input:focus, textarea:focus  {
 }
 
 .btn-primary:hover, .btn-primary:focus {
-    background-color: #009DCD;
+    background-color: #009DCD !important;
     color: #fff;
     border-color: gray important;
 }
@@ -271,7 +271,7 @@ input:focus, textarea:focus  {
 .svd_container .svd_content .svd_survey_designer .svd_editors .svd_questions_editor .panel-body .svd_question_container .svd_question.svd_q_selected,
 .svd_container .svd_content .svd_survey_designer .svd_editors .svd_questions_editor .card-block .svd_question_container .svd_question.svd_q_selected {
   /* doesn't work b/c surveyeditor.css has this marked as important! */
-    border: 1px solid #009DCD !important; 
+    /* border: 1px solid #009DCD !important; 
 }
 
 .sv_qstn, .svd_question_menu {
@@ -289,4 +289,4 @@ input:focus, textarea:focus  {
 
 .svd_container .svd_q_selected {
     border: 1px solid #009DCD !important;
-}
+} */
