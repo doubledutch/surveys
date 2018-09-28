@@ -92,8 +92,53 @@ button.displayButton:focus, button.displayButton:active {
   margin-top: 15px;
 }
 
+.searchBox {
+  padding: 8px 10px;
+  border-radius: 4px;
+  width: 200px;
+  border: 0.75px solid #DCDCDC;
+}
+
+.svd_container.sv_default_css .modal .modal-dialog .modal-content .modal-header button.close {
+  float: right;
+  font-size: 21px;
+  font-weight: 700;
+  margin: 0 !important;
+  line-height: 1;
+  color: white;
+  text-shadow: 0 1px 0 #fff;
+  filter: alpha(opacity=20);
+  opacity: 0.2;
+  -webkit-appearance: none;
+  padding: 0;
+  cursor: pointer;
+  background: 0 0;
+  border: 0; 
+}
+
+.sv_main.sv_default_css .sv_body {
+  border-color: #73aaf3 !important;
+}
+
+.sv_main.sv_default_css .sv_select_wrapper::before {
+  background-color: #73aaf3 !important;
+}
+
+.sv_main.sv_default_css input[type="button"], .sv_default_css button {
+  background-color: #73aaf3 !important;
+}
+
+.noUi-connect {
+  background-color: #73aaf3 !important;
+}
+
+.svda-select-items-editor .svda-select-items-content {
+  margin-top: 20px !important;
+}
+
 
 .csvButton{
+  display: inline;
   text-decoration: none;
   background-color: #FFFFFF;
   border: 1px solid #4A90E2;
@@ -101,9 +146,15 @@ button.displayButton:focus, button.displayButton:active {
   text-align: center;
   color: #4A90E2;
   font-size: 14px;
-  margin: 100px 25px 0px 0px;
   padding: 10px;
-  width: 140px;
+  width: 160px;
+}
+
+.csvLinkBox{
+  flex-direction: row;
+  align-items: flex-end; 
+  justify-content: flex-end;
+  display: flex
 }
 
 .rightButtonCell {

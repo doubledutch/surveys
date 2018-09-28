@@ -61,7 +61,9 @@ class SurveyResults extends Component {
             })
             }
         </ul>
-        <CSVLink className="csvButton" data={this.parseResultsForExport(results)} filename={"results.csv"}>Export Responses</CSVLink>
+        <div className="csvLinkBox">
+          <CSVLink className="csvButton" data={this.parseResultsForExport(results)} filename={"results.csv"}>Export Responses</CSVLink>
+        </div>
       </div>
     )
   }
@@ -84,7 +86,6 @@ class SurveyResults extends Component {
           <button className="grayRightButtonCell" onClick={() => this.loadExpandedCell(item)}>Hide Results</button>      
         </div>
         {results.map(question => {
-          console.log(item.results)
           return (
             <div className="subCell">
               <p className="subCellText">{question + ": " +item.results[question]}</p>

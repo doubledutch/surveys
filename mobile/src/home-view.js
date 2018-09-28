@@ -23,6 +23,7 @@ import ReactNative, {
 import client, { Avatar, TitleBar } from '@doubledutch/rn-client'
 import FirebaseConnector from '@doubledutch/firebase-connector'
 import SurveyTable from "./SurveyTable"
+import surveyViewHtml from "./surveyViewHtml"
 const fbc = FirebaseConnector(client, 'surveys')
 
 fbc.initializeAppWithSimpleBackend()
@@ -32,7 +33,7 @@ export default class HomeView extends Component {
     super()
 
     this.state = {
-      surveys: [], showTable: true, config: "", configKey: "", disable: true
+      surveys: [], showTable: true, config: "", configKey: "", disable: true, color : client.primaryColor
     }
 
     this.signin = fbc.signin()
@@ -45,7 +46,6 @@ export default class HomeView extends Component {
     this.signin.then(() => {
       const survRef = fbc.database.public.adminRef('surveys')
       survRef.on('child_added', data => {
-        console.log(data.val())
         this.setState({ surveys: [{...data.val(), key: data.key }, ...this.state.surveys] })
       })
 
@@ -68,11 +68,12 @@ export default class HomeView extends Component {
       <KeyboardAvoidingView style={s.container} behavior={Platform.select({ios: "padding", android: null})}>
         <TitleBar title="Surveys" client={client} signin={this.signin} />
         {this.state.showTable ? <SurveyTable surveys={this.state.surveys} closeSurveyModal={this.closeSurveyModal} selectSurvey={this.selectSurvey} configKey={this.state.configKey} disable={this.state.disable}/>
-        : <View style={{flex: 1}}><WebView ref={input => this.webview = input} style={s.web} source={{uri: "https://react-barrating-widget-5cpyxw.stackblitz.io/"}} injectedJavaScript={injectedJavaScript} onMessage={e => this.saveResults(e.nativeEvent.data)} onLoad={this.sendInfo}/><Button onPress={()=>this.setState({showTable: true, config: "", configKey: ""})} title=""/></View> 
+        : <View style={{flex: 1}}><WebView ref={input => this.webview = input} style={s.web} source={{uri: "https://react-barrating-widget-9ruuyq.stackblitz.io/"}} injectedJavaScript={injectedJavaScript} onMessage={e => this.saveResults(e.nativeEvent.data)} onLoad={this.sendInfo}/><Button onPress={()=>this.setState({showTable: true, config: "", configKey: ""})} title=""/></View> 
         }
       </KeyboardAvoidingView>
     )
   }
+
 
   sendInfo = () => {
     this.webview.postMessage(this.state.config)
@@ -83,12 +84,12 @@ export default class HomeView extends Component {
   }
 
   saveResults = (resultsString) => {
-    console.log(resultsString)
     const results = JSON.parse(resultsString)
-    const parseResults = Object.values(results).map((item, index) => {
+    // const parseResults = Object.values(results).map((item, index) => {
+    //   const question = this.state.config.pages[0]{
 
-      return 
-    })
+    //   }
+    // })
     fbc.database.private.adminableUserRef('results').child(this.state.configKey).push({
       results, creator: client.currentUser, timeTaken: new Date().getTime()
       })
@@ -105,9 +106,9 @@ export default class HomeView extends Component {
 }
 
 const injectedJavaScript = `
-window.config = 'init2'
+window.config = {survey: "", color: '${client.primaryColor}'}
 window.document.addEventListener("message", function(e) {
-  window.config = e.data
+  window.config = {survey: e.data, color: '${client.primaryColor}'}
 });
 `
 

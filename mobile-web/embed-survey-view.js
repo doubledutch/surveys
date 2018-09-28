@@ -35,4 +35,5 @@ const bundledIndex = index
   .replace(cssRegex, cssTag)
   .replace(jsRegex, jsTag)
 
+console.log(bundledIndex)
 fs.writeFileSync(path.join(__dirname, '../mobile/src/surveyViewHtml.js'), `export default ${JSON.stringify(bundledIndex)};\n`)

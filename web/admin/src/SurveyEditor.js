@@ -5,7 +5,7 @@ import * as SurveyKo from "survey-knockout";
 import "surveyjs-editor/surveyeditor.css";
 
 import "jquery-ui/themes/base/all.css";
-import "nouislider/distribute/nouislider.css";
+// import "nouislider/distribute/nouislider.css";
 import "select2/dist/css/select2.css";
 import "bootstrap-slider/dist/css/bootstrap-slider.css";
 
@@ -17,27 +17,26 @@ import "jquery-ui/ui/widgets/datepicker.js";
 import "select2/dist/js/select2.js";
 import "jquery-bar-rating";
 
-import "icheck/skins/square/blue.css";
+// import "icheck/skins/square/blue.css";
 
 import * as widgets from "surveyjs-widgets";
 
-widgets.icheck(SurveyKo, $);
-widgets.select2(SurveyKo, $);
-widgets.inputmask(SurveyKo);
+// widgets.icheck(SurveyKo, $);
+// widgets.select2(SurveyKo, $);
+// widgets.inputmask(SurveyKo);
 widgets.jquerybarrating(SurveyKo, $);
 widgets.jqueryuidatepicker(SurveyKo, $);
-widgets.nouislider(SurveyKo);
-widgets.select2tagbox(SurveyKo, $);
-widgets.signaturepad(SurveyKo);
-widgets.sortablejs(SurveyKo);
-widgets.ckeditor(SurveyKo);
-widgets.autocomplete(SurveyKo, $);
+// widgets.nouislider(SurveyKo);
+// widgets.select2tagbox(SurveyKo, $);
+// widgets.signaturepad(SurveyKo);
+// widgets.sortablejs(SurveyKo);
+// widgets.ckeditor(SurveyKo);
+// widgets.autocomplete(SurveyKo, $);
 widgets.bootstrapslider(SurveyKo)
 
 
 class SurveyEditor extends Component {
   editor;
-  // SurveyEditor.StylesManager.applyTheme("winterstone"); 
   constructor() {
     super()
     var mainColor = "#73aaf3";
@@ -54,23 +53,22 @@ class SurveyEditor extends Component {
     defaultThemeColorsEditor["$secondary-color"] = mainColor;
     defaultThemeColorsEditor["$primary-hover-color"] = mainHoverColor;
     defaultThemeColorsEditor["$primary-text-color"] = textColor;
+    defaultThemeColorsEditor["$secondary-border-color"] = mainColor;
     defaultThemeColorsEditor["$selection-border-color"] = mainColor;
     SurveyJSEditor.StylesManager.applyTheme();        
   }
   
   componentDidMount() {
-    let editorOptions = { showEmbededSurveyTab: false, showPropertyGrid: false, showPagesToolbox: false, useTabsInElementEditor: true, showJSONEditorTab: false};
-
+    let editorOptions = { 
+      showEmbededSurveyTab: false, showPropertyGrid: false, showPagesToolbox: false, useTabsInElementEditor: true, showJSONEditorTab: false,
+      questionTypes: ["text", "checkbox", "radiogroup", "dropdown", "boolean", "matrix", "rating"]
+    };
     this.editor = new SurveyJSEditor.SurveyEditor(
       "editorElement",
       editorOptions
     );
-
-    // this.editor.StylesManager.applyTheme("winterstone"); 
     this.editor.saveSurveyFunc = this.saveMySurvey;
-
     this.editor.text = this.props.config || ""
-
   }
 
   componentWillReceiveProps(nextProps) {
@@ -81,7 +79,7 @@ class SurveyEditor extends Component {
 
   render() {
     return (
-      <div className="tableContainer">
+    <div className="tableContainer">
       <div className="headerRow">
         <h2>Editor</h2>
       </div>

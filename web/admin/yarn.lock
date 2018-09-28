@@ -7687,9 +7687,9 @@ supports-color@^5.3.0, supports-color@^5.4.0:
   dependencies:
     has-flag "^3.0.0"
 
-survey-knockout@^1.0.35:
-  version "1.0.35"
-  resolved "https://registry.yarnpkg.com/survey-knockout/-/survey-knockout-1.0.35.tgz#fa1273f6abcb53983626d509da19b6b8f9ba86cf"
+survey-knockout@^1.0.46:
+  version "1.0.46"
+  resolved "https://registry.yarnpkg.com/survey-knockout/-/survey-knockout-1.0.46.tgz#dd3912402a388a135f1e32230915e047569c98a3"
   dependencies:
     knockout "^3.4.0"
 
@@ -7697,13 +7697,13 @@ survey-react@^1.0.35:
   version "1.0.35"
   resolved "https://registry.yarnpkg.com/survey-react/-/survey-react-1.0.35.tgz#16f64cb3abb7b75316ba430f9c1f9bbeb14bffb0"
 
-surveyjs-editor@^1.0.35:
-  version "1.0.35"
-  resolved "https://registry.yarnpkg.com/surveyjs-editor/-/surveyjs-editor-1.0.35.tgz#507a01ebefd96bba1fe5317ea10270bf63ed2828"
+surveyjs-editor@^1.0.46:
+  version "1.0.46"
+  resolved "https://registry.yarnpkg.com/surveyjs-editor/-/surveyjs-editor-1.0.46.tgz#6f6f3d0c5ce74755c87aa33677bfc581efa59b0e"
   dependencies:
     "@types/knockout" "^3.4.0"
     knockout "^3.4.0"
-    survey-knockout "^1.0.35"
+    survey-knockout "^1.0.46"
 
 surveyjs-widgets@^1.0.35:
   version "1.0.35"
