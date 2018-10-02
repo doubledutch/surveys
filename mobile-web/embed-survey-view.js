@@ -25,14 +25,14 @@ const jsRegex = /<script type="text\/javascript" src="\/static\/js\/(main\..*\.j
 const cssFile = index.match(cssRegex)[1]
 const jsFile = index.match(jsRegex)[1]
 
-const css = fs.readFileSync(path.join(__dirname, `build/static/css/${cssFile}`))
-const js = fs.readFileSync(path.join(__dirname, `build/static/js/${jsFile}`))
+const css = fs.readFileSync(path.join(__dirname, `build/static/css/${cssFile}`), {encoding: 'utf8'})
+const js = fs.readFileSync(path.join(__dirname, `build/static/js/${jsFile}`), {encoding: 'utf8'})
 
 const cssTag = `<style>${css}</style>`
 const jsTag = `<script type="text/javascript">${js}</script>`
 
 const bundledIndex = index
-  .replace(cssRegex, cssTag)
-  .replace(jsRegex, jsTag)
+  .replace(cssRegex, () => cssTag)
+  .replace(jsRegex, () => jsTag)
 
 fs.writeFileSync(path.join(__dirname, '../mobile/src/surveyViewHtml.js'), `export default ${JSON.stringify(bundledIndex)};\n`)
