@@ -122,7 +122,7 @@ export default class App extends Component {
                 <div>
                   <div className="tableContainer">
                     <div className="headerRow">
-                      <h2>Surveys</h2>
+                      <h2 className="boxTitle">Surveys</h2>
                       {this.state.isSurveysBoxDisplay && <button className="dd-bordered leftMargin" onClick={()=>this.addNewSurvey({history})}> New Survey</button>}
                       <div style={{flex: 1}}/>
                       <input
@@ -145,9 +145,6 @@ export default class App extends Component {
                 if (!this.state.showBuilder) return <Redirect to="/" />
                 return <SurveyEditor saveConfig={this.saveConfig} config={this.state.config} isEditorBoxDisplay={this.state.isEditorBoxDisplay} handleChange={this.handleChange}/>
               }} />
-              {/* <div className="surveyjs">
-                <Survey.Survey model={model} onComplete={this.onComplete} onValueChanged={this.onValueChanged}/>        
-              </div> */}
           </div>
         </Router>
       </div>

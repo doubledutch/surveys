@@ -39,7 +39,7 @@ class SurveyResults extends Component {
     return (
       <div className="tableContainer">
       <div className="headerRow">
-        <h2>Results</h2>
+        <h2 className="boxTitle">Results</h2>
         <div style={{flex: 1}}/>
         <button className="displayButton" onClick={() => this.props.handleChange("isResultsBoxDisplay", !this.props.isResultsBoxDisplay)}>{(this.props.isResultsBoxDisplay ? "Hide Section" : "Show Section")}</button>
       </div>
