@@ -198,7 +198,7 @@ export default class SurveyTable extends Component {
   }
 }
 
-const SurveyRadio = ({selected}, primaryColor) => (
+const SurveyRadio = ({selected, primaryColor}) => (
   <View style={[s.radio, selected ? {borderColor: primaryColor} : null]}>
     {selected ? <View style={[s.radioDot, {backgroundColor: primaryColor}]} /> : null}
   </View>
