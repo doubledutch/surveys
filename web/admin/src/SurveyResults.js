@@ -27,14 +27,6 @@ class SurveyResults extends Component {
     }
   }
 
-  componentDidMount() {
-
-  }
-
-  componentWillReceiveProps(nextProps) {
-
-  }
-
   render() {
     return (
       <div className="tableContainer">
@@ -78,17 +70,17 @@ class SurveyResults extends Component {
   }
 
   expandedCell = (item) => {
-    const results = Object.keys(item.results)
+    const results = item.newResults
     return (
       <div>
         <div key={item.timeTaken} className="buttonRow"> 
           <div className="grayButtonCell"><p className="buttonText">{item.creator.firstName + " " + item.creator.lastName + " - " + new Date(item.timeTaken).toDateString()}</p></div>
           <button className="grayRightButtonCell" onClick={() => this.loadExpandedCell(item)}>Hide Results</button>      
         </div>
-        {results.map(question => {
+        {results.map(item => {
           return (
             <div className="subCell">
-              <p className="subCellText">{question + ": " +item.results[question]}</p>
+              <li className="subCellText">{item.question + ": " + item.answer}</li>
             </div>
           )
         })}
@@ -99,7 +91,11 @@ class SurveyResults extends Component {
   parseResultsForExport = (results) => {
     let parsedResults = []
     results.forEach(item => {
-      let newItem = {...item.results, firstName: item.creator.firstName, lastName: item.creator.lastName, email: item.creator.email, timeTaken: item.timeTaken}
+      let newItem = {firstName: item.creator.firstName, lastName: item.creator.lastName, email: item.creator.email, timeTaken: new Date(item.timeTaken).toDateString()}
+      item.newResults.forEach(item => {
+        const title = item.question
+        newItem[title] = item.answer
+      })
       parsedResults.push(newItem)
     })
     return parsedResults

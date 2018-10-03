@@ -14,31 +14,35 @@
  * limitations under the License.
  */
 
-.App {
-  text-align: center;
+
+sv_qstn, .sv_q_title {
+  font-size: 18px !important;
 }
 
-.App-logo {
-  animation: App-logo-spin infinite 20s linear;
-  height: 80px;
+.sv_complete_btn {
+  color: white !important;
+  padding: 0.2em 1em !important;
+  align-self: center !important;
+  font-size: 18px !important;
+  font-weight: 300 !important;
 }
 
-.App-header {
-  background-color: #222;
-  height: 150px;
-  padding: 20px;
-  color: white;
+.sv_next_btn {
+  color: white !important;
+  padding: 0.2em 1em !important;
+  align-self: center !important;
+  font-size: 18px !important;
+  font-weight: 300 !important;
 }
 
-.App-title {
-  font-size: 1.5em;
+.sv_prev_btn {
+  color: white !important;
+  padding: 0.2em 1em !important;
+  align-self: center !important;
+  font-size: 18px !important;
+  font-weight: 300 !important;
 }
 
-.App-intro {
-  font-size: large;
-}
-
-@keyframes App-logo-spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
+label {
+  font-weight: 300 !important;
 }

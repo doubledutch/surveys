@@ -84,12 +84,13 @@ button.displayButton:focus, button.displayButton:active {
   flex: 1;
   display: flex;
   border-bottom: 1px solid #E3ECF8;
-  padding: 0px 20px;
+  padding: 0px 50px;
   align-items: center;
 }
 
 .subCellText {
-  margin-top: 15px;
+  font-size: 12px;
+  flex: 1;
 }
 
 .searchBox {

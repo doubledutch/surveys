@@ -71,7 +71,7 @@ class HomeView extends PureComponent {
       <KeyboardAvoidingView style={s.container} behavior={Platform.select({ios: "padding", android: null})}>
         <TitleBar title="Surveys" client={client} signin={this.signin} />
         {this.state.showTable ? <SurveyTable surveys={this.state.surveys} closeSurveyModal={this.closeSurveyModal} selectSurvey={this.selectSurvey} configKey={this.state.configKey} disable={this.state.disable}/>
-        : <View style={s.container}><WebView ref={input => this.webview = input} style={s.web} source={{uri: "https://react-barrating-widget-9ruuyq.stackblitz.io/"}} injectedJavaScript={this.injectedJavaScript()} onMessage={e => this.saveResults(e.nativeEvent.data)} onLoad={this.sendInfo}/><TouchableOpacity style={s.backButton} onPress={()=>this.setState({showTable: true, config: "", configKey: ""})}/></View> 
+        : <View style={s.container}><WebView ref={input => this.webview = input} onError={error=>console.log} style={s.web} source={{html: surveyViewHtml}}  injectedJavaScript={this.injectedJavaScript()} onMessage={e => this.saveResults(e.nativeEvent.data)} onLoad={this.sendInfo}/><TouchableOpacity style={s.backButton} onPress={()=>this.setState({showTable: true, config: "", configKey: ""})}/></View> 
         }
       </KeyboardAvoidingView>
     )
@@ -79,7 +79,8 @@ class HomeView extends PureComponent {
 
 
   sendInfo = () => {
-    this.webview.postMessage(this.state.config)
+    const config = JSON.stringify({survey: this.state.config, color: this.state.primaryColor})
+    this.webview.postMessage(config)
   }
 
   closeSurveyModal = () => {
@@ -89,23 +90,17 @@ class HomeView extends PureComponent {
   saveResults = (resultsString) => {
     let results = JSON.parse(resultsString) 
     results = Object.values(results)
-    newQuestionsArray = []
+    let newQuestionsArray = []
     let config = JSON.parse(this.state.config)
-    config.pages.forEach(page => newQuestionsArray.concat(page))
-    console.log(newQuestionsArray)
-    let questionsArray = []
-    // const questions = this.state.config.pages.forEach(item => {
-    //   questionsArray = questionsArray.concat(Object.values(item))
-    // })
-
-    // console.log(questionsArray)
-    // const parseResults = Object.values(results).map((item, index) => {
-    //   const question = this.state.config.pages[0]{
-
-    //   }
-    // })
+    config.pages.forEach(page => {
+      newQuestionsArray = newQuestionsArray.concat(page.elements)
+    })
+    let newResults = []
+    results.forEach((item, index) => {
+      newResults.push({question : newQuestionsArray[index].title, answer: item})
+    })
     this.props.fbc.database.private.adminableUserRef('results').child(this.state.configKey).push({
-      results, creator: client.currentUser, timeTaken: new Date().getTime()
+      newResults, creator: this.state.currentUser, timeTaken: new Date().getTime()
       })
     .then(() => this.setState({}))
     .catch (x => console.error(x))    

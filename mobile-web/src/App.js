@@ -15,14 +15,42 @@
  */
 
 import React, { Component } from 'react';
+import { render } from 'react-dom';
 import './App.css';
-// import SurveyWrapper from "./SurveyWrapper"
+import "survey-react/survey.css";
+import "bootstrap/dist/css/bootstrap.css";
+import SurveyWrapper from "./SurveyWrapper"
+import * as SurveyKo from "survey-knockout";
+import * as Survey from "survey-react";
+import * as Widgets from 'surveyjs-widgets';
+
+import $ from 'jquery';
+import jquery from 'jquery';
+window.$ = window.jQuery = jquery;
 
 class App extends Component {
+  constructor(props) { 
+    super(props)
+    
+    this.state = {
+      survey: "",
+      color: ""
+    }
+    Widgets.jquerybarrating(SurveyKo);    
+    Widgets.jquerybarrating(Survey);
+  }
+  componentDidMount(){
+    document.addEventListener("message", e => {
+      const config = JSON.parse(e.data)
+      const survey = config ? config.survey : ""
+      const color = config ? config.color : ""
+      this.setState({survey, color})
+    })
+  }
+
   render() {
     return (
-      <div />
-        // <SurveyWrapper />
+      this.state.color && this.state.survey ? <SurveyWrapper survey={this.state.survey} color={this.state.color}/> : null
     );
   }
 }

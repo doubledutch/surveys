@@ -4,14 +4,18 @@ import * as Widgets from "surveyjs-widgets";
 
 class SurveyWrapper extends React.Component {
 
-  constructor() {
-    super()
-    var mainColor = "#7ff07f";
-    var mainHoverColor = "#6fe06f";
-    var textColor = "#4a4a4a";
-    var headerColor = "#7ff07f";
-    var headerBackgroundColor = "#4a4a4a";
-    var bodyContainerBackgroundColor = "#f8f8f8";
+  constructor(props) {
+    super(props)
+  }
+
+  componentDidMount = () => {
+    const propColor = this.props.color ? this.props.color : "blue"
+    var mainColor = propColor;
+    var mainHoverColor = propColor;
+    var textColor = '#364247';
+    var headerColor = "#364247";
+    var headerBackgroundColor = "#FFFFFF";
+    var bodyContainerBackgroundColor = "#EFEFEF";
     var defaultThemeColorsSurvey = Survey
     .StylesManager
     .ThemeColors["default"];
@@ -21,7 +25,7 @@ class SurveyWrapper extends React.Component {
     defaultThemeColorsSurvey["$header-color"] = headerColor;
     defaultThemeColorsSurvey["$header-background-color"] = headerBackgroundColor;
     defaultThemeColorsSurvey["$body-container-background-color"] = bodyContainerBackgroundColor;
-    Survey.StylesManager.applyTheme();        
+    Survey.StylesManager.applyTheme();  
   }
 
   onValueChanged(result) {
@@ -30,12 +34,12 @@ class SurveyWrapper extends React.Component {
 
   onComplete(result) {
     console.log("Survey Completed! " + result);
-    console.log(result.valuesHash);
     window.postMessage(JSON.stringify(result.valuesHash))
   }
 
-  render() {        
-    var model = new Survey.Model(this.props.config);
+  render() {  
+    var model = new Survey.Model(this.props.survey ? this.props.survey : "");
+    var surveyJSON = new Survey.Model({pages:[{name:"page1",elements:[{type:"imagepicker",name:"question1",choices:[{value:"lion",imageLink:"https://surveyjs.io/Content/Images/examples/image-picker/lion.jpg"},{value:"giraffe",imageLink:"https://surveyjs.io/Content/Images/examples/image-picker/giraffe.jpg"},{value:"panda",imageLink:"https://surveyjs.io/Content/Images/examples/image-picker/panda.jpg"},{value:"camel",imageLink:"https://surveyjs.io/Content/Images/examples/image-picker/camel.jpg"}]},{type:"text",name:"question2"},{type:"checkbox",name:"question3",choices:["item1","item2","item3"]},{type:"radiogroup",name:"question4",choices:["item1","item2","item3"]},{type:"dropdown",name:"question5",choices:["item1","item2","item3"]}] ,title:"New"}]})
     return (
       <div>
         <div className="surveyjs">
