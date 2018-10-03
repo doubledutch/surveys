@@ -97,7 +97,7 @@ class HomeView extends PureComponent {
     })
     let newResults = []
     results.forEach((item, index) => {
-      newResults.push({question : newQuestionsArray[index].title, answer: item})
+      newResults.push({question : newQuestionsArray[index].title ? newQuestionsArray[index].title : newQuestionsArray[index].name, answer: item})
     })
     this.props.fbc.database.private.adminableUserRef('results').child(this.state.configKey).push({
       newResults, creator: this.state.currentUser, timeTaken: new Date().getTime()
