@@ -52,11 +52,22 @@ class SurveyEditor extends Component {
       "editorElement",
       editorOptions
     );
+    this.editor.onElementAllowOperations.add(function (editor, options) {
+      var obj = options.obj;
+      if (!obj || !obj.page) return;        
+      options.allowEdit = true;
+      options.allowDelete = true;
+      options.allowCopy = true;
+      options.allowAddToToolbox = false;
+      options.allowDragging = true;
+      options.allowChangeType = true;
+  });
     this.editor.saveSurveyFunc = this.saveMySurvey;
     this.editor.text = this.props.config || ""
   }
 
-  componentWillReceiveProps(nextProps) {
+  componentDidUpdate(nextProps) {
+    console.log(nextProps)
     if (nextProps.config !== this.editor.text) {
       this.editor.text = nextProps.config
     }

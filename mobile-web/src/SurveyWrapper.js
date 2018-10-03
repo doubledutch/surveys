@@ -24,22 +24,17 @@ class SurveyWrapper extends React.Component {
     Survey.StylesManager.applyTheme();  
   }
 
-  onValueChanged(result) {
-    console.log("value changed!");
-  }
-
   onComplete(result) {
     console.log("Survey Completed! " + result);
     window.postMessage(JSON.stringify(result.valuesHash))
   }
 
   render() {  
-    var model = new Survey.Model(this.props.survey ? this.props.survey : "");
-    var surveyJSON = new Survey.Model({pages:[{name:"page1",elements:[{type:"imagepicker",name:"question1",choices:[{value:"lion",imageLink:"https://surveyjs.io/Content/Images/examples/image-picker/lion.jpg"},{value:"giraffe",imageLink:"https://surveyjs.io/Content/Images/examples/image-picker/giraffe.jpg"},{value:"panda",imageLink:"https://surveyjs.io/Content/Images/examples/image-picker/panda.jpg"},{value:"camel",imageLink:"https://surveyjs.io/Content/Images/examples/image-picker/camel.jpg"}]},{type:"text",name:"question2"},{type:"checkbox",name:"question3",choices:["item1","item2","item3"]},{type:"radiogroup",name:"question4",choices:["item1","item2","item3"]},{type:"dropdown",name:"question5",choices:["item1","item2","item3"]}] ,title:"New"}]})
+    const model = new Survey.Model(this.props.survey ? this.props.survey : "");
     return (
       <div>
         <div className="surveyjs">
-          <Survey.Survey model={model} onComplete={this.onComplete} onValueChanged={this.onValueChanged}/>        
+          <Survey.Survey model={model} onComplete={this.onComplete}/>        
         </div>        
       </div>)
   }
