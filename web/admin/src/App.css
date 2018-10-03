@@ -13,10 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/* 
- .App{
-   width: 1000px;
- } */
+
  .App-intro {
   font-size: large;
   text-align: center;
@@ -27,7 +24,6 @@
 }
 
 .tableContainer {
-  /* height: 300px; */
   flex: 1;
   box-sizing: border-box;
   font-size: 14; 
@@ -84,16 +80,66 @@ button.displayButton:focus, button.displayButton:active {
   flex: 1;
   display: flex;
   border-bottom: 1px solid #E3ECF8;
-  padding: 0px 20px;
+  padding: 0px 50px;
   align-items: center;
 }
 
 .subCellText {
-  margin-top: 15px;
+  font-size: 12px;
+  flex: 1;
 }
 
+.searchBox {
+  padding: 8px 10px;
+  border-radius: 4px;
+  width: 200px;
+  border: 0.75px solid #DCDCDC;
+}
+
+.svd_container.sv_default_css .modal .modal-dialog .modal-content .modal-header button.close {
+  float: right;
+  font-size: 21px;
+  font-weight: 700;
+  margin: 0 !important;
+  background-color: white !important;
+  line-height: 1;
+  color: white;
+  text-shadow: 0 1px 0 #fff;
+  filter: alpha(opacity=20);
+  opacity: 0.2;
+  -webkit-appearance: none;
+  padding: 0;
+  cursor: pointer;
+  background: 0 0;
+  border: 0; 
+}
+
+.sv_main.sv_default_css .sv_body {
+  border-color: #73aaf3 !important;
+}
+
+.sv_main.sv_default_css .sv_select_wrapper::before {
+  background-color: #73aaf3 !important;
+}
+
+.sv_main.sv_default_css input[type="button"], .sv_default_css button {
+  background-color: #73aaf3 !important;
+}
+
+.noUi-connect {
+  background-color: #73aaf3 !important;
+}
+
+.svda-select-items-editor .svda-select-items-content {
+  margin-top: 20px !important;
+}
+
+.boxTitle {
+  font-weight: 300;
+}
 
 .csvButton{
+  display: inline;
   text-decoration: none;
   background-color: #FFFFFF;
   border: 1px solid #4A90E2;
@@ -101,9 +147,15 @@ button.displayButton:focus, button.displayButton:active {
   text-align: center;
   color: #4A90E2;
   font-size: 14px;
-  margin: 100px 25px 0px 0px;
   padding: 10px;
-  width: 140px;
+  width: 160px;
+}
+
+.csvLinkBox{
+  flex-direction: row;
+  align-items: flex-end; 
+  justify-content: flex-end;
+  display: flex
 }
 
 .rightButtonCell {
@@ -190,103 +242,4 @@ button.displayButton:focus, button.displayButton:active {
   margin-top: 90px;
   font-size: 18px;
 
-}
-
-.btn-green {
-    background-color: #009DCD;
-    padding: 5px;
-    color: #fff;
-    border-radius: 3px;
-}
-.btn-green:focus,
-.btn-green:hover {
-    background-color: #009DCD;
-    color: #fff;
-}
-.panel-footer {
-    padding: 0 15px;
-    border: none;
-    text-align: right;
-    background-color: #fff;
-}
-
-input:focus, textarea:focus  { 
-    outline: none !important;
-    border-color: #009DCD!important;
-    box-shadow: 0 0 10px #009DCD;
-    padding: 5px;
-}
-
-.nav-link {
-  color: #009DCD !important;
-  border-radius: 3px;
-}
-
-.btn-primary {
-  background-color: #009DCD !important;
-  color: #fff;
-  border-radius: 3px;
-  border-color: #009DCD!important;
-  padding: 10px 20px !important
-}
-
-.btn-primary:hover, .btn-primary:focus {
-    background-color: #009DCD;
-    color: #fff;
-    border-color: gray important;
-}
-
-.btn-secondary {
-  padding: 10px 20px !important
-}
-
-.sjs-cb-container input:checked ~ .checkmark {
-    background-color: #009DCD !important;
-}
-
-.svd_custom_select, .svd_property_editor_dropdown, .svd_editor_control {
-    color: #009DCD !important;
-    border: 1px solid #009DCD !important;
-    border-bottom-color: #009DCD !important;
-}
-
-.svd_container .editor-tabs > li.active > a {
-    background-color: #f3f3f4 !important;
-    border: 1px solid #e7eaec;
-    border-bottom-color: #f3f3f4;
-    color: #fff;
-}
-
-.svd_container .svd_content .svd_survey_designer .svd_editors .svd_questions_editor .panel-body .svd_question .svd_question_menu .glyphicon-option-horizontal, .svd_container .svd_content .svd_survey_designer .svd_editors .svd_questions_editor .card-block .svd_question .svd_question_menu .glyphicon-option-horizontal .btn-green {
-    color: #009DCD !important;
-}
-
-.svd_container .glyphicon.glyphicon-plus::before {
-    font-weight: normal;
-    font-size: 20px;
-    color: #009DCD !important;
-    content: "+";
-}
-
-.svd_container .svd_content .svd_survey_designer .svd_editors .svd_questions_editor .panel-body .svd_question_container .svd_question.svd_q_selected,
-.svd_container .svd_content .svd_survey_designer .svd_editors .svd_questions_editor .card-block .svd_question_container .svd_question.svd_q_selected {
-  /* doesn't work b/c surveyeditor.css has this marked as important! */
-    border: 1px solid #009DCD !important; 
-}
-
-.sv_qstn, .svd_question_menu {
-  color: #111111;
-}
-
-.sv_complete_btn {
-  color: #009DCD;
-  background-color: white;
-}
-
-.svd_custom_select:before  {
-  background-color: #009DCD !important;
-}
-
-.svd_container .svd_q_selected {
-    border: 1px solid #009DCD !important;
 }

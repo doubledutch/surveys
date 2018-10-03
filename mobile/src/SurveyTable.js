@@ -20,7 +20,6 @@ import ReactNative, {
   Platform, TouchableOpacity, Text, TextInput, View, ScrollView, FlatList, Modal, Image
 } from 'react-native'
 import client, { Avatar, TitleBar, Color } from '@doubledutch/rn-client'
-const primaryColor = new Color(client.primaryColor).limitLightness(0.9).rgbString()
 
 export default class SurveyTable extends Component {
   constructor(props){
@@ -56,6 +55,7 @@ export default class SurveyTable extends Component {
   }
 
   render() {
+    const primaryColor = new Color(this.props.primaryColor).limitLightness(0.9).rgbString()
     const newStyle = {
       flex: 1,
       fontSize: 18,
@@ -100,7 +100,7 @@ export default class SurveyTable extends Component {
           renderItem={({item}) => (
             <TouchableOpacity onPress={() => this.surveySelect(item)} style={s.listContainer}>
               <View style={s.leftContainer}>
-                <SurveyRadio selected={this.props.configKey === item.key} />
+                <SurveyRadio selected={this.props.configKey === item.key} primaryColor={primaryColor} />
               </View>
               <View style={s.rightContainer}>
                 <Text style={{fontSize: 16, color: '#364247'}}>{this.returnName(item)}</Text>
@@ -198,7 +198,7 @@ export default class SurveyTable extends Component {
   }
 }
 
-const SurveyRadio = ({selected}) => (
+const SurveyRadio = ({selected, primaryColor}) => (
   <View style={[s.radio, selected ? {borderColor: primaryColor} : null]}>
     {selected ? <View style={[s.radioDot, {backgroundColor: primaryColor}]} /> : null}
   </View>
@@ -278,28 +278,6 @@ const s = ReactNative.StyleSheet.create({
     borderTopWidth: 1,
     borderTopColor: "#b7b7b7"
   },
-  button: {
-    width: '25%',
-    height: 40,
-    paddingTop: 10,
-    paddingBottom: 5,
-    justifyContent: 'center',
-  },
-  button1: {
-    height: 40,
-    paddingTop: 10,
-    marginBottom: 10,
-    justifyContent: 'center',
-    borderBottomWidth: 2,
-    borderBottomColor: primaryColor,
-  },
-
-  button2: {
-    height: 40,
-    paddingTop: 10,
-    marginBottom: 10,
-    justifyContent: 'center', 
-  },
   divider: {
     flex: 1
   },
@@ -377,45 +355,6 @@ const s = ReactNative.StyleSheet.create({
     paddingRight: 8,
     height: 22,
     borderRadius: 50,
-  },
-  sendButtons: {
-    justifyContent: 'center',
-    flex: 1
-  },
-  counter: {
-    justifyContent: 'center',
-    marginTop:23,
-    width: 30,
-    fontSize: 14,
-    marginRight: 11,
-    height: 20,
-    color: '#9B9B9B', 
-    textAlign: 'center'
-  },
-  sendButton: {
-    justifyContent: 'center',
-    marginTop: 20,
-    marginRight: 10,
-    width: 124,
-    backgroundColor: primaryColor,
-    height: 42,
-    borderRadius: 4,
-  },
-  checkButton: {
-    justifyContent: 'center',
-    marginLeft: 12,
-    marginTop: 15,
-    height: 19,
-    width: 19,
-  },
-  sendButtonText: {
-    fontSize: 14,
-    color: 'white',
-    textAlign: 'center'
-  },
-  dashboardButton: {
-    fontSize: 18,
-    color: '#9B9B9B',
   },
   composeText: {
     flex: 1,

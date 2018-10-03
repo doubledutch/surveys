@@ -14,38 +14,40 @@
  * limitations under the License.
  */
 
-import React, { Component } from 'react'
+import React, { PureComponent } from 'react'
 import ReactNative, {
   KeyboardAvoidingView, Platform, TouchableOpacity, Text, TextInput, View, ScrollView, WebView, Button
 } from 'react-native'
 
 // rn-client must be imported before FirebaseConnector
 import client, { Avatar, TitleBar } from '@doubledutch/rn-client'
-import FirebaseConnector from '@doubledutch/firebase-connector'
+import {provideFirebaseConnectorToReactComponent} from '@doubledutch/firebase-connector'
 import SurveyTable from "./SurveyTable"
-const fbc = FirebaseConnector(client, 'surveys')
+import Loading from './Loading'
+import surveyViewHtml from "./surveyViewHtml"
 
-fbc.initializeAppWithSimpleBackend()
-
-export default class HomeView extends Component {
+class HomeView extends PureComponent {
   constructor() {
     super()
 
     this.state = {
       surveys: [], showTable: true, config: "", configKey: "", disable: true
     }
-
-    this.signin = fbc.signin()
-      .then(user => this.user = user)
-
-    this.signin.catch(err => console.error(err))
   }
 
   componentDidMount() {
-    this.signin.then(() => {
+    const {fbc} = this.props
+    const signin = fbc.signin()
+    signin.catch(err => console.error(err))
+
+    signin.then(() => {
+      client.getCurrentUser().then(currentUser => {
+        setTimeout(() => {
+          this.setState( {currentUser})
+        }, 500)
+      client.getPrimaryColor().then(primaryColor => this.setState({primaryColor}))
       const survRef = fbc.database.public.adminRef('surveys')
       survRef.on('child_added', data => {
-        console.log(data.val())
         this.setState({ surveys: [{...data.val(), key: data.key }, ...this.state.surveys] })
       })
 
@@ -60,68 +62,89 @@ export default class HomeView extends Component {
         }
       })
     })
+    })
   }
 
   render() {
-
+    if (!this.state.currentUser || !this.state.primaryColor) return <Loading />
     return (
       <KeyboardAvoidingView style={s.container} behavior={Platform.select({ios: "padding", android: null})}>
         <TitleBar title="Surveys" client={client} signin={this.signin} />
-        {this.state.showTable ? <SurveyTable surveys={this.state.surveys} closeSurveyModal={this.closeSurveyModal} selectSurvey={this.selectSurvey} configKey={this.state.configKey} disable={this.state.disable}/>
-        : <View style={{flex: 1}}><WebView ref={input => this.webview = input} style={s.web} source={{uri: "https://react-barrating-widget-cxgvnp.stackblitz.io/"}} injectedJavaScript={injectedJavaScript} onMessage={e => this.saveResults(e.nativeEvent.data)} onLoad={this.sendInfo}/><Button onPress={()=>this.setState({showTable: true, config: "", configKey: ""})} title=""/></View> 
+        {this.state.showTable ? <SurveyTable primaryColor={this.state.primaryColor} surveys={this.state.surveys} closeSurveyModal={this.closeSurveyModal} selectSurvey={this.selectSurvey} configKey={this.state.configKey} disable={this.state.disable}/>
+        : <View style={s.container}><WebView ref={input => this.webview = input} style={s.web} javaScriptEnabled={true} allowUniversalAccessFromFileURLs={true} source={{html: surveyViewHtml}} mixedContentMode={"compatibility"} injectedJavaScript={this.injectedJavaScript()} onMessage={e => this.saveResults(e.nativeEvent.data)} onLoad={this.sendInfo}/><TouchableOpacity style={s.backButton} onPress={()=>this.setState({showTable: true, config: "", configKey: ""})}/></View> 
         }
       </KeyboardAvoidingView>
     )
   }
 
+
   sendInfo = () => {
-    this.webview.postMessage(this.state.config)
+    const config = JSON.stringify({survey: this.state.config, color: this.state.primaryColor})
+    this.webview.postMessage(config)
   }
 
   closeSurveyModal = () => {
-    console.log(this.state.config)
     this.setState({showTable: false})
   }
 
   saveResults = (resultsString) => {
-    const results = JSON.parse(resultsString)
-    fbc.database.private.adminableUserRef('results').child(this.state.configKey).push({
-      results, creator: client.currentUser, timeTaken: new Date().getTime()
+    let results = JSON.parse(resultsString) 
+    results = Object.values(results)
+    let newQuestionsArray = []
+    let config = JSON.parse(this.state.config)
+    config.pages.forEach(page => {
+      newQuestionsArray = newQuestionsArray.concat(page.elements)
+    })
+    let newResults = []
+    results.forEach((item, index) => {
+      newResults.push({question : newQuestionsArray[index].title ? newQuestionsArray[index].title : newQuestionsArray[index].name, answer: item})
+    })
+    this.props.fbc.database.private.adminableUserRef('results').child(this.state.configKey).push({
+      newResults, creator: this.state.currentUser, timeTaken: new Date().getTime()
       })
     .then(() => this.setState({}))
     .catch (x => console.error(x))    
   }
 
   selectSurvey = (item) => {
-    this.setState({config: item.info, configKey: item.key, disable: false})
+    let parsedInfo = JSON.parse(item.info)
+    parsedInfo.pages.forEach(page => {
+      page.elements.forEach(question => {
+        if (question.choices) {
+          question.choices.forEach(item => {
+            if (item.value) {
+              item.value = item.text
+            }
+          })
+        }
+      })
+    })
+    this.setState({config: JSON.stringify(parsedInfo), configKey: item.key, disable: false})
   }
 
-
+  injectedJavaScript = () => `
+  window.config = {survey: null, color: '${this.state.primaryColor}'}
+  window.document.addEventListener("message", function(e) {
+    window.config.survey = e.data
+  });
+  `
 
 }
-
-const injectedJavaScript = `
-window.config = 'init2'
-window.document.addEventListener("message", function(e) {
-  window.config = e.data
-});
-`
-
 
 const fontSize = 18
 const s = ReactNative.StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#d9e1f9',
+    backgroundColor: '#EFEFEF',
   },
   web: {
     flex: 1,
-    height: 500,
-    width: 420
   },
   scroll: {
     flex: 1,
-    // padding: 15
+  },
+  backButton: {
+    height: 50,
   },
   task: {
     flex: 1,
@@ -164,3 +187,5 @@ const s = ReactNative.StyleSheet.create({
     flex: 1
   }
 })
+
+export default provideFirebaseConnectorToReactComponent(client, 'surveys', (props, fbc) => <HomeView {...props} fbc={fbc} />, PureComponent)

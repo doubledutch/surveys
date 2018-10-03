@@ -26,19 +26,9 @@ import 'react-tabs/style/react-tabs.css';
 import SurveyWrapper from './SurveyWrapper';
 import SurveyEditor from "./SurveyEditor";
 import SurveyResults from "./SurveyResults";
-import * as Survey from "survey-react";
 import '@doubledutch/react-components/lib/base.css'
 import "survey-react/survey.css";
-import "./App.css";
 import "bootstrap/dist/css/bootstrap.css";
-
-import "jquery-ui/themes/base/all.css";
-import "nouislider/distribute/nouislider.css";
-import "select2/dist/css/select2.css";
-import "bootstrap-slider/dist/css/bootstrap-slider.css";
-
-import "jquery-bar-rating/dist/themes/css-stars.css";
-
 import $ from "jquery";
 import "jquery-ui/ui/widgets/datepicker.js";
 import "select2/dist/js/select2.js";
@@ -48,20 +38,6 @@ import * as widgets from "surveyjs-widgets";
 
 const fbc = FirebaseConnector(client, 'surveys')
 fbc.initializeAppWithSimpleBackend()
-
-widgets.icheck(Survey, $);
-widgets.select2(Survey, $);
-widgets.inputmask(Survey);
-widgets.jquerybarrating(Survey, $);
-widgets.jqueryuidatepicker(Survey, $);
-widgets.nouislider(Survey);
-widgets.select2tagbox(Survey, $);
-widgets.signaturepad(Survey);
-widgets.sortablejs(Survey);
-widgets.ckeditor(Survey);
-widgets.autocomplete(Survey, $);
-widgets.bootstrapslider(Survey);
-
 
 export default class App extends Component {
   
@@ -75,7 +51,8 @@ export default class App extends Component {
       isSurveysBoxDisplay: true,
       isEditorBoxDisplay: true,
       isResultsBoxDisplay: true,
-      showBuilder: false
+      showBuilder: false,
+      search: ''
     }
     this.signin = fbc.signinAdmin()
     .then(user => this.user = user)
@@ -83,16 +60,12 @@ export default class App extends Component {
   }
 
   componentDidMount() {
-    import("icheck");
-    window["$"] = window["jQuery"] = $;
     this.signin.then(() => {
     client.getUsers().then(users => {
       this.setState({attendees: users})
       const survRef = fbc.database.public.adminRef('surveys')
 
       mapPerUserPrivateAdminablePushedDataToStateObjects(fbc, 'results', this, 'results', (userId, key, value) => key)
-
-
 
       survRef.on('child_added', data => {
         this.setState({ surveys: [{...data.val(), key: data.key }, ...this.state.surveys] })
@@ -107,17 +80,13 @@ export default class App extends Component {
             this.setState({surveys})
           }
         }
-      })
-
-  
+      })  
     })
   })
 
   }
 
   render() {
-    // Survey.Survey.cssType = "bootstrap";
-    // var model = new Survey.Model(this.state.config);
     return (
       <div className="App">
         <Router>
@@ -126,10 +95,15 @@ export default class App extends Component {
                 <div>
                   <div className="tableContainer">
                     <div className="headerRow">
-                      <h2>Surveys</h2>
+                      <h2 className="boxTitle">Surveys</h2>
                       {this.state.isSurveysBoxDisplay && <button className="dd-bordered leftMargin" onClick={()=>this.addNewSurvey({history})}> New Survey</button>}
                       <div style={{flex: 1}}/>
-                      <button className="displayButton" onClick={() => this.handleChange("isSurveysBoxDisplay", !this.state.isSurveysBoxDisplay)}>{(this.state.isSurveysBoxDisplay ? "Hide Section" : "Show Section")}</button>
+                      <input
+                        className="searchBox"
+                        value={this.state.search}
+                        onChange={this.searchTable}
+                        placeholder={'Search'}
+                      />
                     </div>
                     {this.state.isSurveysBoxDisplay && <div>
                       <ul className="surveyTable">
@@ -143,13 +117,14 @@ export default class App extends Component {
                 if (!this.state.showBuilder) return <Redirect to="/" />
                 return <SurveyEditor saveConfig={this.saveConfig} config={this.state.config} isEditorBoxDisplay={this.state.isEditorBoxDisplay} handleChange={this.handleChange}/>
               }} />
-              {/* <div className="surveyjs">
-                <Survey.Survey model={model} onComplete={this.onComplete} onValueChanged={this.onValueChanged}/>        
-              </div> */}
           </div>
         </Router>
       </div>
       );
+  }
+
+  searchTable = event => {
+    this.setState({ search: event.target.value })
   }
 
   addNewSurvey = ({history}) => {
@@ -157,10 +132,11 @@ export default class App extends Component {
     history.push(`/content/builder`)
   }
 
-
   renderSurveyTable=({history})=> {
-    if (this.state.surveys.length) {
-      return this.state.surveys.map(a => {
+    let surveys = this.state.surveys
+    if (this.state.search.length) surveys = this.filterFiles(surveys, this.state.search)
+    if (surveys.length) {
+      return surveys.map(a => {
         const parsedData = JSON.parse(a.info)
         return <div key={a.key} className="buttonRow"> 
           <button className={a.key === this.state.configKey ? "grayButtonCell":"buttonCell"} name={a.key} value={a.info} onClick={this.loadConfig}><p className="buttonText">{parsedData.title}</p></button>
@@ -171,18 +147,20 @@ export default class App extends Component {
     }
   }
 
-
   handleChange = (name, value) => {
     this.setState({[name]: value});
   }
 
-  onValueChanged(result) {
-    console.log("value changed!");
-  }
-
-  onComplete(result) {
-    console.log("Survey Completed! " + result);
-    console.log(result.valuesHash);
+  filterFiles = (surveys, search) => {
+    const filteredSurveys = []
+    surveys.forEach(survey => {
+      const parsedData = JSON.parse(survey.info)
+      const title = parsedData.title
+      if (title.toLowerCase().indexOf(search.toLowerCase().trim()) !== -1) {
+        filteredSurveys.push(survey)
+      }
+    })
+    return filteredSurveys
   }
 
   loadConfig = (event) => {

@@ -16,18 +16,48 @@
 
 import React, { Component } from 'react';
 import './App.css';
+import "survey-react/survey.css";
+import "bootstrap/dist/css/bootstrap.css";
+import SurveyWrapper from "./SurveyWrapper"
+import * as SurveyKo from "survey-knockout";
+import * as Survey from "survey-react";
+import 'jquery-bar-rating';
+import "jquery-bar-rating/dist/themes/css-stars.css";
+import "bootstrap-slider/dist/css/bootstrap-slider.css";
+import "select2/dist/css/select2.css";
+import "jquery-ui/themes/base/all.css";
+import "nouislider/distribute/nouislider.css";
+import * as Widgets from 'surveyjs-widgets';
+
+
+import $ from 'jquery';
+import jquery from 'jquery';
+window.$ = window.jQuery = jquery;
 
 class App extends Component {
+  constructor(props) { 
+    super(props)
+    
+    this.state = {
+      survey: "",
+      color: ""
+    }
+    Widgets.jquerybarrating(SurveyKo);    
+    Widgets.jquerybarrating(Survey);
+    Widgets.bootstrapslider(Survey);
+  }
+  componentDidMount(){
+    document.addEventListener("message", e => {
+      const config = JSON.parse(e.data)
+      const survey = config ? config.survey : null
+      const color = config ? config.color : null
+      this.setState({survey, color})
+    })
+  }
+
   render() {
     return (
-      <div className="App">
-        <header className="App-header">
-          <h1 className="App-title">Welcome to React</h1>
-        </header>
-        <p className="App-intro">
-          To get started, edit <code>src/App.js</code> and save to reload.
-        </p>
-      </div>
+      this.state.color && this.state.survey ? <SurveyWrapper survey={this.state.survey} color={this.state.color}/> : null
     );
   }
 }
