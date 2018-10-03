@@ -15,7 +15,6 @@
  */
 
 import React, { Component } from 'react';
-import { render } from 'react-dom';
 import './App.css';
 import "survey-react/survey.css";
 import "bootstrap/dist/css/bootstrap.css";
@@ -42,8 +41,8 @@ class App extends Component {
   componentDidMount(){
     document.addEventListener("message", e => {
       const config = JSON.parse(e.data)
-      const survey = config ? config.survey : ""
-      const color = config ? config.color : ""
+      const survey = config ? config.survey : null
+      const color = config ? config.color : null
       this.setState({survey, color})
     })
   }

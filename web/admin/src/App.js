@@ -26,20 +26,9 @@ import 'react-tabs/style/react-tabs.css';
 import SurveyWrapper from './SurveyWrapper';
 import SurveyEditor from "./SurveyEditor";
 import SurveyResults from "./SurveyResults";
-// import * as Survey from "survey-react";
 import '@doubledutch/react-components/lib/base.css'
-
 import "survey-react/survey.css";
-// import "./App.css";
 import "bootstrap/dist/css/bootstrap.css";
-
-// import "jquery-ui/themes/base/all.css";
-// import "nouislider/distribute/nouislider.css";
-// import "select2/dist/css/select2.css";
-// import "bootstrap-slider/dist/css/bootstrap-slider.css";
-
-// import "jquery-bar-rating/dist/themes/css-stars.css";
-
 import $ from "jquery";
 import "jquery-ui/ui/widgets/datepicker.js";
 import "select2/dist/js/select2.js";
@@ -49,20 +38,6 @@ import * as widgets from "surveyjs-widgets";
 
 const fbc = FirebaseConnector(client, 'surveys')
 fbc.initializeAppWithSimpleBackend()
-
-// widgets.icheck(Survey, $);
-// widgets.select2(Survey, $);
-// widgets.inputmask(Survey);
-// widgets.jquerybarrating(Survey, $);
-// widgets.jqueryuidatepicker(Survey, $);
-// widgets.nouislider(Survey);
-// widgets.select2tagbox(Survey, $);
-// widgets.signaturepad(Survey);
-// widgets.sortablejs(Survey);
-// widgets.ckeditor(Survey);
-// widgets.autocomplete(Survey, $);
-// widgets.bootstrapslider(Survey);
-
 
 export default class App extends Component {
   
@@ -85,8 +60,6 @@ export default class App extends Component {
   }
 
   componentDidMount() {
-    // import("icheck");
-    // window["$"] = window["jQuery"] = $;
     this.signin.then(() => {
     client.getUsers().then(users => {
       this.setState({attendees: users})
@@ -131,7 +104,6 @@ export default class App extends Component {
                         onChange={this.searchTable}
                         placeholder={'Search'}
                       />
-                      {/* <button className="displayButton" onClick={() => this.handleChange("isSurveysBoxDisplay", !this.state.isSurveysBoxDisplay)}>{(this.state.isSurveysBoxDisplay ? "Hide Section" : "Show Section")}</button> */}
                     </div>
                     {this.state.isSurveysBoxDisplay && <div>
                       <ul className="surveyTable">

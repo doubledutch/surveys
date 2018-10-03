@@ -14,9 +14,8 @@
  * limitations under the License.
  */
 /* 
- .App{
-   width: 1000px;
- } */
+ */
+ 
  .App-intro {
   font-size: large;
   text-align: center;
@@ -27,7 +26,6 @@
 }
 
 .tableContainer {
-  /* height: 300px; */
   flex: 1;
   box-sizing: border-box;
   font-size: 14; 
@@ -247,102 +245,3 @@ button.displayButton:focus, button.displayButton:active {
   font-size: 18px;
 
 }
-/* 
-.btn-green {
-    background-color: #009DCD;
-    padding: 5px;
-    color: #fff;
-    border-radius: 3px;
-}
-.btn-green:focus,
-.btn-green:hover {
-    background-color: #009DCD;
-    color: #fff;
-}
-.panel-footer {
-    padding: 0 15px;
-    border: none;
-    text-align: right;
-    background-color: #fff;
-}
-
-input:focus, textarea:focus  { 
-    outline: none !important;
-    border-color: #009DCD!important;
-    box-shadow: 0 0 10px #009DCD;
-    padding: 5px;
-}
-
-.nav-link {
-  color: #009DCD !important;
-  border-radius: 3px;
-}
-
-.btn-primary {
-  background-color: #009DCD !important;
-  color: #fff;
-  border-radius: 3px;
-  border-color: #009DCD!important;
-  padding: 10px 20px !important
-}
-
-.btn-primary:hover, .btn-primary:focus {
-    background-color: #009DCD !important;
-    color: #fff;
-    border-color: gray important;
-}
-
-.btn-secondary {
-  padding: 10px 20px !important
-}
-
-.sjs-cb-container input:checked ~ .checkmark {
-    background-color: #009DCD !important;
-}
-
-.svd_custom_select, .svd_property_editor_dropdown, .svd_editor_control {
-    color: #009DCD !important;
-    border: 1px solid #009DCD !important;
-    border-bottom-color: #009DCD !important;
-}
-
-.svd_container .editor-tabs > li.active > a {
-    background-color: #f3f3f4 !important;
-    border: 1px solid #e7eaec;
-    border-bottom-color: #f3f3f4;
-    color: #fff;
-}
-
-.svd_container .svd_content .svd_survey_designer .svd_editors .svd_questions_editor .panel-body .svd_question .svd_question_menu .glyphicon-option-horizontal, .svd_container .svd_content .svd_survey_designer .svd_editors .svd_questions_editor .card-block .svd_question .svd_question_menu .glyphicon-option-horizontal .btn-green {
-    color: #009DCD !important;
-}
-
-.svd_container .glyphicon.glyphicon-plus::before {
-    font-weight: normal;
-    font-size: 20px;
-    color: #009DCD !important;
-    content: "+";
-}
-
-.svd_container .svd_content .svd_survey_designer .svd_editors .svd_questions_editor .panel-body .svd_question_container .svd_question.svd_q_selected,
-.svd_container .svd_content .svd_survey_designer .svd_editors .svd_questions_editor .card-block .svd_question_container .svd_question.svd_q_selected {
-  /* doesn't work b/c surveyeditor.css has this marked as important! */
-    /* border: 1px solid #009DCD !important; 
-}
-
-.sv_qstn, .svd_question_menu {
-  color: #111111;
-}
-
-.sv_complete_btn {
-  color: #009DCD;
-  background-color: white;
-}
-
-.svd_custom_select:before  {
-  background-color: #009DCD !important;
-}
-
-.svd_container .svd_q_selected {
-    border: 1px solid #009DCD !important;
-} */

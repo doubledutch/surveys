@@ -4,11 +4,7 @@ import * as Widgets from "surveyjs-widgets";
 
 class SurveyWrapper extends React.Component {
 
-  constructor(props) {
-    super(props)
-  }
-
-  componentDidMount = () => {
+  componentDidMount() {
     const propColor = this.props.color ? this.props.color : "blue"
     var mainColor = propColor;
     var mainHoverColor = propColor;
