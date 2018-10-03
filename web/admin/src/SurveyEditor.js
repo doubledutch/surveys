@@ -46,7 +46,7 @@ class SurveyEditor extends Component {
   componentDidMount() {
     let editorOptions = { 
       showEmbededSurveyTab: false, showPropertyGrid: false, showPagesToolbox: true, useTabsInElementEditor: true, showJSONEditorTab: false,
-      questionTypes: ["text", "checkbox", "radiogroup", "dropdown", "boolean", "matrix", "rating"]
+      questionTypes: ["text", "checkbox", "radiogroup", "dropdown", "boolean", "matrix", "matrixdynamic", "rating", "imagepicker", "comment", "expression", "panel", "multipletext"]
     };
     this.editor = new SurveyJSEditor.SurveyEditor(
       "editorElement",
