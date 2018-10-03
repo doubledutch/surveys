@@ -67,11 +67,15 @@ class HomeView extends PureComponent {
 
   render() {
     if (!this.state.currentUser || !this.state.primaryColor) return <Loading />
+    let htmlSource = { html: surveyViewHtml };
+    if ( Platform.OS == "android" ) {
+      htmlSource.baseUrl = "file:///android_asset";
+    }
     return (
       <KeyboardAvoidingView style={s.container} behavior={Platform.select({ios: "padding", android: null})}>
         <TitleBar title="Surveys" client={client} signin={this.signin} />
         {this.state.showTable ? <SurveyTable primaryColor={this.state.primaryColor} surveys={this.state.surveys} closeSurveyModal={this.closeSurveyModal} selectSurvey={this.selectSurvey} configKey={this.state.configKey} disable={this.state.disable}/>
-        : <View style={s.container}><WebView ref={input => this.webview = input} style={s.web} javaScriptEnabled={true} allowUniversalAccessFromFileURLs={true} source={{html: surveyViewHtml}} mixedContentMode={"compatibility"} injectedJavaScript={this.injectedJavaScript()} onMessage={e => this.saveResults(e.nativeEvent.data)} onLoad={this.sendInfo}/><TouchableOpacity style={s.backButton} onPress={()=>this.setState({showTable: true, config: "", configKey: ""})}/></View> 
+        : <View style={s.container}><WebView ref={input => this.webview = input} style={s.web} startInLoadingState={true} originWhitelist={['*']} source={htmlSource} injectedJavaScript={this.injectedJavaScript()} onMessage={e => this.saveResults(e.nativeEvent.data)} onLoad={this.sendInfo}/><TouchableOpacity style={s.backButton} onPress={()=>this.setState({showTable: true, config: "", configKey: ""})}/></View> 
         }
       </KeyboardAvoidingView>
     )
@@ -123,10 +127,7 @@ class HomeView extends PureComponent {
   }
 
   injectedJavaScript = () => `
-  window.config = {survey: null, color: '${this.state.primaryColor}'}
-  window.document.addEventListener("message", function(e) {
-    window.config.survey = e.data
-  });
+
   `
 
 }

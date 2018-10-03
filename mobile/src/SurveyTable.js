@@ -109,7 +109,7 @@ export default class SurveyTable extends Component {
           )} />
           <View style={{borderTopColor:"#b7b7b7", borderTopWidth: 1, backgroundColor: '#EFEFEF'}}>
             <TouchableOpacity disabled={this.props.disable} onPress={this.props.closeSurveyModal} style={[s.bigButton, colorStyle]}>
-              <Text style={{fontSize: 14, textAlign: "center", marginTop: 13, color: "white"}}>Take Survey</Text>
+              <Text style={{fontSize: 14, textAlign: "center",  color: "white"}}>Take Survey</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -156,7 +156,6 @@ export default class SurveyTable extends Component {
     const androidStyle = {
       paddingLeft: 0,
       marginTop: 5,
-      marginBottom: 5,
     }
     const iosStyle = {
       marginTop: 10,
@@ -276,7 +275,9 @@ const s = ReactNative.StyleSheet.create({
     marginRight: 21,
     borderRadius: 4,
     borderTopWidth: 1,
-    borderTopColor: "#b7b7b7"
+    borderTopColor: "#b7b7b7",
+    alignItems: "center",
+    justifyContent: "center"
   },
   divider: {
     flex: 1
