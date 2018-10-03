@@ -4,7 +4,7 @@
   "baseBundleVersion": "0.46.4",
   "private": true,
   "scripts": {
-    "build": "pushd mobile-web && npm build && popd",
+    "build": "pushd mobile-web && npm run build && popd",
     "start": "pushd mobile && npm run ios && popd && pushd web/admin && npm start && popd"
   },
   "dependencies": {
