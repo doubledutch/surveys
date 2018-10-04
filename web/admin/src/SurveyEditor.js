@@ -12,9 +12,12 @@ import "jquery-ui/ui/widgets/datepicker.js";
 import "select2/dist/js/select2.js";
 import "jquery-bar-rating";
 
+import "icheck/skins/square/blue.css";
+
 
 import * as widgets from "surveyjs-widgets";
 
+widgets.icheck(SurveyKo, $);
 widgets.jquerybarrating(SurveyKo, $);
 widgets.jqueryuidatepicker(SurveyKo, $);
 widgets.bootstrapslider(SurveyKo)
@@ -52,16 +55,6 @@ class SurveyEditor extends Component {
       "editorElement",
       editorOptions
     );
-    this.editor.onElementAllowOperations.add(function (editor, options) {
-      var obj = options.obj;
-      if (!obj || !obj.page) return;        
-      options.allowEdit = true;
-      options.allowDelete = true;
-      options.allowCopy = true;
-      options.allowAddToToolbox = false;
-      options.allowDragging = true;
-      options.allowChangeType = true;
-  });
     this.editor.saveSurveyFunc = this.saveMySurvey;
     this.editor.text = this.props.config || ""
   }

@@ -92,16 +92,19 @@ class HomeView extends PureComponent {
   }
 
   saveResults = (resultsString) => {
-    let results = JSON.parse(resultsString) 
-    results = Object.values(results)
+    const origResults = JSON.parse(resultsString) 
+    resultsKeys = Object.keys(origResults)
     let newQuestionsArray = []
     let config = JSON.parse(this.state.config)
     config.pages.forEach(page => {
       newQuestionsArray = newQuestionsArray.concat(page.elements)
     })
     let newResults = []
-    results.forEach((item, index) => {
-      newResults.push({question : newQuestionsArray[index].title ? newQuestionsArray[index].title : newQuestionsArray[index].name, answer: item})
+    resultsKeys.forEach((item, index) => {
+      const question = newQuestionsArray.find(question => question.name === item)
+      if (question) {
+        newResults.push({question : question.title ? question.title : newQuestionsArray.name, answer: origResults[item]})
+      }
     })
     this.props.fbc.database.private.adminableUserRef('results').child(this.state.configKey).push({
       newResults, creator: this.state.currentUser, timeTaken: new Date().getTime()
@@ -113,15 +116,17 @@ class HomeView extends PureComponent {
   selectSurvey = (item) => {
     let parsedInfo = JSON.parse(item.info)
     parsedInfo.pages.forEach(page => {
-      page.elements.forEach(question => {
-        if (question.choices) {
-          question.choices.forEach(item => {
-            if (item.text) {
-              item.value = item.text
-            }
-          })
-        }
-      })
+      if (page.elements){
+        page.elements.forEach(question => {
+          if (question.choices) {
+            question.choices.forEach(item => {
+              if (item.text) {
+                item.value = item.text
+              }
+            })
+          }
+        })
+      }
     })
     this.setState({config: JSON.stringify(parsedInfo), configKey: item.key, disable: false})
   }

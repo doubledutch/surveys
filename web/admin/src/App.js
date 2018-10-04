@@ -34,8 +34,6 @@ import "jquery-ui/ui/widgets/datepicker.js";
 import "select2/dist/js/select2.js";
 import "jquery-bar-rating";
 
-import * as widgets from "surveyjs-widgets";
-
 const fbc = FirebaseConnector(client, 'surveys')
 fbc.initializeAppWithSimpleBackend()
 

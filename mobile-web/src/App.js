@@ -26,8 +26,8 @@ import "jquery-bar-rating/dist/themes/css-stars.css";
 import "bootstrap-slider/dist/css/bootstrap-slider.css";
 import "select2/dist/css/select2.css";
 import "jquery-ui/themes/base/all.css";
+import "jquery-ui/ui/widgets/datepicker.js";
 import "nouislider/distribute/nouislider.css";
-import * as Widgets from 'surveyjs-widgets';
 
 
 import $ from 'jquery';
@@ -42,9 +42,6 @@ class App extends Component {
       survey: "",
       color: ""
     }
-    Widgets.jquerybarrating(SurveyKo);    
-    Widgets.jquerybarrating(Survey);
-    Widgets.bootstrapslider(Survey);
   }
   componentDidMount(){
     document.addEventListener("message", e => {
