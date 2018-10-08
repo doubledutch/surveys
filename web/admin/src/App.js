@@ -191,7 +191,9 @@ export default class App extends Component {
   }
 
   loadConfig = (event) => {
-    this.setState({config: event.target.value, configKey: event.target.name})
+    if (event.target.name !== this.state.configKey) {
+      this.setState({config: event.target.value, configKey: event.target.name})
+    }
   }
 
   loadBuilder = (event, {history}) => {
