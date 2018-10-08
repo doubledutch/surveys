@@ -78,15 +78,17 @@ class SurveyResults extends Component {
           <button className="grayRightButtonCell" onClick={() => this.loadExpandedCell(item)}>Hide Results</button>      
         </div>
         {results.map(item => {
+          const answer = item.answer.toString()
           return (
             <div className="subCell">
-              <li className="subCellText">{item.question + ": " + item.answer}</li>
+              <li className="subCellText">{item.question + ": " + answer}</li>
             </div>
           )
         })}
       </div>
     )
   }
+
 
   parseResultsForExport = (results) => {
     let parsedResults = []

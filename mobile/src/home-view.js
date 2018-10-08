@@ -103,7 +103,8 @@ class HomeView extends PureComponent {
     resultsKeys.forEach((item, index) => {
       const question = newQuestionsArray.find(question => question.name === item)
       if (question) {
-        newResults.push({question : question.title ? question.title : question.name, answer: origResults[item]})
+        const answer = (typeof origResults[item] === "object" && !origResults[item].length) ? JSON.stringify(origResults[item]) : origResults[item]
+        newResults.push({question : question.title ? question.title : question.name, answer: answer})
       }
     })
     this.props.fbc.database.private.adminableUserRef('results').child(this.state.configKey).push({

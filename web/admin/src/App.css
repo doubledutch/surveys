@@ -69,12 +69,6 @@ button.displayButton:focus, button.displayButton:active {
   flex-flow: nowrap;
 }
 
-.buttonRow {
-  flex: 1;
-  display: flex;
-  flex-flow: nowrap;
-}
-
 .subCell {
   height: 30px;
   flex: 1;
@@ -136,6 +130,26 @@ button.displayButton:focus, button.displayButton:active {
 
 .boxTitle {
   font-weight: 300;
+}
+
+.flex {
+  flex: 1
+}
+
+.publishedTime {
+  margin-bottom: 0;
+  margin-left: 10px;
+  align-self: center;
+  color: #AEAEAE
+}
+
+.deleteButton {
+  background-color: red;
+  color: white;
+  margin-left: 20px;
+  padding: 0.7em 1.2em;
+  border-radius: 0.4em;
+  border: none;
 }
 
 .csvButton{
@@ -227,6 +241,16 @@ button.displayButton:focus, button.displayButton:active {
 .buttonText {
   margin-top: 10px;
   margin-left: 20px;
+}
+
+.publishedText {
+  color: #8eb06e;
+  margin-top: 8px;
+}
+
+.draftText {
+  color: #e96a7b;
+  margin-top: 8px
 }
 
 .surveyTable {
