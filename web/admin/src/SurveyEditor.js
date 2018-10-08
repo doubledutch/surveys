@@ -69,8 +69,8 @@ class SurveyEditor extends Component {
         <h2 className="boxTitle">Editor</h2>
         {publishedTime ? <p className="publishedTime">Last Published: {publishedTime.toLocaleString()}</p> : null}
         <div className="flex"></div>
-        <button className="dd-bordered" onClick={()=>this.props.showHomePage(this.props.history)}>Cancel</button>
-        <button className="deleteButton" onClick={()=> this.props.deleteSurvey(this.props.history)}>Delete</button>
+          <button className="deleteButton" onClick={()=> this.props.deleteSurvey(this.props.history)}>Delete</button>
+          <button className="dd-bordered" onClick={()=>this.props.showHomePage(this.props.history)}>Done</button>
       </div>
       {this.props.isEditorBoxDisplay && <div id="editorElement" />}
     </div>

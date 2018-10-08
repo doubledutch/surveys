@@ -203,8 +203,10 @@ export default class App extends Component {
 
   deleteSurvey = (history) => {
     if (window.confirm("Are you sure you want to delete this survey?")) {
-      fbc.database.public.adminRef("surveys").child(this.state.configKey).remove()
-      fbc.database.public.adminRef("surveysDraft").child(this.state.configKey).remove()
+      if (this.state.configKey){
+        fbc.database.public.adminRef("surveys").child(this.state.configKey).remove()
+        fbc.database.public.adminRef("surveysDraft").child(this.state.configKey).remove()
+      }
       this.showHomePage(history)
     }
   }
