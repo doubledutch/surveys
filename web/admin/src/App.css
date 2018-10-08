@@ -221,7 +221,7 @@ button.displayButton:focus, button.displayButton:active {
   border-bottom: 1px solid #E3ECF8;
   flex: 1;
   display: flex;
-  padding: 0px;
+  padding: 0px 20px;
   margin: 0px;
   height: 40px;
   background-color: white;
@@ -232,7 +232,7 @@ button.displayButton:focus, button.displayButton:active {
   border-bottom: 1px solid #E3ECF8;
   flex: 1;
   display: flex;
-  padding: 0px;
+  padding: 0px 20px;
   margin: 0px;
   height: 40px;
   background-color: #E2E2E2;

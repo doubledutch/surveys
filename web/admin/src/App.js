@@ -165,7 +165,7 @@ export default class App extends Component {
         const publishedVersion = this.state.surveys.find(survey => survey.key === a.key)
         const isPublished = publishedVersion ? publishedVersion.info === a.info && publishedVersion.isViewable : false
         return <div key={a.key} className="buttonRow"> 
-          <button className={a.key === this.state.configKey ? "grayButtonCell":"buttonCell"} name={a.key} value={a.info} onClick={this.loadConfig}><p className="buttonText">{parsedData.title}</p></button>
+          <button className={a.key === this.state.configKey ? "grayButtonCell":"buttonCell"} name={a.key} value={a.info} onClick={this.loadConfig}>{parsedData.title}</button>
           <span className={a.key === this.state.configKey ? "grayRightButtonCell":"rightButtonCell"}><p className={isPublished ? "publishedText" : "draftText"}>{isPublished ? "Live" : "Draft"}</p></span>
           <button className={a.key === this.state.configKey ? "grayRightButtonCellSmall":"rightButtonCellSmall"} name={a.key} value={a.info} onClick={(event) => this.loadBuilder(event, {history})}>Edit</button>
           <button className={a.key === this.state.configKey ? "grayRightButtonCell":"rightButtonCell"} onClick={()=>this.publishConfig(a, isPublished)}>{isPublished ? "Unpublish" : "Publish"}</button>      
