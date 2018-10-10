@@ -43,18 +43,25 @@ class SurveyResults extends Component {
   renderTable = () => {
     let results = this.props.results[this.props.configKey] ? Object.values(this.props.results[this.props.configKey]) : []
     results = results.filter(item => typeof item === "object")
+    let newResults = []
+    results.forEach(item => {
+      const items = Object.values(item)
+      items.forEach(response => {
+        if (typeof response === "object") newResults.push(response)
+      })
+    })
     return (
       <div>
         <ul className="surveyTable">
             {this.props.configKey.length === 0 && <p className="helpText">Select a survey to see responses</p>}
             {this.props.configKey.length > 0 && results.length === 0 && <p className="helpText">No responses found</p>}
-            { results.map(item => {
+            { newResults.map(item => {
               return this.state.expandedItem === item ? this.expandedCell(item) : this.standardCell(item)
             })
             }
         </ul>
         <div className="csvLinkBox">
-          <CSVLink className="csvButton" data={this.parseResultsForExport(results)} filename={"results.csv"}>Export Responses</CSVLink>
+          <CSVLink className="csvButton" data={this.parseResultsForExport(newResults)} filename={"results.csv"}>Export Responses</CSVLink>
         </div>
       </div>
     )
@@ -78,7 +85,7 @@ class SurveyResults extends Component {
           <button className="grayRightButtonCell" onClick={() => this.loadExpandedCell(item)}>Hide Results</button>      
         </div>
         {results.map(item => {
-          const answer = item.answer.toString()
+          const answer = (typeof item.answer === "object" && !item.answer.length) ? JSON.stringify(item.answer) : item.answer.toString()
           return (
             <div className="subCell">
               <li className="subCellText">{item.question + ": " + answer}</li>
@@ -96,7 +103,8 @@ class SurveyResults extends Component {
       let newItem = {firstName: item.creator.firstName, lastName: item.creator.lastName, email: item.creator.email, timeTaken: new Date(item.timeTaken).toDateString()}
       item.newResults.forEach(item => {
         const title = item.question
-        newItem[title] = item.answer
+        const answer = (typeof item.answer === "object" && !item.answer.length) ? stringifyForCsv(item.answer) : item.answer.toString()
+        newItem[title] = answer
       })
       parsedResults.push(newItem)
     })
@@ -108,6 +116,10 @@ class SurveyResults extends Component {
     this.setState({expandedItem: item})
   }
 
+}
+
+function stringifyForCsv(obj) {
+  return Object.entries(obj).map(([key, val]) => `${key}: ${val}`).join('; ')
 }
 
 export default SurveyResults;

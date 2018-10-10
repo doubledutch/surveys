@@ -76,6 +76,7 @@ button.displayButton:focus, button.displayButton:active {
   border-bottom: 1px solid #E3ECF8;
   padding: 0px 50px;
   align-items: center;
+  overflow-y: auto;
 }
 
 .subCellText {
@@ -178,9 +179,10 @@ button.displayButton:focus, button.displayButton:active {
   color: #73aaf3;
   margin: 0px;
   height: 40px;
-  width: 11%;
+  padding: 0px 10px;
   background-color: white;
-  text-align: center
+  display: flex;
+  align-items: center;
 }
 
 .grayRightButtonCell {
@@ -189,9 +191,10 @@ button.displayButton:focus, button.displayButton:active {
   color: #73aaf3;
   margin: 0px;
   height: 40px;
-  width: 11%;
+  padding: 0px 10px;
   background-color: #E2E2E2;
-  text-align: center
+  display: flex;
+  align-items: center;
 }
 
 .rightButtonCellSmall {
@@ -200,7 +203,9 @@ button.displayButton:focus, button.displayButton:active {
   color: #73aaf3;
   margin: 0px;
   height: 40px;
-  width: 40px;
+  padding: 0px 10px;
+  display: flex;
+  align-items: center;
   background-color: white;
   text-align: center
 }
@@ -211,7 +216,9 @@ button.displayButton:focus, button.displayButton:active {
   color: #73aaf3;
   margin: 0px;
   height: 40px;
-  width: 40px;
+  padding: 0px 10px;
+  display: flex;
+  align-items: center;
   background-color: #E2E2E2;
   text-align: center
 }
@@ -225,6 +232,7 @@ button.displayButton:focus, button.displayButton:active {
   margin: 0px;
   height: 40px;
   background-color: white;
+  align-items: center;
 }
 
 .grayButtonCell {
@@ -236,21 +244,20 @@ button.displayButton:focus, button.displayButton:active {
   margin: 0px;
   height: 40px;
   background-color: #E2E2E2;
+  align-items: center;
 }
 
 .buttonText {
   margin-top: 10px;
-  margin-left: 20px;
 }
 
 .publishedText {
   color: #8eb06e;
-  margin-top: 8px;
 }
 
 .draftText {
   color: #e96a7b;
-  margin-top: 8px
+  margin: 0px;
 }
 
 .surveyTable {

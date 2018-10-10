@@ -85,7 +85,7 @@ export default class SurveyTable extends Component {
     const colorStyle = {
       backgroundColor: newColor
     }
-
+      console.log(this.props.surveys)
       let surveys = this.props.surveys.filter(item => item.isViewable)
       if (this.state.search) { 
         surveys = this.state.newList

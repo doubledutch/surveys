@@ -39,7 +39,6 @@ class HomeView extends PureComponent {
     const {fbc} = this.props
     const signin = fbc.signin()
     signin.catch(err => console.error(err))
-
     signin.then(() => {
       client.getCurrentUser().then(currentUser => {
         setTimeout(() => {
@@ -52,14 +51,15 @@ class HomeView extends PureComponent {
       })
 
       survRef.on('child_changed', data => {
-        var surveys = this.state.surveys
-        for (var i in surveys){
-          if (surveys[i].key === data.key) {
-            surveys[i] = data.val()
-            surveys[i].key = data.key
-            this.setState({surveys})
-          }
-        }
+        let surveys = this.state.surveys
+        let i = surveys.findIndex(item => {
+          return item.key === data.key
+        })
+        surveys.splice(i, 1)
+        this.setState({ surveys: [...this.state.surveys, {...data.val(), key: data.key }]})
+      })
+      survRef.on('child_removed', data => {
+        this.setState({ surveys: this.state.surveys.filter(x => x.key !== data.key) })
       })
     })
     })
@@ -93,25 +93,28 @@ class HomeView extends PureComponent {
 
   saveResults = (resultsString) => {
     const origResults = JSON.parse(resultsString) 
-    resultsKeys = Object.keys(origResults)
+    const resultsKeys = Object.keys(origResults)
     let newQuestionsArray = []
     let config = JSON.parse(this.state.config)
     config.pages.forEach(page => {
       newQuestionsArray = newQuestionsArray.concat(page.elements)
     })
     let newResults = []
-    resultsKeys.forEach((item, index) => {
-      const question = newQuestionsArray.find(question => question.name === item)
-      if (question) {
-        const answer = (typeof origResults[item] === "object" && !origResults[item].length) ? JSON.stringify(origResults[item]) : origResults[item]
-        newResults.push({question : question.title ? question.title : question.name, answer: answer})
-      }
-    })
-    this.props.fbc.database.private.adminableUserRef('results').child(this.state.configKey).push({
-      newResults, creator: this.state.currentUser, timeTaken: new Date().getTime()
+    if (resultsKeys.length){
+      resultsKeys.forEach((item, index) => {
+        const question = newQuestionsArray.find(question => question.name === item)
+        if (question) {
+          const answer = origResults[item]
+          // const answer = (typeof origResults[item] === "object" && !origResults[item].length) ? stringifyForCsv(origResults[item]) : origResults[item]
+          newResults.push({question : question.title ? question.title : question.name, answer: answer})
+        }
       })
-    .then(() => this.setState({}))
-    .catch (x => console.error(x))    
+      this.props.fbc.database.private.adminableUserRef('results').child(this.state.configKey).push({
+        newResults, creator: this.state.currentUser, timeTaken: new Date().getTime()
+        })
+      .then(() => this.setState({}))
+      .catch (x => console.error(x))
+    }    
   }
 
   selectSurvey = (item) => {
@@ -136,6 +139,10 @@ class HomeView extends PureComponent {
 
   `
 
+}
+
+function stringifyForCsv(obj) {
+  return Object.entries(obj).map(([key, val]) => `${key}: ${val}`).join('; ')
 }
 
 const fontSize = 18

@@ -19,7 +19,7 @@ import './App.css'
 import moment from 'moment'
 import client from '@doubledutch/admin-client'
 import FirebaseConnector from '@doubledutch/firebase-connector'
-import { mapPerUserPrivateAdminablePushedDataToStateObjects } from "@doubledutch/firebase-connector"
+import { mapPerUserPrivateAdminablePushedDataToObjectOfStateObjects } from "@doubledutch/firebase-connector"
 import { HashRouter as Router, Redirect, Route } from 'react-router-dom'
 import 'react-tabs/style/react-tabs.css';
 
@@ -64,8 +64,8 @@ export default class App extends Component {
       this.setState({attendees: users})
       const survRef = fbc.database.public.adminRef('surveys')
       const survDraftRef = fbc.database.public.adminRef('surveysDraft')
-
-      mapPerUserPrivateAdminablePushedDataToStateObjects(fbc, 'results', this, 'results', (userId, key, value) => key)
+      
+      mapPerUserPrivateAdminablePushedDataToObjectOfStateObjects(fbc, 'results', this, 'results', (userId, key, value) => key, (userId) => userId)
 
       survRef.on('child_added', data => {
         this.setState({ surveys: [{...data.val(), key: data.key }, ...this.state.surveys] })
@@ -164,13 +164,18 @@ export default class App extends Component {
         const parsedData = JSON.parse(a.info)
         const publishedVersion = this.state.surveys.find(survey => survey.key === a.key)
         const isPublished = publishedVersion ? publishedVersion.info === a.info && publishedVersion.isViewable : false
-        return <div key={a.key} className="buttonRow"> 
-          <button className={a.key === this.state.configKey ? "grayButtonCell":"buttonCell"} name={a.key} value={a.info} onClick={this.loadConfig}>{parsedData.title}</button>
+        return <div key={a.key} name={a.key} value={a.info} className="buttonRow" onClick={()=>this.loadConfig(a.key, a.info)}> 
+          <p className={a.key === this.state.configKey ? "grayButtonCell":"buttonCell"}>{parsedData.title}</p>
           <span className={a.key === this.state.configKey ? "grayRightButtonCell":"rightButtonCell"}><p className={isPublished ? "publishedText" : "draftText"}>{isPublished ? "Live" : "Draft"}</p></span>
           <button className={a.key === this.state.configKey ? "grayRightButtonCellSmall":"rightButtonCellSmall"} name={a.key} value={a.info} onClick={(event) => this.loadBuilder(event, {history})}>Edit</button>
           <button className={a.key === this.state.configKey ? "grayRightButtonCell":"rightButtonCell"} onClick={()=>this.publishConfig(a, isPublished)}>{isPublished ? "Unpublish" : "Publish"}</button>      
         </div>
       })
+    }
+    else {
+      return (
+        <p className="helpText">No surveys found</p>
+      )
     }
   }
 
@@ -190,9 +195,9 @@ export default class App extends Component {
     return filteredSurveys
   }
 
-  loadConfig = (event) => {
-    if (event.target.name !== this.state.configKey) {
-      this.setState({config: event.target.value, configKey: event.target.name})
+  loadConfig = (key, config) => {
+    if (key !== this.state.configKey) {
+      this.setState({config: config, configKey: key})
     }
   }
 
