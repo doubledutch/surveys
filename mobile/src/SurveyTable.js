@@ -93,6 +93,7 @@ export default class SurveyTable extends Component {
       return(
         <View style={{flex: 1, backgroundColor: "#EFEFEF"}}>
           {this.renderModalHeader()}
+          {surveys.length ? null : <View style={s.helpTextBox}><Text style={s.helpText}>No Surveys Found</Text></View>}
           <FlatList
           style={{backgroundColor: '#EFEFEF'}}
           data = {surveys}
@@ -211,6 +212,16 @@ const s = ReactNative.StyleSheet.create({
   buttonContainer: {
     flex: 1,
     flexDirection: 'row',
+  },
+  helpText: {
+    color: '#364247',
+    fontSize: 18,
+  },
+  helpTextBox: {
+    flex: 1,
+    backgroundColor: "#EFEFEF",
+    justifyContent: "flex-end",
+    alignItems: "center"
   },
   circleBoxMargin: {
   marginTop:10,

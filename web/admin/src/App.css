@@ -70,13 +70,11 @@ button.displayButton:focus, button.displayButton:active {
 }
 
 .subCell {
-  height: 30px;
   flex: 1;
   display: flex;
   border-bottom: 1px solid #E3ECF8;
-  padding: 0px 50px;
+  padding: 5px 50px;
   align-items: center;
-  overflow-y: auto;
 }
 
 .subCellText {
@@ -253,6 +251,7 @@ button.displayButton:focus, button.displayButton:active {
 
 .publishedText {
   color: #8eb06e;
+  margin: 0px;
 }
 
 .draftText {
