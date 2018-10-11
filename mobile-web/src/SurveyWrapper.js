@@ -1,6 +1,21 @@
 import React from 'react';
 import * as Survey from "survey-react";
-import * as Widgets from "surveyjs-widgets";
+import * as widgets from "surveyjs-widgets";
+import $ from "jquery";
+import "jquery-ui/ui/widgets/datepicker.js";
+
+widgets.icheck(Survey, $);
+widgets.select2(Survey, $);
+widgets.inputmask(Survey);
+widgets.jquerybarrating(Survey, $);
+widgets.jqueryuidatepicker(Survey, $);
+widgets.nouislider(Survey);
+widgets.select2tagbox(Survey, $);
+widgets.signaturepad(Survey);
+widgets.sortablejs(Survey);
+widgets.ckeditor(Survey);
+widgets.autocomplete(Survey, $);
+widgets.bootstrapslider(Survey);
 
 class SurveyWrapper extends React.Component {
 

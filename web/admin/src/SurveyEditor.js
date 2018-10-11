@@ -12,9 +12,12 @@ import "jquery-ui/ui/widgets/datepicker.js";
 import "select2/dist/js/select2.js";
 import "jquery-bar-rating";
 
+import "icheck/skins/square/blue.css";
+
 
 import * as widgets from "surveyjs-widgets";
 
+widgets.icheck(SurveyKo, $);
 widgets.jquerybarrating(SurveyKo, $);
 widgets.jqueryuidatepicker(SurveyKo, $);
 widgets.bootstrapslider(SurveyKo)
@@ -45,39 +48,29 @@ class SurveyEditor extends Component {
   
   componentDidMount() {
     let editorOptions = { 
-      showEmbededSurveyTab: false, showPropertyGrid: false, showPagesToolbox: true, useTabsInElementEditor: true, showJSONEditorTab: false,
+      showEmbededSurveyTab: false, showPropertyGrid: false, showPagesToolbox: true, useTabsInElementEditor: true, showJSONEditorTab: true,
       questionTypes: ["text", "checkbox", "radiogroup", "dropdown", "boolean", "matrix", "matrixdynamic", "rating", "imagepicker", "comment", "expression", "panel", "multipletext"]
     };
     this.editor = new SurveyJSEditor.SurveyEditor(
       "editorElement",
       editorOptions
     );
-    this.editor.onElementAllowOperations.add(function (editor, options) {
-      var obj = options.obj;
-      if (!obj || !obj.page) return;        
-      options.allowEdit = true;
-      options.allowDelete = true;
-      options.allowCopy = true;
-      options.allowAddToToolbox = false;
-      options.allowDragging = true;
-      options.allowChangeType = true;
-  });
+    this.editor.isAutoSave = true
     this.editor.saveSurveyFunc = this.saveMySurvey;
     this.editor.text = this.props.config || ""
   }
 
-  componentDidUpdate(nextProps) {
-    console.log(nextProps)
-    if (nextProps.config !== this.editor.text) {
-      this.editor.text = nextProps.config
-    }
-  }
-
   render() {
+    const publishedVersion = this.props.surveys.find(survey => survey.key === this.props.configKey)
+    const publishedTime = publishedVersion ? new Date(publishedVersion.lastUpdate) : undefined
     return (
     <div className="tableContainer">
       <div className="headerRow">
         <h2 className="boxTitle">Editor</h2>
+        {publishedTime ? <p className="publishedTime">Last Published: {publishedTime.toLocaleString()}</p> : null}
+        <div className="flex"></div>
+          <button className="deleteButton" onClick={()=> this.props.deleteSurvey(this.props.history)}>Delete</button>
+          <button className="dd-bordered" onClick={()=>this.props.showHomePage(this.props.history)}>Done</button>
       </div>
       {this.props.isEditorBoxDisplay && <div id="editorElement" />}
     </div>

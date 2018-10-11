@@ -69,12 +69,6 @@ button.displayButton:focus, button.displayButton:active {
   flex-flow: nowrap;
 }
 
-.buttonRow {
-  flex: 1;
-  display: flex;
-  flex-flow: nowrap;
-}
-
 .subCell {
   height: 30px;
   flex: 1;
@@ -82,6 +76,7 @@ button.displayButton:focus, button.displayButton:active {
   border-bottom: 1px solid #E3ECF8;
   padding: 0px 50px;
   align-items: center;
+  overflow-y: auto;
 }
 
 .subCellText {
@@ -138,6 +133,26 @@ button.displayButton:focus, button.displayButton:active {
   font-weight: 300;
 }
 
+.flex {
+  flex: 1
+}
+
+.publishedTime {
+  margin-bottom: 0;
+  margin-left: 10px;
+  align-self: center;
+  color: #AEAEAE
+}
+
+.deleteButton {
+  background-color: #e96a7b;
+  color: white;
+  margin-right : 20px;
+  padding: 0.7em 1.2em;
+  border-radius: 0.4em;
+  border: none;
+}
+
 .csvButton{
   display: inline;
   text-decoration: none;
@@ -164,9 +179,10 @@ button.displayButton:focus, button.displayButton:active {
   color: #73aaf3;
   margin: 0px;
   height: 40px;
-  width: 11%;
+  padding: 0px 10px;
   background-color: white;
-  text-align: center
+  display: flex;
+  align-items: center;
 }
 
 .grayRightButtonCell {
@@ -175,9 +191,10 @@ button.displayButton:focus, button.displayButton:active {
   color: #73aaf3;
   margin: 0px;
   height: 40px;
-  width: 11%;
+  padding: 0px 10px;
   background-color: #E2E2E2;
-  text-align: center
+  display: flex;
+  align-items: center;
 }
 
 .rightButtonCellSmall {
@@ -186,7 +203,9 @@ button.displayButton:focus, button.displayButton:active {
   color: #73aaf3;
   margin: 0px;
   height: 40px;
-  width: 40px;
+  padding: 0px 10px;
+  display: flex;
+  align-items: center;
   background-color: white;
   text-align: center
 }
@@ -197,7 +216,9 @@ button.displayButton:focus, button.displayButton:active {
   color: #73aaf3;
   margin: 0px;
   height: 40px;
-  width: 40px;
+  padding: 0px 10px;
+  display: flex;
+  align-items: center;
   background-color: #E2E2E2;
   text-align: center
 }
@@ -207,10 +228,11 @@ button.displayButton:focus, button.displayButton:active {
   border-bottom: 1px solid #E3ECF8;
   flex: 1;
   display: flex;
-  padding: 0px;
+  padding: 0px 20px;
   margin: 0px;
   height: 40px;
   background-color: white;
+  align-items: center;
 }
 
 .grayButtonCell {
@@ -218,15 +240,24 @@ button.displayButton:focus, button.displayButton:active {
   border-bottom: 1px solid #E3ECF8;
   flex: 1;
   display: flex;
-  padding: 0px;
+  padding: 0px 20px;
   margin: 0px;
   height: 40px;
   background-color: #E2E2E2;
+  align-items: center;
 }
 
 .buttonText {
   margin-top: 10px;
-  margin-left: 20px;
+}
+
+.publishedText {
+  color: #8eb06e;
+}
+
+.draftText {
+  color: #e96a7b;
+  margin: 0px;
 }
 
 .surveyTable {
@@ -235,6 +266,7 @@ button.displayButton:focus, button.displayButton:active {
   margin: 20px 0px;
   padding: 0px;
   border: 1px solid #E3ECF8;
+  overflow: auto;
 }
 
 .helpText {
