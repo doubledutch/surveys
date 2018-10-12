@@ -265,6 +265,7 @@ button.displayButton:focus, button.displayButton:active {
   margin: 20px 0px;
   padding: 0px;
   border: 1px solid #E3ECF8;
+  border-radius: 5px;
   overflow: auto;
 }
 

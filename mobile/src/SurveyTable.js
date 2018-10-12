@@ -184,10 +184,9 @@ export default class SurveyTable extends Component {
     else {
       return (
         <View>
-          <View style={{borderBottomColor: "#b7b7b7", borderBottomWidth: 1, marginBottom: 150}}>
+          <View style={{borderBottomColor: "#b7b7b7", borderBottomWidth: 1}}>
             <Text style={s.modHeader}> Please select a survey</Text>
           </View>
-            <Text style={{textAlign: "center", fontSize: 20, color: '#9B9B9B', marginBottom: 5}}>No Surveys Available</Text>
         </View>
       )
     }

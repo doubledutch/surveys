@@ -141,10 +141,6 @@ class HomeView extends PureComponent {
 
 }
 
-function stringifyForCsv(obj) {
-  return Object.entries(obj).map(([key, val]) => `${key}: ${val}`).join('; ')
-}
-
 const fontSize = 18
 const s = ReactNative.StyleSheet.create({
   container: {
