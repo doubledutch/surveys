@@ -101,11 +101,10 @@ class HomeView extends PureComponent {
     })
     let newResults = []
     if (resultsKeys.length){
-      resultsKeys.forEach((item, index) => {
+      resultsKeys.forEach(item => {
         const question = newQuestionsArray.find(question => question.name === item)
         if (question) {
           const answer = origResults[item]
-          // const answer = (typeof origResults[item] === "object" && !origResults[item].length) ? stringifyForCsv(origResults[item]) : origResults[item]
           newResults.push({question : question.title ? question.title : question.name, answer: answer})
         }
       })

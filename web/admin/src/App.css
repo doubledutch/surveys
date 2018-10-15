@@ -208,6 +208,16 @@ button.displayButton:focus, button.displayButton:active {
   text-align: center
 }
 
+.button {
+  background-color: white;
+  border: 1px solid #73aaf3;
+  border-radius: 5px;
+  color: #73aaf3;
+  font-size: 13px;
+  padding: 8px 15px;
+  margin-left: 20px;
+}
+
 .grayRightButtonCellSmall {
   border: none;
   border-bottom: 1px solid #E3ECF8;
