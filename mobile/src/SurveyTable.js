@@ -99,8 +99,8 @@ export default class SurveyTable extends Component {
           data = {surveys}
           ListFooterComponent={<View style={{height: 100}}></View>}
           renderItem={({item}) => (
-            <TouchableOpacity onPress={() => this.surveySelect(item)} style={s.listContainer}>
-              <View style={s.leftContainer}>
+            <TouchableOpacity onPress={() => this.surveySelect(item)} style={this.hasCompleted(item.key) ? s.listContainerGray : s.listContainer} disabled={this.hasCompleted(item.key)}>
+              <View style={this.hasCompleted(item.key) ? s.leftContainerGray : s.leftContainer} >
                 <SurveyRadio selected={this.props.configKey === item.key} primaryColor={primaryColor} />
               </View>
               <View style={s.rightContainer}>
@@ -115,6 +115,12 @@ export default class SurveyTable extends Component {
           </View>
         </View>
       ) 
+  }
+
+  hasCompleted = (key) => {
+    const completed = this.props.results.find(item => item === key)
+    if (completed) return true
+    else false
   }
 
 
@@ -306,6 +312,22 @@ const s = ReactNative.StyleSheet.create({
     alignItems:'center',
     backgroundColor: 'white',
     marginBottom: 2,
+  },
+  listContainerGray: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems:'center',
+    backgroundColor: '#EFEFEF',
+    marginBottom: 2,
+    opacity: .5
+  },
+  leftContainerGray: {
+    flexDirection: 'column',
+    paddingLeft: 10,
+    backgroundColor: '#EFEFEF',
+    alignItems:'center',
+    height: '100%',
+    paddingTop: 15
   },
   leftContainer: {
     flexDirection: 'column',
