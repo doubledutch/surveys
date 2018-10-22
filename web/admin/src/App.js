@@ -143,7 +143,7 @@ export default class App extends Component {
   }
 
   searchTable = event => {
-    this.setState({ search: event.target.value })
+    this.setState({ search: event.target.value, config: "", configKey: "" })
   }
 
   showHomePage = (history) => {

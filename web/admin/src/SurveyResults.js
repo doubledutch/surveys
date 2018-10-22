@@ -63,7 +63,7 @@ class SurveyResults extends Component {
             }
         </ul>
         <div className="csvLinkBox">
-          <button className="button" onClick={()=>this.prepareCsv(newResults)}>Export List of Attendees</button>
+          <button className="button" onClick={()=>this.prepareCsv(newResults)}>Export Results</button>
           {this.state.exporting ? <CSVDownload data={this.state.exportList} target="_blank" /> : null}
         </div>
       </div>

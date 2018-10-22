@@ -229,25 +229,23 @@ const s = ReactNative.StyleSheet.create({
     alignItems: "center"
   },
   circleBoxMargin: {
-  marginTop:10,
-  marginRight: 10,
-  marginLeft: 10,
-  marginBottom: 20,
-  justifyContent: 'center',
-  backgroundColor: '#9B9B9B',
-  paddingTop: 8,
-  paddingBottom: 8,
-  paddingLeft: 8,
-  paddingRight: 8,
-  height: 22,
-  borderRadius: 50,
+    marginTop:10,
+    marginRight: 10,
+    marginLeft: 10,
+    marginBottom: 20,
+    justifyContent: 'center',
+    backgroundColor: '#9B9B9B',
+    paddingTop: 8,
+    paddingBottom: 8,
+    paddingLeft: 8,
+    paddingRight: 8,
+    height: 22,
+    borderRadius: 50,
   },
-
   whiteText: {
     fontSize: 18,
     color: 'white',
   },
-
   modHeader: {
     backgroundColor: 'white', 
     height: 51, 
@@ -261,7 +259,6 @@ const s = ReactNative.StyleSheet.create({
     backgroundColor: 'white',
     height: 82
   },
-
   modal: {
     flexDirection: 'row',
     backgroundColor: 'white',
@@ -272,7 +269,6 @@ const s = ReactNative.StyleSheet.create({
     backgroundColor: 'black',
     opacity: 0.5
   },
-
   subText:{
     fontSize: 12,
     color: '#9B9B9B'
@@ -281,7 +277,6 @@ const s = ReactNative.StyleSheet.create({
   nameText:{
     fontSize: 14,
     color: '#9B9B9B',
-
   },
   bigButton:{
     height: 42, 
@@ -327,7 +322,7 @@ const s = ReactNative.StyleSheet.create({
     backgroundColor: '#EFEFEF',
     alignItems:'center',
     height: '100%',
-    paddingTop: 15
+    justifyContent: "center"
   },
   leftContainer: {
     flexDirection: 'column',
@@ -335,7 +330,7 @@ const s = ReactNative.StyleSheet.create({
     backgroundColor: 'white',
     alignItems:'center',
     height: '100%',
-    paddingTop: 15
+    justifyContent: "center"
   },
   rightContainer: {
     flex: 1,

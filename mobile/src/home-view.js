@@ -42,7 +42,7 @@ class HomeView extends PureComponent {
     signin.then(() => {
       client.getCurrentUser().then(currentUser => {
         setTimeout(() => {
-          this.setState( {currentUser})
+          this.setState({currentUser})
         }, 500)
       client.getPrimaryColor().then(primaryColor => this.setState({primaryColor}))
       const survRef = fbc.database.public.adminRef('surveys')
@@ -142,7 +142,6 @@ class HomeView extends PureComponent {
   }
 
   injectedJavaScript = () => `
-
   `
 
 }
