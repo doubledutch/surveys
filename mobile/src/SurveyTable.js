@@ -17,7 +17,7 @@
 'use strict'
 import React, { Component } from 'react'
 import ReactNative, {
-  Platform, TouchableOpacity, Text, TextInput, View, ScrollView, FlatList, Modal, Image
+  Platform, TouchableOpacity, Text, TextInput, View, ScrollView, FlatList, Modal, Image, KeyboardAvoidingView
 } from 'react-native'
 import client, { Avatar, TitleBar, Color } from '@doubledutch/rn-client'
 
@@ -85,13 +85,12 @@ export default class SurveyTable extends Component {
     const colorStyle = {
       backgroundColor: newColor
     }
-      console.log(this.props.surveys)
       let surveys = this.props.surveys.filter(item => item.isViewable)
       if (this.state.search) { 
         surveys = this.state.newList
       }
       return(
-        <View style={{flex: 1, backgroundColor: "#EFEFEF"}}>
+        <KeyboardAvoidingView style={{flex: 1, backgroundColor: "#EFEFEF"}}>
           {this.renderModalHeader()}
           {surveys.length ? null : <View style={s.helpTextBox}><Text style={s.helpText}>No Surveys Found</Text></View>}
           <FlatList
@@ -113,7 +112,7 @@ export default class SurveyTable extends Component {
               <Text style={{fontSize: 14, textAlign: "center",  color: "white"}}>Take Survey</Text>
             </TouchableOpacity>
           </View>
-        </View>
+        </KeyboardAvoidingView>
       ) 
   }
 

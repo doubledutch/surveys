@@ -19,14 +19,11 @@ import './App.css';
 import "survey-react/survey.css";
 import "bootstrap/dist/css/bootstrap.css";
 import SurveyWrapper from "./SurveyWrapper"
-import * as SurveyKo from "survey-knockout";
-import * as Survey from "survey-react";
-import 'jquery-bar-rating';
 import "jquery-bar-rating/dist/themes/css-stars.css";
+import "jquery-bar-rating/dist/themes/fontawesome-stars.css";
 import "bootstrap-slider/dist/css/bootstrap-slider.css";
 import "select2/dist/css/select2.css";
 import "jquery-ui/themes/base/all.css";
-import "jquery-ui/ui/widgets/datepicker.js";
 import "nouislider/distribute/nouislider.css";
 
 

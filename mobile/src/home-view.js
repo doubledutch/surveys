@@ -82,7 +82,7 @@ class HomeView extends PureComponent {
       <KeyboardAvoidingView style={s.container} behavior={Platform.select({ios: "padding", android: null})}>
         <TitleBar title="Surveys" client={client} signin={this.signin} />
         {this.state.showTable ? <SurveyTable results={this.state.results} primaryColor={this.state.primaryColor} surveys={this.state.surveys} closeSurveyModal={this.closeSurveyModal} selectSurvey={this.selectSurvey} configKey={this.state.configKey} disable={this.state.disable}/>
-        : <View style={s.container}><WebView ref={input => this.webview = input} style={s.web} originWhitelist={['*']} source={htmlSource} injectedJavaScript={this.injectedJavaScript()} onMessage={e => this.saveResults(e.nativeEvent.data)} onLoad={this.sendInfo}/><TouchableOpacity style={s.backButton} onPress={()=>this.setState({showTable: true, config: "", configKey: ""})}/></View> 
+        : <KeyboardAvoidingView style={s.container}><WebView ref={input => this.webview = input} style={s.web} originWhitelist={['*']} source={htmlSource} injectedJavaScript={this.injectedJavaScript()} onMessage={e => this.saveResults(e.nativeEvent.data)} onLoad={this.sendInfo}/><TouchableOpacity style={[s.backButton, {backgroundColor: this.state.primaryColor}]} onPress={()=>this.setState({showTable: true, config: "", configKey: ""})}><Text style={s.closeText}>Exit</Text></TouchableOpacity></KeyboardAvoidingView> 
         }
       </KeyboardAvoidingView>
     )
@@ -159,7 +159,15 @@ const s = ReactNative.StyleSheet.create({
     flex: 1,
   },
   backButton: {
-    height: 50,
+    height: 40,
+    margin: 15,
+    borderRadius: 5,
+    alignItems: "center",
+    justifyContent: "center"
+  },
+  closeText: {
+    color: "white",
+    fontSize: 16
   },
   task: {
     flex: 1,

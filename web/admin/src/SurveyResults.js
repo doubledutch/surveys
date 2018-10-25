@@ -88,7 +88,14 @@ class SurveyResults extends Component {
           <button className="grayRightButtonCell" onClick={() => this.loadExpandedCell(item)}>Hide Results</button>      
         </div>
         {results.map(item => {
-          const answer = (typeof item.answer === "object" && !item.answer.length) ? JSON.stringify(item.answer) : item.answer.toString()
+          let answer = ""
+          if (typeof item.answer === "object" && !item.answer.length){
+            answer = JSON.stringify(item.answer)
+          }
+          else if (typeof item.answer === "object" && item.answer.length){
+            answer = item.answer.map(answer => (typeof answer === "object" && !answer.length) ? JSON.stringify(answer) : answer.toString())
+          }
+          else answer = item.answer.toString()
           return (
             <div className="subCell">
               <li className="subCellText">{item.question + ": " + answer}</li>
@@ -106,7 +113,14 @@ class SurveyResults extends Component {
       let newItem = {firstName: item.creator.firstName, lastName: item.creator.lastName, email: item.email, timeTaken: new Date(item.timeTaken).toDateString()}
       item.newResults.forEach(item => {
         const title = item.question
-        const answer = (typeof item.answer === "object" && !item.answer.length) ? stringifyForCsv(item.answer) : item.answer.toString()
+        let answer = ""
+        if (typeof item.answer === "object" && !item.answer.length){
+          stringifyForCsv(item.answer)
+        }
+        if (typeof item.answer === "object" && item.answer.length){
+          answer = item.answer.map(answer => (typeof answer === "object" && !answer.length) ? stringifyForCsv(answer) : answer.toString())
+        }
+        else answer = item.answer.toString()
         newItem[title] = answer
       })
       parsedResults.push(newItem)
@@ -124,7 +138,6 @@ class SurveyResults extends Component {
       .catch(err => result))
 
     Promise.all(attendeeClickPromises).then(newResults => {
-      console.log(newResults)
       // Build CSV and trigger download...
       newList = this.parseResultsForExport(newResults)
       this.setState({exporting: true, exportList: newList})

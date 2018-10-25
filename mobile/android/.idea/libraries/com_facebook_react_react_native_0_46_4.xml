@@ -1,9 +1,9 @@
 <component name="libraryTable">
   <library name="com.facebook.react:react-native-0.46.4">
     <CLASSES>
-      <root url="jar://$PROJECT_DIR$/../node_modules/react-native-video/android/build/intermediates/exploded-aar/com.facebook.react/react-native/0.46.4/jars/libs/infer-annotations-4.0.jar!/" />
-      <root url="jar://$PROJECT_DIR$/../node_modules/react-native-video/android/build/intermediates/exploded-aar/com.facebook.react/react-native/0.46.4/jars/classes.jar!/" />
-      <root url="file://$PROJECT_DIR$/../node_modules/react-native-video/android/build/intermediates/exploded-aar/com.facebook.react/react-native/0.46.4/res" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-1/files-1.1/react-native-0.46.4.aar/6c5a4bc9ba05e88ce63922be772950b5/res" />
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-1/files-1.1/react-native-0.46.4.aar/6c5a4bc9ba05e88ce63922be772950b5/jars/libs/infer-annotations-4.0.jar!/" />
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-1/files-1.1/react-native-0.46.4.aar/6c5a4bc9ba05e88ce63922be772950b5/jars/classes.jar!/" />
     </CLASSES>
     <JAVADOC>
       <root url="jar://$PROJECT_DIR$/../node_modules/react-native/android/com/facebook/react/react-native/0.46.4/react-native-0.46.4-javadoc.jar!/" />

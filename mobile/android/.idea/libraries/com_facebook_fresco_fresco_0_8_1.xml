@@ -1,8 +1,8 @@
 <component name="libraryTable">
   <library name="com.facebook.fresco:fresco-0.8.1">
     <CLASSES>
-      <root url="file://$PROJECT_DIR$/../node_modules/react-native-camera/android/build/intermediates/exploded-aar/com.facebook.fresco/fresco/0.8.1/res" />
-      <root url="jar://$PROJECT_DIR$/../node_modules/react-native-camera/android/build/intermediates/exploded-aar/com.facebook.fresco/fresco/0.8.1/jars/classes.jar!/" />
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-1/files-1.1/fresco-0.8.1.aar/d9e11df2786145d5961cd33851595b82/jars/classes.jar!/" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-1/files-1.1/fresco-0.8.1.aar/d9e11df2786145d5961cd33851595b82/res" />
     </CLASSES>
     <JAVADOC />
     <SOURCES>

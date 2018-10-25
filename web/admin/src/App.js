@@ -219,12 +219,19 @@ export default class App extends Component {
   publishConfig=(survey, isPublished)=> {
     const info = survey.info
     const state = isPublished ? "unpublish" : "publish"
-    if (window.confirm("Are you sure you want to " + state + " this survey?")) {
-      if (isPublished) {
-        fbc.database.public.adminRef('surveys').child(survey.key).update({info, isViewable: false, lastUpdate: new Date().getTime()})
-      }
-      else {
-        fbc.database.public.adminRef('surveys').child(survey.key).update({info, isViewable: true, lastUpdate: new Date().getTime()})
+    const name = JSON.parse(info).title
+    const isDup = this.state.surveysDraft.find(item => JSON.parse(item.info).title === name && survey.key !== item.key)
+    if (isDup && !isPublished) {
+      window.alert("A survey with this name already exists. Please rename in order to publish")
+    }
+    else {
+      if (window.confirm("Are you sure you want to " + state + " this survey?")) {
+        if (isPublished) {
+          fbc.database.public.adminRef('surveys').child(survey.key).update({info, isViewable: false, lastUpdate: new Date().getTime()})
+        }
+        else {
+          fbc.database.public.adminRef('surveys').child(survey.key).update({info, isViewable: true, lastUpdate: new Date().getTime()})
+        }
       }
     }
   }
