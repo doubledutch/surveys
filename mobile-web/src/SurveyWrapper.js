@@ -2,6 +2,7 @@ import React from 'react';
 import * as Survey from "survey-react";
 import * as widgets from "surveyjs-widgets";
 import $ from "jquery";
+import 'jquery-bar-rating';
 import "jquery-ui/ui/widgets/datepicker.js";
 
 widgets.icheck(Survey, $);

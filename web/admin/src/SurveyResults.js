@@ -15,7 +15,7 @@
  */
 
 import React, { Component } from 'react'
-import {CSVLink} from 'react-csv'
+import {CSVLink, CSVDownload} from 'react-csv'
 
 
 class SurveyResults extends Component {
@@ -23,7 +23,9 @@ class SurveyResults extends Component {
     super()
     this.state = {
       selectedCell: "",
-      expandedItem: ""
+      expandedItem: "",
+      exporting: false,
+      exportList: []
     }
   }
 
@@ -61,7 +63,8 @@ class SurveyResults extends Component {
             }
         </ul>
         <div className="csvLinkBox">
-          <CSVLink className="csvButton" data={this.parseResultsForExport(newResults)} filename={"results.csv"}>Export Responses</CSVLink>
+          <button className="button" onClick={()=>this.prepareCsv(newResults)}>Export Results</button>
+          {this.state.exporting ? <CSVDownload data={this.state.exportList} target="_blank" /> : null}
         </div>
       </div>
     )
@@ -85,7 +88,14 @@ class SurveyResults extends Component {
           <button className="grayRightButtonCell" onClick={() => this.loadExpandedCell(item)}>Hide Results</button>      
         </div>
         {results.map(item => {
-          const answer = (typeof item.answer === "object" && !item.answer.length) ? JSON.stringify(item.answer) : item.answer.toString()
+          let answer = ""
+          if (typeof item.answer === "object" && !item.answer.length){
+            answer = JSON.stringify(item.answer)
+          }
+          else if (typeof item.answer === "object" && item.answer.length){
+            answer = item.answer.map(answer => (typeof answer === "object" && !answer.length) ? JSON.stringify(answer) : answer.toString())
+          }
+          else answer = item.answer.toString()
           return (
             <div className="subCell">
               <li className="subCellText">{item.question + ": " + answer}</li>
@@ -100,15 +110,39 @@ class SurveyResults extends Component {
   parseResultsForExport = (results) => {
     let parsedResults = []
     results.forEach(item => {
-      let newItem = {firstName: item.creator.firstName, lastName: item.creator.lastName, email: item.creator.email, timeTaken: new Date(item.timeTaken).toDateString()}
+      let newItem = {firstName: item.creator.firstName, lastName: item.creator.lastName, email: item.email, timeTaken: new Date(item.timeTaken).toDateString()}
       item.newResults.forEach(item => {
         const title = item.question
-        const answer = (typeof item.answer === "object" && !item.answer.length) ? stringifyForCsv(item.answer) : item.answer.toString()
+        let answer = ""
+        if (typeof item.answer === "object" && !item.answer.length){
+          answer = stringifyForCsv(item.answer)
+        }
+        else if (typeof item.answer === "object" && item.answer.length){
+          answer = item.answer.map(answer => (typeof answer === "object" && !answer.length) ? stringifyForCsv(answer) : answer.toString())
+        }
+        else answer = item.answer.toString()
         newItem[title] = answer
       })
       parsedResults.push(newItem)
     })
     return parsedResults
+  }
+
+  prepareCsv = results => {
+    if (this.state.exporting) {
+      return;
+    }
+    let newList = []
+    const attendeeClickPromises = results.map(result => this.props.client.getAttendee(result.creator.id)
+      .then(attendee => ({...result, ...attendee}))
+      .catch(err => result))
+
+    Promise.all(attendeeClickPromises).then(newResults => {
+      // Build CSV and trigger download...
+      newList = this.parseResultsForExport(newResults)
+      this.setState({exporting: true, exportList: newList})
+      setTimeout(()=>this.setState({exporting: false, newList: []}), 3000)
+    })
   }
 
   loadExpandedCell = (currentItem) => {

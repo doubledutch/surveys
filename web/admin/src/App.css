@@ -70,13 +70,11 @@ button.displayButton:focus, button.displayButton:active {
 }
 
 .subCell {
-  height: 30px;
   flex: 1;
   display: flex;
   border-bottom: 1px solid #E3ECF8;
-  padding: 0px 50px;
+  padding: 5px 50px;
   align-items: center;
-  overflow-y: auto;
 }
 
 .subCellText {
@@ -210,6 +208,16 @@ button.displayButton:focus, button.displayButton:active {
   text-align: center
 }
 
+.button {
+  background-color: white;
+  border: 1px solid #73aaf3;
+  border-radius: 5px;
+  color: #73aaf3;
+  font-size: 13px;
+  padding: 8px 15px;
+  margin-left: 20px;
+}
+
 .grayRightButtonCellSmall {
   border: none;
   border-bottom: 1px solid #E3ECF8;
@@ -253,6 +261,7 @@ button.displayButton:focus, button.displayButton:active {
 
 .publishedText {
   color: #8eb06e;
+  margin: 0px;
 }
 
 .draftText {
@@ -266,6 +275,7 @@ button.displayButton:focus, button.displayButton:active {
   margin: 20px 0px;
   padding: 0px;
   border: 1px solid #E3ECF8;
+  border-radius: 5px;
   overflow: auto;
 }
 

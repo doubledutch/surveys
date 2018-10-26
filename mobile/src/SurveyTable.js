@@ -17,7 +17,7 @@
 'use strict'
 import React, { Component } from 'react'
 import ReactNative, {
-  Platform, TouchableOpacity, Text, TextInput, View, ScrollView, FlatList, Modal, Image
+  Platform, TouchableOpacity, Text, TextInput, View, ScrollView, FlatList, Modal, Image, KeyboardAvoidingView
 } from 'react-native'
 import client, { Avatar, TitleBar, Color } from '@doubledutch/rn-client'
 
@@ -85,21 +85,21 @@ export default class SurveyTable extends Component {
     const colorStyle = {
       backgroundColor: newColor
     }
-      console.log(this.props.surveys)
       let surveys = this.props.surveys.filter(item => item.isViewable)
       if (this.state.search) { 
         surveys = this.state.newList
       }
       return(
-        <View style={{flex: 1, backgroundColor: "#EFEFEF"}}>
+        <KeyboardAvoidingView style={{flex: 1, backgroundColor: "#EFEFEF"}}>
           {this.renderModalHeader()}
+          {surveys.length ? null : <View style={s.helpTextBox}><Text style={s.helpText}>No Surveys Found</Text></View>}
           <FlatList
           style={{backgroundColor: '#EFEFEF'}}
           data = {surveys}
           ListFooterComponent={<View style={{height: 100}}></View>}
           renderItem={({item}) => (
-            <TouchableOpacity onPress={() => this.surveySelect(item)} style={s.listContainer}>
-              <View style={s.leftContainer}>
+            <TouchableOpacity onPress={() => this.surveySelect(item)} style={this.hasCompleted(item.key) ? s.listContainerGray : s.listContainer} disabled={this.hasCompleted(item.key)}>
+              <View style={this.hasCompleted(item.key) ? s.leftContainerGray : s.leftContainer} >
                 <SurveyRadio selected={this.props.configKey === item.key} primaryColor={primaryColor} />
               </View>
               <View style={s.rightContainer}>
@@ -112,8 +112,14 @@ export default class SurveyTable extends Component {
               <Text style={{fontSize: 14, textAlign: "center",  color: "white"}}>Take Survey</Text>
             </TouchableOpacity>
           </View>
-        </View>
+        </KeyboardAvoidingView>
       ) 
+  }
+
+  hasCompleted = (key) => {
+    const completed = this.props.results.find(item => item === key)
+    if (completed) return true
+    else return false
   }
 
 
@@ -183,10 +189,9 @@ export default class SurveyTable extends Component {
     else {
       return (
         <View>
-          <View style={{borderBottomColor: "#b7b7b7", borderBottomWidth: 1, marginBottom: 150}}>
+          <View style={{borderBottomColor: "#b7b7b7", borderBottomWidth: 1}}>
             <Text style={s.modHeader}> Please select a survey</Text>
           </View>
-            <Text style={{textAlign: "center", fontSize: 20, color: '#9B9B9B', marginBottom: 5}}>No Surveys Available</Text>
         </View>
       )
     }
@@ -212,26 +217,34 @@ const s = ReactNative.StyleSheet.create({
     flex: 1,
     flexDirection: 'row',
   },
-  circleBoxMargin: {
-  marginTop:10,
-  marginRight: 10,
-  marginLeft: 10,
-  marginBottom: 20,
-  justifyContent: 'center',
-  backgroundColor: '#9B9B9B',
-  paddingTop: 8,
-  paddingBottom: 8,
-  paddingLeft: 8,
-  paddingRight: 8,
-  height: 22,
-  borderRadius: 50,
+  helpText: {
+    color: '#364247',
+    fontSize: 18,
   },
-
+  helpTextBox: {
+    flex: 1,
+    backgroundColor: "#EFEFEF",
+    justifyContent: "flex-end",
+    alignItems: "center"
+  },
+  circleBoxMargin: {
+    marginTop:10,
+    marginRight: 10,
+    marginLeft: 10,
+    marginBottom: 20,
+    justifyContent: 'center',
+    backgroundColor: '#9B9B9B',
+    paddingTop: 8,
+    paddingBottom: 8,
+    paddingLeft: 8,
+    paddingRight: 8,
+    height: 22,
+    borderRadius: 50,
+  },
   whiteText: {
     fontSize: 18,
     color: 'white',
   },
-
   modHeader: {
     backgroundColor: 'white', 
     height: 51, 
@@ -245,7 +258,6 @@ const s = ReactNative.StyleSheet.create({
     backgroundColor: 'white',
     height: 82
   },
-
   modal: {
     flexDirection: 'row',
     backgroundColor: 'white',
@@ -256,7 +268,6 @@ const s = ReactNative.StyleSheet.create({
     backgroundColor: 'black',
     opacity: 0.5
   },
-
   subText:{
     fontSize: 12,
     color: '#9B9B9B'
@@ -265,7 +276,6 @@ const s = ReactNative.StyleSheet.create({
   nameText:{
     fontSize: 14,
     color: '#9B9B9B',
-
   },
   bigButton:{
     height: 42, 
@@ -297,13 +307,29 @@ const s = ReactNative.StyleSheet.create({
     backgroundColor: 'white',
     marginBottom: 2,
   },
+  listContainerGray: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems:'center',
+    backgroundColor: '#EFEFEF',
+    marginBottom: 2,
+    opacity: .5
+  },
+  leftContainerGray: {
+    flexDirection: 'column',
+    paddingLeft: 10,
+    backgroundColor: '#EFEFEF',
+    alignItems:'center',
+    height: '100%',
+    justifyContent: 'center'
+  },
   leftContainer: {
     flexDirection: 'column',
     paddingLeft: 10,
     backgroundColor: 'white',
     alignItems:'center',
     height: '100%',
-    paddingTop: 15
+    justifyContent: 'center'
   },
   rightContainer: {
     flex: 1,

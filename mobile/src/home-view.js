@@ -31,7 +31,7 @@ class HomeView extends PureComponent {
     super()
 
     this.state = {
-      surveys: [], showTable: true, config: "", configKey: "", disable: true
+      surveys: [], showTable: true, config: "", configKey: "", disable: true, results: []
     }
   }
 
@@ -42,10 +42,15 @@ class HomeView extends PureComponent {
     signin.then(() => {
       client.getCurrentUser().then(currentUser => {
         setTimeout(() => {
-          this.setState( {currentUser})
+          this.setState({currentUser})
         }, 500)
       client.getPrimaryColor().then(primaryColor => this.setState({primaryColor}))
       const survRef = fbc.database.public.adminRef('surveys')
+      const resultsRef = fbc.database.private.adminableUserRef('results')
+      resultsRef.on("child_added", data => {
+        this.setState(({results}) => ({results: [...results, data.key]}))
+      })
+
       survRef.on('child_added', data => {
         this.setState({ surveys: [{...data.val(), key: data.key }, ...this.state.surveys] })
       })
@@ -74,8 +79,8 @@ class HomeView extends PureComponent {
     return (
       <KeyboardAvoidingView style={s.container} behavior={Platform.select({ios: "padding", android: null})}>
         <TitleBar title="Surveys" client={client} signin={this.signin} />
-        {this.state.showTable ? <SurveyTable primaryColor={this.state.primaryColor} surveys={this.state.surveys} closeSurveyModal={this.closeSurveyModal} selectSurvey={this.selectSurvey} configKey={this.state.configKey} disable={this.state.disable}/>
-        : <View style={s.container}><WebView ref={input => this.webview = input} style={s.web} originWhitelist={['*']} source={htmlSource} injectedJavaScript={this.injectedJavaScript()} onMessage={e => this.saveResults(e.nativeEvent.data)} onLoad={this.sendInfo}/><TouchableOpacity style={s.backButton} onPress={()=>this.setState({showTable: true, config: "", configKey: ""})}/></View> 
+        {this.state.showTable ? <SurveyTable results={this.state.results} primaryColor={this.state.primaryColor} surveys={this.state.surveys} closeSurveyModal={this.closeSurveyModal} selectSurvey={this.selectSurvey} configKey={this.state.configKey} disable={this.state.disable}/>
+        : <KeyboardAvoidingView style={s.container}><WebView ref={input => this.webview = input} style={s.web} originWhitelist={['*']} source={htmlSource} injectedJavaScript={this.injectedJavaScript()} onMessage={e => this.saveResults(e.nativeEvent.data)} onLoad={this.sendInfo}/><TouchableOpacity style={[s.backButton, {backgroundColor: this.state.primaryColor}]} onPress={()=>this.setState({showTable: true, config: "", configKey: ""})}><Text style={s.closeText}>Exit</Text></TouchableOpacity></KeyboardAvoidingView> 
         }
       </KeyboardAvoidingView>
     )
@@ -101,11 +106,10 @@ class HomeView extends PureComponent {
     })
     let newResults = []
     if (resultsKeys.length){
-      resultsKeys.forEach((item, index) => {
+      resultsKeys.forEach(item => {
         const question = newQuestionsArray.find(question => question.name === item)
         if (question) {
           const answer = origResults[item]
-          // const answer = (typeof origResults[item] === "object" && !origResults[item].length) ? stringifyForCsv(origResults[item]) : origResults[item]
           newResults.push({question : question.title ? question.title : question.name, answer: answer})
         }
       })
@@ -136,13 +140,8 @@ class HomeView extends PureComponent {
   }
 
   injectedJavaScript = () => `
-
   `
 
-}
-
-function stringifyForCsv(obj) {
-  return Object.entries(obj).map(([key, val]) => `${key}: ${val}`).join('; ')
 }
 
 const fontSize = 18
@@ -158,7 +157,15 @@ const s = ReactNative.StyleSheet.create({
     flex: 1,
   },
   backButton: {
-    height: 50,
+    height: 40,
+    margin: 15,
+    borderRadius: 5,
+    alignItems: "center",
+    justifyContent: "center"
+  },
+  closeText: {
+    color: "white",
+    fontSize: 16
   },
   task: {
     flex: 1,
