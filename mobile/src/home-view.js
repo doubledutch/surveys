@@ -48,9 +48,7 @@ class HomeView extends PureComponent {
       const survRef = fbc.database.public.adminRef('surveys')
       const resultsRef = fbc.database.private.adminableUserRef('results')
       resultsRef.on("child_added", data => {
-        let results = this.state.results
-        results.push(data.key)
-        this.setState({results})
+        this.setState(({results}) => ({results: [...results, data.key]}))
       })
 
       survRef.on('child_added', data => {

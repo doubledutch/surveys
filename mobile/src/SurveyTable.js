@@ -119,7 +119,7 @@ export default class SurveyTable extends Component {
   hasCompleted = (key) => {
     const completed = this.props.results.find(item => item === key)
     if (completed) return true
-    else false
+    else return false
   }
 
 
@@ -321,7 +321,7 @@ const s = ReactNative.StyleSheet.create({
     backgroundColor: '#EFEFEF',
     alignItems:'center',
     height: '100%',
-    justifyContent: "center"
+    justifyContent: 'center'
   },
   leftContainer: {
     flexDirection: 'column',
@@ -329,7 +329,7 @@ const s = ReactNative.StyleSheet.create({
     backgroundColor: 'white',
     alignItems:'center',
     height: '100%',
-    justifyContent: "center"
+    justifyContent: 'center'
   },
   rightContainer: {
     flex: 1,

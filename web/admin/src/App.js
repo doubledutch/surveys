@@ -225,13 +225,9 @@ export default class App extends Component {
       window.alert("A survey with this name already exists. Please rename in order to publish")
     }
     else {
-      if (window.confirm("Are you sure you want to " + state + " this survey?")) {
-        if (isPublished) {
-          fbc.database.public.adminRef('surveys').child(survey.key).update({info, isViewable: false, lastUpdate: new Date().getTime()})
-        }
-        else {
-          fbc.database.public.adminRef('surveys').child(survey.key).update({info, isViewable: true, lastUpdate: new Date().getTime()})
-        }
+      if (window.confirm(`Are you sure you want to ${state} this survey?`)) {
+        let isViewable = isPublished ? false : true
+        fbc.database.public.adminRef('surveys').child(survey.key).update({info, isViewable, lastUpdate: new Date().getTime()})
       }
     }
   }
