@@ -115,9 +115,9 @@ class SurveyResults extends Component {
         const title = item.question
         let answer = ""
         if (typeof item.answer === "object" && !item.answer.length){
-          stringifyForCsv(item.answer)
+          answer = stringifyForCsv(item.answer)
         }
-        if (typeof item.answer === "object" && item.answer.length){
+        else if (typeof item.answer === "object" && item.answer.length){
           answer = item.answer.map(answer => (typeof answer === "object" && !answer.length) ? stringifyForCsv(answer) : answer.toString())
         }
         else answer = item.answer.toString()
