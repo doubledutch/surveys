@@ -3,10 +3,10 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "start": "node node_modules/dd-rn-packager/react-native/local-cli/cli.js start --port 8081",
+    "start": "node node_modules/react-native/local-cli/cli.js start --port 8081",
     "clean": "watchman watch-del-all && rm -rf node_modules && rm -fr $TMPDIR/react-* && rm -rf ios/build && (yarn || npm i)",
-    "ios": "node node_modules/dd-rn-packager/react-native/local-cli/cli.js run-ios",
-    "android": "node node_modules/dd-rn-packager/react-native/local-cli/cli.js run-android"
+    "ios": "node node_modules/react-native/local-cli/cli.js run-ios",
+    "android": "node node_modules/react-native/local-cli/cli.js run-android"
   },
   "dependencies": {
     "@doubledutch/firebase-connector": "^4.1.0",
@@ -24,7 +24,6 @@
   "devDependencies": {
     "babel-preset-env": "^1.6.1",
     "babel-preset-react": "^6.24.1",
-    "dd-rn-packager": "~0.46.8",
     "rnpm": "^1.9.0"
   }
 }
