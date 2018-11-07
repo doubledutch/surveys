@@ -16,10 +16,10 @@
 
 'use strict'
 import React, { Component } from 'react'
-import ReactNative, {
-  Platform, TouchableOpacity, Text, TextInput, View, ScrollView, FlatList, Modal, Image, KeyboardAvoidingView
+import {
+  Platform, StyleSheet, TouchableOpacity, Text, TextInput, View, FlatList, KeyboardAvoidingView
 } from 'react-native'
-import client, { Avatar, TitleBar, Color } from '@doubledutch/rn-client'
+import { Color } from '@doubledutch/rn-client'
 
 export default class SurveyTable extends Component {
   constructor(props){
@@ -32,7 +32,6 @@ export default class SurveyTable extends Component {
       newList: [],
     }
   }
-
 
   componentWillReceiveProps(nextProps) {
     if (nextProps.showError !== this.state.isError){
@@ -56,27 +55,7 @@ export default class SurveyTable extends Component {
 
   render() {
     const primaryColor = new Color(this.props.primaryColor).limitLightness(0.9).rgbString()
-    const newStyle = {
-      flex: 1,
-      fontSize: 18,
-      color: '#364247',
-      textAlignVertical: 'top',
-      maxHeight: 100,
-      height: Math.max(35, this.state.inputHeight),
-      paddingTop: 0,
-    }
-    
-    const androidStyle = {
-      paddingLeft: 0,
-      marginTop: 17,
-      marginBottom: 10
-    }
 
-    const iosStyle = {
-      marginTop: 20,
-      marginBottom: 10,
-    }
-    
     var newColor = "#9B9B9B"
     if (this.props.configKey){
       newColor = primaryColor
@@ -85,35 +64,35 @@ export default class SurveyTable extends Component {
     const colorStyle = {
       backgroundColor: newColor
     }
-      let surveys = this.props.surveys.filter(item => item.isViewable)
-      if (this.state.search) { 
-        surveys = this.state.newList
-      }
-      return(
-        <KeyboardAvoidingView style={{flex: 1, backgroundColor: "#EFEFEF"}}>
-          {this.renderModalHeader()}
-          {surveys.length ? null : <View style={s.helpTextBox}><Text style={s.helpText}>No Surveys Found</Text></View>}
-          <FlatList
-          style={{backgroundColor: '#EFEFEF'}}
-          data = {surveys}
-          ListFooterComponent={<View style={{height: 100}}></View>}
-          renderItem={({item}) => (
-            <TouchableOpacity onPress={() => this.surveySelect(item)} style={this.hasCompleted(item.key) ? s.listContainerGray : s.listContainer} disabled={this.hasCompleted(item.key)}>
-              <View style={this.hasCompleted(item.key) ? s.leftContainerGray : s.leftContainer} >
-                <SurveyRadio selected={this.props.configKey === item.key} primaryColor={primaryColor} />
-              </View>
-              <View style={s.rightContainer}>
-                <Text style={{fontSize: 16, color: '#364247'}}>{this.returnName(item)}</Text>
-              </View>
-            </TouchableOpacity>
-          )} />
-          <View style={{borderTopColor:"#b7b7b7", borderTopWidth: 1, backgroundColor: '#EFEFEF'}}>
-            <TouchableOpacity disabled={this.props.disable} onPress={this.props.closeSurveyModal} style={[s.bigButton, colorStyle]}>
-              <Text style={{fontSize: 14, textAlign: "center",  color: "white"}}>Take Survey</Text>
-            </TouchableOpacity>
-          </View>
-        </KeyboardAvoidingView>
-      ) 
+    let surveys = this.props.surveys.filter(item => item.isViewable)
+    if (this.state.search) { 
+      surveys = this.state.newList
+    }
+    return(
+      <KeyboardAvoidingView style={{flex: 1, backgroundColor: "#EFEFEF"}}>
+        {this.renderModalHeader()}
+        {surveys.length ? null : <View style={s.helpTextBox}><Text style={s.helpText}>No Surveys Found</Text></View>}
+        <FlatList
+        style={{backgroundColor: '#EFEFEF'}}
+        data = {surveys}
+        ListFooterComponent={<View style={{height: 100}}></View>}
+        renderItem={({item}) => (
+          <TouchableOpacity onPress={() => this.surveySelect(item)} style={this.hasCompleted(item.key) ? s.listContainerGray : s.listContainer} disabled={this.hasCompleted(item.key)}>
+            <View style={this.hasCompleted(item.key) ? s.leftContainerGray : s.leftContainer} >
+              <SurveyRadio selected={this.props.configKey === item.key} primaryColor={primaryColor} />
+            </View>
+            <View style={s.rightContainer}>
+              <Text style={{fontSize: 16, color: '#364247'}}>{this.returnName(item)}</Text>
+            </View>
+          </TouchableOpacity>
+        )} />
+        <View style={{borderTopColor:"#b7b7b7", borderTopWidth: 1, backgroundColor: '#EFEFEF'}}>
+          <TouchableOpacity disabled={this.props.disable} onPress={this.props.closeSurveyModal} style={[s.bigButton, colorStyle]}>
+            <Text style={{fontSize: 14, textAlign: "center",  color: "white"}}>Take Survey</Text>
+          </TouchableOpacity>
+        </View>
+      </KeyboardAvoidingView>
+    ) 
   }
 
   hasCompleted = (key) => {
@@ -122,13 +101,10 @@ export default class SurveyTable extends Component {
     else return false
   }
 
-
-  returnName=(item)=> {
+  returnName= item => {
     const parsedData = JSON.parse(item.info)
     return parsedData.title
   }
-
-
 
   updateList = (value) => {
     const queryText = value.toLowerCase()
@@ -208,7 +184,7 @@ const SurveyRadio = ({selected, primaryColor}) => (
   </View>
 )
 
-const s = ReactNative.StyleSheet.create({
+const s = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#EFEFEF',

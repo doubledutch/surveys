@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-import React, { Component } from 'react'
+import React, { PureComponent } from 'react'
 import './App.css'
 import moment from 'moment'
 import client from '@doubledutch/admin-client'
-import FirebaseConnector from '@doubledutch/firebase-connector'
+import {provideFirebaseConnectorToReactComponent} from '@doubledutch/firebase-connector'
 import { mapPerUserPrivateAdminablePushedDataToObjectOfStateObjects } from "@doubledutch/firebase-connector"
 import { HashRouter as Router, Redirect, Route } from 'react-router-dom'
 import 'react-tabs/style/react-tabs.css';
@@ -34,13 +34,9 @@ import "jquery-ui/ui/widgets/datepicker.js";
 import "select2/dist/js/select2.js";
 import "jquery-bar-rating";
 
-const fbc = FirebaseConnector(client, 'surveys')
-fbc.initializeAppWithSimpleBackend()
-
-export default class App extends Component {
-  
-  constructor() {
-    super()
+class App extends PureComponent {
+  constructor(props) {
+    super(props)
     this.state = {
       surveys: [],
       surveysDraft: [],
@@ -53,14 +49,15 @@ export default class App extends Component {
       showBuilder: false,
       search: ''
     }
-    this.signin = fbc.signinAdmin()
+    this.signin = props.fbc.signinAdmin()
     .then(user => this.user = user)
     .catch(err => console.error(err))
   }
 
   componentDidMount() {
+    const {fbc} = this.props
     this.signin.then(() => {
-    client.getUsers().then(users => {
+    client.getAttendees().then(users => {
       this.setState({attendees: users})
       const survRef = fbc.database.public.adminRef('surveys')
       const survDraftRef = fbc.database.public.adminRef('surveysDraft')
@@ -207,6 +204,7 @@ export default class App extends Component {
   }
 
   deleteSurvey = (history) => {
+    const {fbc} = this.props
     if (window.confirm("Are you sure you want to delete this survey?")) {
       if (this.state.configKey){
         fbc.database.public.adminRef("surveys").child(this.state.configKey).remove()
@@ -227,12 +225,13 @@ export default class App extends Component {
     else {
       if (window.confirm(`Are you sure you want to ${state} this survey?`)) {
         let isViewable = isPublished ? false : true
-        fbc.database.public.adminRef('surveys').child(survey.key).update({info, isViewable, lastUpdate: new Date().getTime()})
+        this.props.fbc.database.public.adminRef('surveys').child(survey.key).update({info, isViewable, lastUpdate: new Date().getTime()})
       }
     }
   }
 
   saveDraft=(data)=> {
+    const {fbc} = this.props
     let info = JSON.parse(data)
     info.title = info.title ? info.title : "New Survey"
     info = JSON.stringify(info)
@@ -246,7 +245,6 @@ export default class App extends Component {
       })
     }
   }
-
-
-
 }
+
+export default provideFirebaseConnectorToReactComponent(client, 'surveys', (props, fbc) => <App {...props} fbc={fbc} />, PureComponent)

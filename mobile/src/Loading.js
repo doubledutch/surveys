@@ -35,4 +35,3 @@ const s = StyleSheet.create({
     fontSize: 18,
   },
 })
-

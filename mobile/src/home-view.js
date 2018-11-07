@@ -15,24 +15,18 @@
  */
 
 import React, { PureComponent } from 'react'
-import ReactNative, {
-  KeyboardAvoidingView, Platform, TouchableOpacity, Text, TextInput, View, ScrollView, WebView, Button
-} from 'react-native'
+import { KeyboardAvoidingView, Platform, StyleSheet, TouchableOpacity, Text, WebView } from 'react-native'
 
 // rn-client must be imported before FirebaseConnector
-import client, { Avatar, TitleBar } from '@doubledutch/rn-client'
+import client, { TitleBar } from '@doubledutch/rn-client'
 import {provideFirebaseConnectorToReactComponent} from '@doubledutch/firebase-connector'
 import SurveyTable from "./SurveyTable"
 import Loading from './Loading'
 import surveyViewHtml from "./surveyViewHtml"
 
 class HomeView extends PureComponent {
-  constructor() {
-    super()
-
-    this.state = {
-      surveys: [], showTable: true, config: "", configKey: "", disable: true, results: []
-    }
+  state = {
+    surveys: [], showTable: true, config: "", configKey: "", disable: true, results: []
   }
 
   componentDidMount() {
@@ -145,7 +139,7 @@ class HomeView extends PureComponent {
 }
 
 const fontSize = 18
-const s = ReactNative.StyleSheet.create({
+const s = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#EFEFEF',
