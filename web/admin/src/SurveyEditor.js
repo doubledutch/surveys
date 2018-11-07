@@ -48,13 +48,14 @@ class SurveyEditor extends Component {
   
   componentDidMount() {
     let editorOptions = { 
-      showEmbededSurveyTab: false, showPropertyGrid: false, showPagesToolbox: true, useTabsInElementEditor: true, showJSONEditorTab: true,
+      showEmbededSurveyTab: false, showPropertyGrid: false, showPagesToolbox: true, useTabsInElementEditor: true, showJSONEditorTab: false,
       questionTypes: ["text", "checkbox", "radiogroup", "dropdown", "boolean", "matrix", "matrixdynamic", "rating", "imagepicker", "comment", "expression", "panel", "multipletext"]
     };
     this.editor = new SurveyJSEditor.SurveyEditor(
       "editorElement",
       editorOptions
     );
+    this.editor.haveCommercialLicense = true
     this.editor.isAutoSave = true
     this.editor.saveSurveyFunc = this.saveMySurvey;
     this.editor.text = this.props.config || ""
@@ -72,7 +73,9 @@ class SurveyEditor extends Component {
           <button className="deleteButton" onClick={()=> this.props.deleteSurvey(this.props.history)}>Delete</button>
           <button className="dd-bordered" onClick={()=>this.props.showHomePage(this.props.history)}>Done</button>
       </div>
-      {this.props.isEditorBoxDisplay && <div id="editorElement" />}
+      <div className="editorBox">
+        {this.props.isEditorBoxDisplay && <div id="editorElement" />}
+      </div>
     </div>
     )
   }

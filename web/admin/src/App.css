@@ -56,11 +56,16 @@ button.displayButton:focus, button.displayButton:active {
   display: flex;
   justify-content: flex-end;
 }
+
 .headerRow {
   display: flex;
   flex-flow: nowrap;
   margin: 0px;
   padding: 0px;
+}
+
+.editorBox {
+  margin-top: 10px;
 }
 
 .buttonRow {
