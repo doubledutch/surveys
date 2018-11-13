@@ -71,7 +71,7 @@ class HomeView extends PureComponent {
       htmlSource.baseUrl = "file:///android_asset";
     }
     const surveys = this.state.surveys.sort(function (a,b){ 
-      return b.lastUpdate = a.lastUpdate
+      return b.lastUpdate - a.lastUpdate
     })
     return (
       <KeyboardAvoidingView style={s.container} behavior={Platform.select({ios: "padding", android: null})}>
