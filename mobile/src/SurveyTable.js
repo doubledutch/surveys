@@ -68,13 +68,16 @@ export default class SurveyTable extends Component {
     if (this.state.search) { 
       surveys = this.state.newList
     }
+    const surveysCompleted = surveys.filter(item => this.hasCompleted(item.key))
+    const surveysNotCompleted = surveys.filter(item => !this.hasCompleted(item.key))
+    let surveysOrdered = surveysNotCompleted.concat(surveysCompleted)
     return(
       <KeyboardAvoidingView style={{flex: 1, backgroundColor: "#EFEFEF"}}>
         {this.renderModalHeader()}
-        {surveys.length ? null : <View style={s.helpTextBox}><Text style={s.helpText}>No Surveys Found</Text></View>}
+        {surveysOrdered.length ? null : <View style={s.helpTextBox}><Text style={s.helpText}>No Surveys Found</Text></View>}
         <FlatList
         style={{backgroundColor: '#EFEFEF'}}
-        data = {surveys}
+        data = {surveysOrdered}
         ListFooterComponent={<View style={{height: 100}}></View>}
         renderItem={({item}) => (
           <TouchableOpacity onPress={() => this.surveySelect(item)} style={this.hasCompleted(item.key) ? s.listContainerGray : s.listContainer} disabled={this.hasCompleted(item.key)}>
