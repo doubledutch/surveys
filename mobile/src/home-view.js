@@ -15,7 +15,7 @@
  */
 
 import React, { PureComponent } from 'react'
-import { KeyboardAvoidingView, Platform, StyleSheet, TouchableOpacity, Text, WebView, AsyncStorage } from 'react-native'
+import { KeyboardAvoidingView, Platform, StyleSheet, TouchableOpacity, Text, WebView, AsyncStorage, View } from 'react-native'
 
 // rn-client must be imported before FirebaseConnector
 import client, { TitleBar } from '@doubledutch/rn-client'
@@ -26,7 +26,7 @@ import surveyViewHtml from "./surveyViewHtml"
 
 class HomeView extends PureComponent {
   state = {
-    surveys: undefined, showTable: true, config: "", configKey: "", disable: true, results: []
+    surveys: undefined, showTable: true, config: "", configKey: "", disable: true, results: [], surveyLoading: true
   }
 
   componentDidMount() {
@@ -70,12 +70,21 @@ class HomeView extends PureComponent {
       <KeyboardAvoidingView style={s.container} behavior={Platform.select({ios: "padding", android: null})}>
         <TitleBar title="Surveys" client={client} signin={this.signin} />
         {this.state.showTable ? <SurveyTable results={this.state.results} primaryColor={this.state.primaryColor} surveys={surveys} closeSurveyModal={this.closeSurveyModal} selectSurvey={this.selectSurvey} configKey={this.state.configKey} disable={this.state.disable}/>
-        : <KeyboardAvoidingView style={s.container}><WebView ref={input => this.webview = input} style={s.web} originWhitelist={['*']} source={htmlSource} injectedJavaScript={this.injectedJavaScript()} onMessage={e => this.saveResults(e.nativeEvent.data)} onLoad={this.sendInfo}/><TouchableOpacity style={[s.backButton, {backgroundColor: this.state.primaryColor}]} onPress={()=>this.setState({showTable: true, config: "", configKey: ""})}><Text style={s.closeText}>Exit</Text></TouchableOpacity></KeyboardAvoidingView> 
+        : <KeyboardAvoidingView style={s.container}>
+            {this.state.surveyLoading && <Loading />}
+            <View style={this.state.surveyLoading ? s.webHidden : s.web} ><WebView ref={input => this.webview = input} originWhitelist={['*']} source={htmlSource} injectedJavaScript={this.injectedJavaScript()} onMessage={e => this.saveResults(e.nativeEvent.data)} onLoad={this.sendInfo} onLoadEnd={this.surveyLoadEnd}/></View>
+            {!this.state.surveyLoading && <TouchableOpacity style={[s.backButton, {backgroundColor: this.state.primaryColor}]} onPress={()=>this.setState({showTable: true, config: "", configKey: ""})}>
+              <Text style={s.closeText}>Exit</Text>
+            </TouchableOpacity>}
+          </KeyboardAvoidingView>
         }
       </KeyboardAvoidingView>
     )
   }
 
+  surveyLoadEnd = () => {
+    this.setState({surveyLoading: false})
+  }
 
   sendInfo = () => {
     const config = JSON.stringify({survey: this.state.config, color: this.state.primaryColor})
@@ -160,6 +169,10 @@ const s = StyleSheet.create({
   },
   web: {
     flex: 1,
+  },
+  webHidden: {
+    height: 1,
+    width: 1
   },
   scroll: {
     flex: 1,
