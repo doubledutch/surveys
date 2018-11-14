@@ -38,9 +38,6 @@ class HomeView extends PureComponent {
     signin.then(() => {
       client.getCurrentUser().then(currentUser => {
         this.setState({currentUser})
-        // setTimeout(() => {
-        //   this.setState({currentUser})
-        // }, 500)
         this.loadLocalSurveys()
         const survRef = fbc.database.public.adminRef('surveys')
         const resultsRef = fbc.database.private.adminableUserRef('results')

@@ -157,7 +157,6 @@ class App extends PureComponent {
     let surveys = this.state.surveysDraft.sort(function (a,b){ 
       return b.lastUpdate - a.lastUpdate
     })
-    console.log(surveys)
     if (this.state.search.length) surveys = this.filterSurveys(surveys, this.state.search)
     if (surveys.length) {
       return surveys.map(a => {
