@@ -15,10 +15,11 @@
  */
 
 import React from 'react'
-import { StyleSheet, Text, View } from 'react-native'
+import { StyleSheet, Text, View, ActivityIndicator } from 'react-native'
 
 export default () => (
   <View style={s.container}>
+    <ActivityIndicator size="large" color={"white"}/>
     <Text style={s.text}>Loading...</Text>
   </View>
 )

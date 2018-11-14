@@ -15,7 +15,7 @@
  */
 
 import React, { PureComponent } from 'react'
-import { KeyboardAvoidingView, Platform, StyleSheet, TouchableOpacity, Text, WebView } from 'react-native'
+import { KeyboardAvoidingView, Platform, StyleSheet, TouchableOpacity, Text, WebView, AsyncStorage, View } from 'react-native'
 
 // rn-client must be imported before FirebaseConnector
 import client, { TitleBar } from '@doubledutch/rn-client'
@@ -26,46 +26,36 @@ import surveyViewHtml from "./surveyViewHtml"
 
 class HomeView extends PureComponent {
   state = {
-    surveys: [], showTable: true, config: "", configKey: "", disable: true, results: []
+    surveys: undefined, showTable: true, config: "", configKey: "", disable: true, results: [], surveyLoading: true
   }
 
   componentDidMount() {
     const {fbc} = this.props
+    client.getCurrentEvent().then(currentEvent => this.setState({currentEvent}))
+    client.getPrimaryColor().then(primaryColor => this.setState({primaryColor}))
     const signin = fbc.signin()
     signin.catch(err => console.error(err))
     signin.then(() => {
       client.getCurrentUser().then(currentUser => {
-        setTimeout(() => {
-          this.setState({currentUser})
-        }, 500)
-      client.getPrimaryColor().then(primaryColor => this.setState({primaryColor}))
-      const survRef = fbc.database.public.adminRef('surveys')
-      const resultsRef = fbc.database.private.adminableUserRef('results')
-      resultsRef.on("child_added", data => {
-        this.setState(({results}) => ({results: [...results, data.key]}))
-      })
-
-      survRef.on('child_added', data => {
-        this.setState({ surveys: [{...data.val(), key: data.key }, ...this.state.surveys] })
-      })
-
-      survRef.on('child_changed', data => {
-        let surveys = this.state.surveys
-        let i = surveys.findIndex(item => {
-          return item.key === data.key
+        this.setState({currentUser})
+        this.loadLocalSurveys()
+        const survRef = fbc.database.public.adminRef('surveys')
+        const resultsRef = fbc.database.private.adminableUserRef('results')
+        resultsRef.on("child_added", data => {
+          this.setState(({results}) => ({results: [...results, data.key]}))
         })
-        surveys.splice(i, 1)
-        this.setState({ surveys: [...this.state.surveys, {...data.val(), key: data.key }]})
+        survRef.on('value', data => { 
+          let surveys = Object.entries(data.val() || {})
+          .map(([key, val]) => ({...val, key}))
+          this.setState({surveys})
+          this.saveLocalSurveys({surveys})
+        })
       })
-      survRef.on('child_removed', data => {
-        this.setState({ surveys: this.state.surveys.filter(x => x.key !== data.key) })
-      })
-    })
     })
   }
 
   render() {
-    if (!this.state.currentUser || !this.state.primaryColor) return <Loading />
+    if (!this.state.currentUser || !this.state.primaryColor || !this.state.surveys) return <Loading />
     let htmlSource = { html: surveyViewHtml };
     if ( Platform.OS == "android" ) {
       htmlSource.baseUrl = "file:///android_asset";
@@ -77,12 +67,21 @@ class HomeView extends PureComponent {
       <KeyboardAvoidingView style={s.container} behavior={Platform.select({ios: "padding", android: null})}>
         <TitleBar title="Surveys" client={client} signin={this.signin} />
         {this.state.showTable ? <SurveyTable results={this.state.results} primaryColor={this.state.primaryColor} surveys={surveys} closeSurveyModal={this.closeSurveyModal} selectSurvey={this.selectSurvey} configKey={this.state.configKey} disable={this.state.disable}/>
-        : <KeyboardAvoidingView style={s.container}><WebView ref={input => this.webview = input} style={s.web} originWhitelist={['*']} source={htmlSource} injectedJavaScript={this.injectedJavaScript()} onMessage={e => this.saveResults(e.nativeEvent.data)} onLoad={this.sendInfo}/><TouchableOpacity style={[s.backButton, {backgroundColor: this.state.primaryColor}]} onPress={()=>this.setState({showTable: true, config: "", configKey: ""})}><Text style={s.closeText}>Exit</Text></TouchableOpacity></KeyboardAvoidingView> 
+        : <KeyboardAvoidingView style={s.container}>
+            {this.state.surveyLoading && <Loading />}
+            <View style={this.state.surveyLoading ? s.webHidden : s.web} ><WebView ref={input => this.webview = input} originWhitelist={['*']} source={htmlSource} injectedJavaScript={this.injectedJavaScript()} onMessage={e => this.saveResults(e.nativeEvent.data)} onLoad={this.sendInfo} onLoadEnd={this.surveyLoadEnd}/></View>
+            {!this.state.surveyLoading && <TouchableOpacity style={[s.backButton, {backgroundColor: this.state.primaryColor}]} onPress={()=>this.setState({showTable: true, config: "", configKey: ""})}>
+              <Text style={s.closeText}>Exit</Text>
+            </TouchableOpacity>}
+          </KeyboardAvoidingView>
         }
       </KeyboardAvoidingView>
     )
   }
 
+  surveyLoadEnd = () => {
+    this.setState({surveyLoading: false})
+  }
 
   sendInfo = () => {
     const config = JSON.stringify({survey: this.state.config, color: this.state.primaryColor})
@@ -139,7 +138,25 @@ class HomeView extends PureComponent {
   injectedJavaScript = () => `
   `
 
+  loadLocalSurveys() {
+    return AsyncStorage.getItem(this.leadStorageKey())
+    .then(value => {
+      if (value) {
+        const surveys = JSON.parse(value)
+        return surveys
+      }
+      else return []
+    })
+  }
+
+  saveLocalSurveys({surveys}) {
+    return AsyncStorage.setItem(this.leadStorageKey(), JSON.stringify(surveys))
+  }
+
+  leadStorageKey() { return `@DD:surveys_${this.state.currentEvent.id}_${this.state.currentUser.id}` }
 }
+
+
 
 const fontSize = 18
 const s = StyleSheet.create({
@@ -149,6 +166,10 @@ const s = StyleSheet.create({
   },
   web: {
     flex: 1,
+  },
+  webHidden: {
+    height: 1,
+    width: 1
   },
   scroll: {
     flex: 1,

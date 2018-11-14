@@ -69,7 +69,7 @@ class App extends PureComponent {
       })
 
       survRef.on('child_changed', data => {
-        let surveys = this.state.surveys
+        let surveys = this.state.surveys.slice()
         for (const i in surveys){
           if (surveys[i].key === data.key) {
             surveys[i] = Object.assign({}, data.val())
@@ -85,10 +85,10 @@ class App extends PureComponent {
         this.setState({ surveysDraft: [{...data.val(), key: data.key }, ...this.state.surveysDraft] })
       })
       survDraftRef.on('child_changed', data => {
-        let surveys = this.state.surveysDraft
+        let surveys = this.state.surveysDraft.slice()
         for (const i in surveys){
           if (surveys[i].key === data.key) {
-            surveys[i] = data.val()
+            surveys[i] = Object.assign({}, data.val())
             surveys[i].key = data.key
             this.setState({surveysDraft : surveys})
           }
@@ -154,14 +154,16 @@ class App extends PureComponent {
   }
 
   renderSurveyTable=({history})=> {
-    let surveys = this.state.surveysDraft
+    let surveys = this.state.surveysDraft.sort(function (a,b){ 
+      return b.lastUpdate - a.lastUpdate
+    })
     if (this.state.search.length) surveys = this.filterSurveys(surveys, this.state.search)
     if (surveys.length) {
       return surveys.map(a => {
         const parsedData = JSON.parse(a.info)
         const publishedVersion = this.state.surveys.find(survey => survey.key === a.key)
         const isPublished = publishedVersion ? publishedVersion.info === a.info && publishedVersion.isViewable : false
-        return <div key={a.key} name={a.key} value={a.info} className="buttonRow" onClick={()=>this.loadConfig(a.key, a.info)}> 
+        return <div key={a.key} name={a.key} value={a.info} className="buttonRow" onClick={event =>this.loadConfig(event, a.key, a.info)}> 
           <p className={a.key === this.state.configKey ? "grayButtonCell":"buttonCell"}>{parsedData.title}</p>
           <span className={a.key === this.state.configKey ? "grayRightButtonCell":"rightButtonCell"}><p className={isPublished ? "publishedText" : "draftText"}>{isPublished ? "Live" : "Draft"}</p></span>
           <button className={a.key === this.state.configKey ? "grayRightButtonCellSmall":"rightButtonCellSmall"} name={a.key} value={a.info} onClick={(event) => this.loadBuilder(event, {history})}>Edit</button>
@@ -192,8 +194,8 @@ class App extends PureComponent {
     return filteredSurveys
   }
 
-  loadConfig = (key, config) => {
-    if (key !== this.state.configKey) {
+  loadConfig = (event, key, config) => {
+    if (key !== this.state.configKey && event.target.className === "buttonCell") {
       this.setState({config: config, configKey: key})
     }
   }
@@ -225,6 +227,7 @@ class App extends PureComponent {
     else {
       if (window.confirm(`Are you sure you want to ${state} this survey?`)) {
         let isViewable = isPublished ? false : true
+        this.props.fbc.database.public.adminRef('surveysDraft').child(survey.key).update({lastUpdate: new Date().getTime()})
         this.props.fbc.database.public.adminRef('surveys').child(survey.key).update({info, isViewable, lastUpdate: new Date().getTime()})
       }
     }
