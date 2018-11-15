@@ -16,11 +16,12 @@
 
 import React from 'react'
 import { StyleSheet, Text, View, ActivityIndicator } from 'react-native'
+import { translate as t } from '@doubledutch/rn-client'
 
 export default () => (
   <View style={s.container}>
     <ActivityIndicator size="large" color={"white"}/>
-    <Text style={s.text}>Loading...</Text>
+    <Text style={s.text}>{t("loading")}</Text>
   </View>
 )
 
