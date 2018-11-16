@@ -17,7 +17,8 @@
 import React, { PureComponent } from 'react'
 import './App.css'
 import moment from 'moment'
-import client from '@doubledutch/admin-client'
+import client, {translate as t, useStrings}  from '@doubledutch/admin-client'
+import i18n from './i18n'
 import {provideFirebaseConnectorToReactComponent} from '@doubledutch/firebase-connector'
 import { mapPerUserPrivateAdminablePushedDataToObjectOfStateObjects } from "@doubledutch/firebase-connector"
 import { HashRouter as Router, Redirect, Route } from 'react-router-dom'
@@ -33,6 +34,8 @@ import $ from "jquery";
 import "jquery-ui/ui/widgets/datepicker.js";
 import "select2/dist/js/select2.js";
 import "jquery-bar-rating";
+
+useStrings(i18n)
 
 class App extends PureComponent {
   constructor(props) {
@@ -111,8 +114,8 @@ class App extends PureComponent {
                 <div>
                   <div className="tableContainer">
                     <div className="headerRow">
-                      <h2 className="boxTitle">Surveys</h2>
-                      {this.state.isSurveysBoxDisplay && <button className="dd-bordered leftMargin" onClick={()=>this.addNewSurvey({history})}> New Survey</button>}
+                      <h2 className="boxTitle">{t("surveys")}</h2>
+                      {this.state.isSurveysBoxDisplay && <button className="dd-bordered leftMargin" onClick={()=>this.addNewSurvey({history})}>{t("new_survey")}</button>}
                       <div style={{flex: 1}}/>
                       <input
                         className="searchBox"
@@ -173,7 +176,7 @@ class App extends PureComponent {
     }
     else {
       return (
-        <p className="helpText">No surveys found</p>
+        <p className="helpText">{t("no_surveys")}</p>
       )
     }
   }
@@ -207,7 +210,7 @@ class App extends PureComponent {
 
   deleteSurvey = (history) => {
     const {fbc} = this.props
-    if (window.confirm("Are you sure you want to delete this survey?")) {
+    if (window.confirm(t("delete_alert"))) {
       if (this.state.configKey){
         fbc.database.public.adminRef("surveys").child(this.state.configKey).remove()
         fbc.database.public.adminRef("surveysDraft").child(this.state.configKey).remove()
@@ -218,14 +221,14 @@ class App extends PureComponent {
 
   publishConfig=(survey, isPublished)=> {
     const info = survey.info
-    const state = isPublished ? "unpublish" : "publish"
+    const state = isPublished ? t("unpublish") : t("publish")
     const name = JSON.parse(info).title
     const isDup = this.state.surveysDraft.find(item => JSON.parse(item.info).title === name && survey.key !== item.key)
     if (isDup && !isPublished) {
-      window.alert("A survey with this name already exists. Please rename in order to publish")
+      window.alert(t("dup_alert"))
     }
     else {
-      if (window.confirm(`Are you sure you want to ${state} this survey?`)) {
+      if (window.confirm(t("confirm_alert", {state:state}))) {
         let isViewable = isPublished ? false : true
         this.props.fbc.database.public.adminRef('surveysDraft').child(survey.key).update({lastUpdate: new Date().getTime()})
         this.props.fbc.database.public.adminRef('surveys').child(survey.key).update({info, isViewable, lastUpdate: new Date().getTime()})
@@ -236,7 +239,7 @@ class App extends PureComponent {
   saveDraft=(data)=> {
     const {fbc} = this.props
     let info = JSON.parse(data)
-    info.title = info.title ? info.title : "New Survey"
+    info.title = info.title ? info.title : t("new_survey")
     info = JSON.stringify(info)
     if (this.state.config.length) {
       fbc.database.public.adminRef('surveysDraft').child(this.state.configKey).update({info, lastUpdate: new Date().getTime()})

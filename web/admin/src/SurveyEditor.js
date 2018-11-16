@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import {translate as t}  from '@doubledutch/admin-client'
 import * as SurveyJSEditor from "surveyjs-editor";
 import * as SurveyKo from "survey-knockout";
 import "surveyjs-editor/surveyeditor.css";
@@ -67,11 +68,11 @@ class SurveyEditor extends Component {
     return (
     <div className="tableContainer">
       <div className="headerRow">
-        <h2 className="boxTitle">Editor</h2>
-        {publishedTime ? <p className="publishedTime">Last Published: {publishedTime.toLocaleString()}</p> : null}
+        <h2 className="boxTitle">{t("editor")}</h2>
+        {publishedTime ? <p className="publishedTime">{t("last_published", {time: publishedTime.toLocaleString()})}</p> : null}
         <div className="flex"></div>
-          <button className="deleteButton" onClick={()=> this.props.deleteSurvey(this.props.history)}>Delete</button>
-          <button className="dd-bordered" onClick={()=>this.props.showHomePage(this.props.history)}>Done</button>
+          <button className="deleteButton" onClick={()=> this.props.deleteSurvey(this.props.history)}>{t("delete")}</button>
+          <button className="dd-bordered" onClick={()=>this.props.showHomePage(this.props.history)}>{t("done")}</button>
       </div>
       <div className="editorBox">
         {this.props.isEditorBoxDisplay && <div id="editorElement" />}

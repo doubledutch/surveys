@@ -18,11 +18,14 @@ import React, { PureComponent } from 'react'
 import { KeyboardAvoidingView, Platform, StyleSheet, TouchableOpacity, Text, WebView, AsyncStorage, View } from 'react-native'
 
 // rn-client must be imported before FirebaseConnector
-import client, { TitleBar } from '@doubledutch/rn-client'
+import client, { TitleBar, translate as t, useStrings } from '@doubledutch/rn-client'
+import i18n from './i18n'
 import {provideFirebaseConnectorToReactComponent} from '@doubledutch/firebase-connector'
 import SurveyTable from "./SurveyTable"
 import Loading from './Loading'
 import surveyViewHtml from "./surveyViewHtml"
+
+useStrings(i18n)
 
 class HomeView extends PureComponent {
   state = {
@@ -71,7 +74,7 @@ class HomeView extends PureComponent {
             {this.state.surveyLoading && <Loading />}
             <View style={this.state.surveyLoading ? s.webHidden : s.web} ><WebView ref={input => this.webview = input} originWhitelist={['*']} source={htmlSource} injectedJavaScript={this.injectedJavaScript()} onMessage={e => this.saveResults(e.nativeEvent.data)} onLoad={this.sendInfo} onLoadEnd={this.surveyLoadEnd}/></View>
             {!this.state.surveyLoading && <TouchableOpacity style={[s.backButton, {backgroundColor: this.state.primaryColor}]} onPress={()=>this.setState({showTable: true, config: "", configKey: ""})}>
-              <Text style={s.closeText}>Exit</Text>
+              <Text style={s.closeText}>{t("exit")}</Text>
             </TouchableOpacity>}
           </KeyboardAvoidingView>
         }

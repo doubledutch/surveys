@@ -1,0 +1,22 @@
+{
+  "surveys": "Surveys",
+  "new_survey": "New Survey",
+  "no_surveys": "No Surveys Found",
+  "dup_alert": "A survey with this name already exists. Please rename in order to publish",
+  "publish": "publish",
+  "unpublish": "unpublish",
+  "delete_alert": "Are you sure you want to delete this survey?",
+  "confirm_alert": "Are you sure you want to ${state} this survey?",
+  "editor": "Editor",
+  "done": "Done",
+  "delete": "Delete",
+  "last_published": "Last Published: ${time}",
+  "results": "Results",
+  "hide": "Hide Section",
+  "show": "Show Section",
+  "select": "Select a survey to see responses",
+  "no_responses": "No Responses Found",
+  "export": "Export Results",
+  "show_results": "Show Results",
+  "hide_results": "Hide Results"
+}

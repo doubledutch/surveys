@@ -19,7 +19,7 @@ import React, { Component } from 'react'
 import {
   Platform, StyleSheet, TouchableOpacity, Text, TextInput, View, FlatList, KeyboardAvoidingView
 } from 'react-native'
-import { Color } from '@doubledutch/rn-client'
+import { Color, translate as t } from '@doubledutch/rn-client'
 
 export default class SurveyTable extends Component {
   constructor(props){
@@ -74,7 +74,7 @@ export default class SurveyTable extends Component {
     return(
       <KeyboardAvoidingView style={{flex: 1, backgroundColor: "#EFEFEF"}}>
         {this.renderModalHeader()}
-        {surveysOrdered.length ? null : <View style={s.helpTextBox}><Text style={s.helpText}>No Surveys Found</Text></View>}
+        {surveysOrdered.length ? null : <View style={s.helpTextBox}><Text style={s.helpText}>{t("no_surveys")}</Text></View>}
         <FlatList
         style={{backgroundColor: '#EFEFEF'}}
         data = {surveysOrdered}
@@ -91,7 +91,7 @@ export default class SurveyTable extends Component {
         )} />
         <View style={{borderTopColor:"#b7b7b7", borderTopWidth: 1, backgroundColor: '#EFEFEF'}}>
           <TouchableOpacity disabled={this.props.disable} onPress={this.props.closeSurveyModal} style={[s.bigButton, colorStyle]}>
-            <Text style={{fontSize: 14, textAlign: "center",  color: "white"}}>Take Survey</Text>
+            <Text style={{fontSize: 14, textAlign: "center",  color: "white"}}>{t("take_survey")}</Text>
           </TouchableOpacity>
         </View>
       </KeyboardAvoidingView>
@@ -153,7 +153,7 @@ export default class SurveyTable extends Component {
           <View style={{backgroundColor: '#9B9B9B', padding: 10}}>
             <View style={{flexDirection: "row", backgroundColor: "#FFFFFF", borderBottomColor: "#b7b7b7", borderBottomWidth: 1, borderRadius: 5, height: 40}}>
               {this.state.search ? <View style={{width: 40}} /> : <TouchableOpacity style={s.circleBoxMargin}><Text style={s.whiteText}>?</Text></TouchableOpacity>}
-              <TextInput style={Platform.select({ios: [newStyle, iosStyle], android: [newStyle, androidStyle]})} placeholder="Search"
+              <TextInput style={Platform.select({ios: [newStyle, iosStyle], android: [newStyle, androidStyle]})} placeholder={t("search")}
                 value={this.state.survey}
                 onChangeText={survey => this.updateList(survey)} 
                 maxLength={25}
@@ -169,7 +169,7 @@ export default class SurveyTable extends Component {
       return (
         <View>
           <View style={{borderBottomColor: "#b7b7b7", borderBottomWidth: 1}}>
-            <Text style={s.modHeader}> Please select a survey</Text>
+            <Text style={s.modHeader}>{t("select_survey")}</Text>
           </View>
         </View>
       )

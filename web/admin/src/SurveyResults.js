@@ -15,6 +15,7 @@
  */
 
 import React, { Component } from 'react'
+import {translate as t}  from '@doubledutch/admin-client'
 import {CSVLink, CSVDownload} from 'react-csv'
 
 
@@ -33,9 +34,9 @@ class SurveyResults extends Component {
     return (
       <div className="tableContainer">
       <div className="headerRow">
-        <h2 className="boxTitle">Results</h2>
+        <h2 className="boxTitle">{t("results")}</h2>
         <div style={{flex: 1}}/>
-        <button className="displayButton" onClick={() => this.props.handleChange("isResultsBoxDisplay", !this.props.isResultsBoxDisplay)}>{(this.props.isResultsBoxDisplay ? "Hide Section" : "Show Section")}</button>
+        <button className="displayButton" onClick={() => this.props.handleChange("isResultsBoxDisplay", !this.props.isResultsBoxDisplay)}>{(this.props.isResultsBoxDisplay ? t("hide") : t("show"))}</button>
       </div>
       {this.props.isResultsBoxDisplay && this.renderTable()}
     </div>
@@ -55,15 +56,15 @@ class SurveyResults extends Component {
     return (
       <div>
         <ul className="surveyTable">
-            {this.props.configKey.length === 0 && <p className="helpText">Select a survey to see responses</p>}
-            {this.props.configKey.length > 0 && results.length === 0 && <p className="helpText">No responses found</p>}
+            {this.props.configKey.length === 0 && <p className="helpText">{t("select")}</p>}
+            {this.props.configKey.length > 0 && results.length === 0 && <p className="helpText">{t("no_responses")}</p>}
             { newResults.map(item => {
               return this.state.expandedItem === item ? this.expandedCell(item) : this.standardCell(item)
             })
             }
         </ul>
         <div className="csvLinkBox">
-          <button className="button" onClick={()=>this.prepareCsv(newResults)}>Export Results</button>
+          <button className="button" onClick={()=>this.prepareCsv(newResults)}>{t("export")}</button>
           {this.state.exporting ? <CSVDownload data={this.state.exportList} target="_blank" /> : null}
         </div>
       </div>
@@ -74,7 +75,7 @@ class SurveyResults extends Component {
     return (
       <div key={item.timeTaken} className="buttonRow"> 
         <div className="buttonCell"><p className="buttonText">{item.creator.firstName + " " + item.creator.lastName + " - " + new Date(item.timeTaken).toDateString()}</p></div>
-        <button className="rightButtonCell" onClick={() => this.loadExpandedCell(item)}>Show Results</button>      
+        <button className="rightButtonCell" onClick={() => this.loadExpandedCell(item)}>{t("show_results")}</button>      
       </div>
     )
   }
@@ -85,7 +86,7 @@ class SurveyResults extends Component {
       <div>
         <div key={item.timeTaken} className="buttonRow"> 
           <div className="grayButtonCell"><p className="buttonText">{item.creator.firstName + " " + item.creator.lastName + " - " + new Date(item.timeTaken).toDateString()}</p></div>
-          <button className="grayRightButtonCell" onClick={() => this.loadExpandedCell(item)}>Hide Results</button>      
+          <button className="grayRightButtonCell" onClick={() => this.loadExpandedCell(item)}>{t("hide_results")}</button>      
         </div>
         {results.map(item => {
           let answer = ""
