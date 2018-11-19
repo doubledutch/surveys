@@ -101,7 +101,14 @@ class HomeView extends PureComponent {
             <Loading />
             }
             <View style={this.state.surveyLoading ? s.webHidden : s.web} >
-              <WebView ref={input => this.webview = input} originWhitelist={['*']} source={htmlSource} injectedJavaScript={this.injectedJavaScript()} onMessage={e => this.saveResults(e.nativeEvent.data)} onLoad={this.sendInfo} onLoadEnd={this.surveyLoadEnd}/>
+              <WebView 
+                ref={input => this.webview = input} 
+                originWhitelist={['*']} source={htmlSource} 
+                injectedJavaScript={this.injectedJavaScript()} 
+                onMessage={e => this.saveResults(e.nativeEvent.data)} 
+                onLoad={this.sendInfo} 
+                onLoadEnd={this.surveyLoadEnd}
+              />
             </View>
             {!this.state.surveyLoading && 
             <TouchableOpacity style={[s.backButton, {backgroundColor: this.state.primaryColor}]} onPress={()=>this.setState({showTable: true, config: "", configKey: "", disable: true})}>
