@@ -130,7 +130,7 @@ class App extends PureComponent {
                       </ul>
                     </div>}
                   </div>
-                  <SurveyResults client={client} isResultsBoxDisplay={this.state.isResultsBoxDisplay} handleChange={this.handleChange} results={this.state.results} configKey = {this.state.configKey}/>
+                  <SurveyResults client={client} isResultsBoxDisplay={this.state.isResultsBoxDisplay} handleChange={this.handleChange} results={this.state.results} configKey = {this.state.configKey} config={this.state.config}/>
                 </div> )} />
               <Route exact path="/content/builder" render={({history}) => {
                 if (!this.state.showBuilder) return <Redirect to="/" />

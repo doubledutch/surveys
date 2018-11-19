@@ -123,6 +123,7 @@ class SurveyResults extends Component {
         }
         else answer = item.answer.toString()
         newItem[title] = answer
+        newItem.surveyTitle = JSON.parse(this.props.config).title
       })
       parsedResults.push(newItem)
     })
