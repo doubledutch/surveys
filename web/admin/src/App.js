@@ -155,6 +155,7 @@ class App extends PureComponent {
                     handleChange={this.handleChange}
                     results={this.state.results}
                     configKey={this.state.configKey}
+                    config={this.state.config}
                   />
                 </div>
               )}

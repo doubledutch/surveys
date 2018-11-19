@@ -97,26 +97,24 @@ class HomeView extends PureComponent {
           />
         ) : (
           <KeyboardAvoidingView style={s.container}>
-            {this.state.surveyLoading && <Loading />}
-            <View style={this.state.surveyLoading ? s.webHidden : s.web}>
-              <WebView
-                ref={input => (this.webview = input)}
-                originWhitelist={['*']}
-                source={htmlSource}
-                injectedJavaScript={this.injectedJavaScript()}
-                onMessage={e => this.saveResults(e.nativeEvent.data)}
-                onLoad={this.sendInfo}
+            {this.state.surveyLoading && 
+            <Loading />
+            }
+            <View style={this.state.surveyLoading ? s.webHidden : s.web} >
+              <WebView 
+                ref={input => this.webview = input} 
+                originWhitelist={['*']} source={htmlSource} 
+                injectedJavaScript={this.injectedJavaScript()} 
+                onMessage={e => this.saveResults(e.nativeEvent.data)} 
+                onLoad={this.sendInfo} 
                 onLoadEnd={this.surveyLoadEnd}
               />
             </View>
-            {!this.state.surveyLoading && (
-              <TouchableOpacity
-                style={[s.backButton, { backgroundColor: this.state.primaryColor }]}
-                onPress={() => this.setState({ showTable: true, config: '', configKey: '' })}
-              >
-                <Text style={s.closeText}>{t('exit')}</Text>
-              </TouchableOpacity>
-            )}
+            {!this.state.surveyLoading && 
+            <TouchableOpacity style={[s.backButton, {backgroundColor: this.state.primaryColor}]} onPress={()=>this.setState({showTable: true, config: "", configKey: "", disable: true})}>
+              <Text style={s.closeText}>{t("exit")}</Text>
+            </TouchableOpacity>
+            }
           </KeyboardAvoidingView>
         )}
       </KeyboardAvoidingView>
