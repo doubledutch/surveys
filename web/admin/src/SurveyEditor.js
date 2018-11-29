@@ -50,7 +50,7 @@ class SurveyEditor extends Component {
       showPropertyGrid: false,
       showPagesToolbox: true,
       useTabsInElementEditor: true,
-      showJSONEditorTab: false,
+      showJSONEditorTab: true,
       questionTypes: [
         'text',
         'checkbox',
