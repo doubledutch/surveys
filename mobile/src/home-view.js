@@ -149,7 +149,9 @@ class HomeView extends PureComponent {
     const newResults = []
     if (resultsKeys.length) {
       resultsKeys.forEach(item => {
-        const question = newQuestionsArray.find(question => question.name === item)
+        const question = newQuestionsArray.find(
+          question => question.name === item.replace('-Comment', ''),
+        )
         if (question) {
           const answer = origResults[item]
           let questionTitle = question.title ? question.title : question.name

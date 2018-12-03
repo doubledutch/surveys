@@ -50,7 +50,7 @@ class SurveyEditor extends Component {
       showPropertyGrid: false,
       showPagesToolbox: true,
       useTabsInElementEditor: true,
-      showJSONEditorTab: true,
+      showJSONEditorTab: false,
       questionTypes: [
         'text',
         'checkbox',
@@ -62,7 +62,6 @@ class SurveyEditor extends Component {
         'imagepicker',
         'comment',
         'expression',
-        'panel',
         'multipletext',
       ],
     }
