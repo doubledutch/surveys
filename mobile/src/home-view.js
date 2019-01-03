@@ -72,6 +72,7 @@ class HomeView extends PureComponent {
   }
 
   render() {
+    const { suggestedTitle } = this.props
     if (!this.state.currentUser || !this.state.primaryColor || !this.state.surveys)
       return <Loading />
     const htmlSource = { html: surveyViewHtml }
@@ -84,7 +85,7 @@ class HomeView extends PureComponent {
         style={s.container}
         behavior={Platform.select({ ios: 'padding', android: null })}
       >
-        <TitleBar title="Surveys" client={client} signin={this.signin} />
+        <TitleBar title={suggestedTitle || 'Surveys'} client={client} signin={this.signin} />
         {this.state.showTable ? (
           <SurveyTable
             results={this.state.results}
