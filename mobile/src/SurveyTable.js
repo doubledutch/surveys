@@ -172,7 +172,7 @@ export default class SurveyTable extends Component {
     if (this.props.surveys.length > 0) {
       return (
         <View style={{ borderBottomColor: '#b7b7b7', borderBottomWidth: 1 }}>
-          <Text style={s.modHeader}> Please select a survey</Text>
+          <Text style={s.modHeader}> {t('select_survey')}</Text>
           <View style={{ backgroundColor: '#9B9B9B', padding: 10 }}>
             <View
               style={{

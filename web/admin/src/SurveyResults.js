@@ -64,7 +64,12 @@ class SurveyResults extends Component {
     return (
       <div>
         <ul className="surveyTable">
-          {this.props.configKey.length === 0 && <p className="helpText">{t('select')}</p>}
+          {this.props.configKey.length === 0 && this.props.surveys.length > 0 && (
+            <p className="helpText">{t('select')}</p>
+          )}
+          {this.props.surveys.length === 0 && (
+            <p className="helpText">{t('no_survey_select_message')}</p>
+          )}
           {this.props.configKey.length > 0 && results.length === 0 && (
             <p className="helpText">{t('no_responses')}</p>
           )}

@@ -18,5 +18,6 @@
   "no_responses": "No Responses Found",
   "export": "Export Results",
   "show_results": "Show Results",
-  "hide_results": "Hide Results"
+  "hide_results": "Hide Results",
+  "no_survey_select_message": "Please build a survey to access response section"
 }
