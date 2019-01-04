@@ -61,7 +61,6 @@ class SurveyResults extends Component {
         if (typeof response === 'object') newResults.push(response)
       })
     })
-    console.log(this.props.surveys)
     return (
       <div>
         <ul className="surveyTable">
