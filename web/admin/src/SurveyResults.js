@@ -16,7 +16,7 @@
 
 import React, { Component } from 'react'
 import { translate as t } from '@doubledutch/admin-client'
-import { CSVLink, CSVDownload } from 'react-csv'
+import { CSVLink, CSVDownload } from '@doubledutch/react-csv'
 
 class SurveyResults extends Component {
   constructor() {
@@ -82,7 +82,7 @@ class SurveyResults extends Component {
             {t('export')}
           </button>
           {this.state.exporting ? (
-            <CSVDownload data={this.state.exportList} target="_blank" />
+            <CSVDownload data={this.state.exportList} filename="results.csv" target="_blank" />
           ) : null}
         </div>
       </div>
