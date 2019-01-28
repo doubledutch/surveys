@@ -863,6 +863,11 @@
     react-dom "^16.3.2"
     react-infinite-calendar "^2.3.1"
 
+"@doubledutch/react-csv@^1.1.0":
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/@doubledutch/react-csv/-/react-csv-1.1.0.tgz#b608f950d0a8f8968102aa74d0fc667ea84a16c1"
+  integrity sha512-OeyUbMT/uabYsR/9fyKy7k75FJqi3c8Ne5hkn1kLELlWKbPaEVV27hbTxHeZKrtijBmrxJtl5EKt5fqz6nHLXg==
+
 "@firebase/app-types@0.3.2":
   version "0.3.2"
   resolved "https://registry.yarnpkg.com/@firebase/app-types/-/app-types-0.3.2.tgz#a92dc544290e2893bd8c02a81e684dae3d8e7c85"
