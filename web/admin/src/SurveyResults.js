@@ -122,15 +122,16 @@ class SurveyResults extends Component {
         </div>
         {results.map(item => {
           let answer = ''
-          if (typeof item.answer === 'object' && !item.answer.length) {
-            answer = JSON.stringify(item.answer)
-          } else if (typeof item.answer === 'object' && item.answer.length) {
-            answer = item.answer.map(answer =>
+          const origAnswer = getAnswer(item)
+          if (typeof origAnswer === 'object' && !origAnswer.length) {
+            answer = JSON.stringify(origAnswer)
+          } else if (typeof item.answer === 'object' && origAnswer.length) {
+            answer = origAnswer.map(answer =>
               typeof answer === 'object' && !answer.length
                 ? JSON.stringify(answer)
                 : answer.toString(),
             )
-          } else answer = item.answer.toString()
+          } else answer = origAnswer.toString()
           return (
             <div className="subCell">
               <li className="subCellText">{`${item.question}: ${answer}`}</li>
@@ -153,15 +154,18 @@ class SurveyResults extends Component {
       item.newResults.forEach(item => {
         const title = item.question
         let answer = ''
-        if (typeof item.answer === 'object' && !item.answer.length) {
-          answer = stringifyForCsv(item.answer)
-        } else if (typeof item.answer === 'object' && item.answer.length) {
-          answer = item.answer.map(answer =>
+        const origAnswer = getAnswer(item)
+        if (typeof origAnswer === 'object' && !origAnswer.length) {
+          answer = stringifyForCsv(origAnswer)
+        } else if (typeof origAnswer === 'object' && origAnswer.length) {
+          answer = origAnswer.map(answer =>
             typeof answer === 'object' && !answer.length
               ? stringifyForCsv(answer)
               : answer.toString(),
           )
-        } else answer = item.answer.toString()
+        } else {
+          answer = origAnswer.toString()
+        }
         newItem[title] = answer
         newItem.surveyTitle = JSON.parse(this.props.config).title
       })
@@ -195,6 +199,8 @@ class SurveyResults extends Component {
     this.setState({ expandedItem: item })
   }
 }
+
+const getAnswer = item => (item.schemaVersion === 2 ? JSON.parse(item.answer) : item.answer)
 
 function stringifyForCsv(obj) {
   return Object.entries(obj)

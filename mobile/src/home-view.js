@@ -154,7 +154,7 @@ class HomeView extends PureComponent {
           question => question.name === item.replace('-Comment', ''),
         )
         if (question) {
-          const answer = origResults[item]
+          const answer = JSON.stringify(origResults[item])
           let questionTitle = question.title ? question.title : question.name
           questionTitle = question.label ? question.label : questionTitle
           newResults.push({
@@ -170,6 +170,7 @@ class HomeView extends PureComponent {
           newResults,
           creator: this.state.currentUser,
           timeTaken: new Date().getTime(),
+          schemaVersion: 2
         })
         .then(() => this.setState({}))
         .catch(x => console.error(x))
