@@ -16,7 +16,7 @@
 
 import React, { Component } from 'react'
 
-export default class AnomIcon extends Component {
+export default class Icon extends Component {
   render() {
     const anom = this.props.allowAnom
     return (
