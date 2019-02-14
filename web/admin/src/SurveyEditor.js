@@ -17,6 +17,8 @@ import 'icheck/skins/square/blue.css'
 
 import * as widgets from 'surveyjs-widgets'
 
+import AnomIcon from './anomicon'
+
 widgets.icheck(SurveyKo, $)
 widgets.jquerybarrating(SurveyKo, $)
 widgets.jqueryuidatepicker(SurveyKo, $)
@@ -25,8 +27,11 @@ widgets.bootstrapslider(SurveyKo)
 class SurveyEditor extends Component {
   editor
 
-  constructor() {
-    super()
+  constructor(props) {
+    super(props)
+    this.state = {
+      allowAnom: false,
+    }
     const mainColor = '#73aaf3'
     const mainHoverColor = '#73aaf3'
     const textColor = '#4a4a4a'
@@ -45,6 +50,7 @@ class SurveyEditor extends Component {
   }
 
   componentDidMount() {
+    this.setState({ allowAnom: this.props.allowAnom || false })
     const editorOptions = {
       showEmbededSurveyTab: false,
       showPropertyGrid: false,
@@ -101,12 +107,37 @@ class SurveyEditor extends Component {
         <div className="editorBox">
           {this.props.isEditorBoxDisplay && <div id="editorElement" />}
         </div>
+        <div className="settingsContainer">
+          <p className="boxTitleBold">{t('allow_anom')}</p>
+          <AnomIcon
+            allowAnom={this.state.allowAnom}
+            offApprove={this.reSaveOff}
+            onApprove={this.reSaveOn}
+          />
+        </div>
       </div>
     )
   }
 
+  reSaveOn = () => {
+    const allowAnom = true
+    if (allowAnom !== this.state.allowAnom) {
+      this.setState({ allowAnom })
+      this.props.saveConfig(this.editor.text, true)
+    }
+  }
+
+  reSaveOff = () => {
+    const allowAnom = false
+    if (allowAnom !== this.state.allowAnom) {
+      this.setState({ allowAnom })
+      this.props.saveConfig(this.editor.text, false)
+    }
+  }
+
   saveMySurvey = () => {
-    this.props.saveConfig(this.editor.text)
+    const { allowAnom } = this.state
+    this.props.saveConfig(this.editor.text, allowAnom)
   }
 }
 
