@@ -51,6 +51,7 @@ class App extends PureComponent {
       isResultsBoxDisplay: true,
       showBuilder: false,
       search: '',
+      allowAnom: false,
     }
     this.signin = props.fbc
       .signinAdmin()
@@ -172,6 +173,7 @@ class App extends PureComponent {
                     configKey={this.state.configKey}
                     saveConfig={this.saveDraft}
                     config={this.state.config}
+                    allowAnom={this.state.allowAnom}
                     history={history}
                     isEditorBoxDisplay={this.state.isEditorBoxDisplay}
                     handleChange={this.handleChange}
@@ -188,11 +190,11 @@ class App extends PureComponent {
   }
 
   searchTable = event => {
-    this.setState({ search: event.target.value, config: '', configKey: '' })
+    this.setState({ search: event.target.value, config: '', configKey: '', allowAnom: false })
   }
 
   showHomePage = history => {
-    this.setState({ showBuilder: false, config: '', configKey: '' })
+    this.setState({ showBuilder: false, config: '', configKey: '', allowAnom: false })
     history.push(`/`)
   }
 
@@ -209,7 +211,9 @@ class App extends PureComponent {
         const parsedData = JSON.parse(a.info)
         const publishedVersion = this.state.surveys.find(survey => survey.key === a.key)
         const isPublished = publishedVersion
-          ? publishedVersion.info === a.info && publishedVersion.isViewable
+          ? publishedVersion.info === a.info &&
+            publishedVersion.isViewable &&
+            publishedVersion.allowAnom === a.allowAnom
           : false
         return (
           <div
@@ -217,7 +221,7 @@ class App extends PureComponent {
             name={a.key}
             value={a.info}
             className="buttonRow"
-            onClick={event => this.loadConfig(event, a.key, a.info)}
+            onClick={event => this.loadConfig(event, a.key, a.info, a.allowAnom)}
           >
             <p className={a.key === this.state.configKey ? 'grayButtonCell' : 'buttonCell'}>
               {parsedData.title}
@@ -233,9 +237,7 @@ class App extends PureComponent {
               className={
                 a.key === this.state.configKey ? 'grayRightButtonCellSmall' : 'rightButtonCellSmall'
               }
-              name={a.key}
-              value={a.info}
-              onClick={event => this.loadBuilder(event, { history })}
+              onClick={() => this.loadBuilder(a, history)}
             >
               Edit
             </button>
@@ -274,8 +276,13 @@ class App extends PureComponent {
     }
   }
 
-  loadBuilder = (event, { history }) => {
-    this.setState({ config: event.target.value, configKey: event.target.name, showBuilder: true })
+  loadBuilder = (survey, history) => {
+    this.setState({
+      config: survey.info,
+      configKey: survey.key,
+      allowAnom: survey.allowAnom,
+      showBuilder: true,
+    })
     history.push(`/content/builder`)
   }
 
@@ -298,6 +305,7 @@ class App extends PureComponent {
 
   publishConfig = (survey, isPublished) => {
     const info = survey.info
+    const allowAnom = survey.allowAnom || false
     const state = isPublished ? t('unpublish') : t('publish')
     const name = JSON.parse(info).title
     const isDup = this.state.surveysDraft.find(
@@ -314,11 +322,11 @@ class App extends PureComponent {
       this.props.fbc.database.public
         .adminRef('surveys')
         .child(survey.key)
-        .update({ info, isViewable, lastUpdate: new Date().getTime() })
+        .update({ info, isViewable, lastUpdate: new Date().getTime(), allowAnom })
     }
   }
 
-  saveDraft = data => {
+  saveDraft = (data, allowAnom) => {
     const { fbc } = this.props
     let info = JSON.parse(data)
     info.title = info.title ? info.title : t('new_survey')
@@ -327,12 +335,12 @@ class App extends PureComponent {
       fbc.database.public
         .adminRef('surveysDraft')
         .child(this.state.configKey)
-        .update({ info, lastUpdate: new Date().getTime() })
+        .update({ info, lastUpdate: new Date().getTime(), allowAnom })
       this.setState({ config: info })
     } else {
       fbc.database.public
         .adminRef('surveysDraft')
-        .push({ info, lastUpdate: new Date().getTime() })
+        .push({ info, lastUpdate: new Date().getTime(), allowAnom })
         .then(ref => {
           this.setState({ config: info, configKey: ref.key })
         })
