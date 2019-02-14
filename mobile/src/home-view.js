@@ -33,6 +33,7 @@ import { provideFirebaseConnectorToReactComponent } from '@doubledutch/firebase-
 import i18n from './i18n'
 import SurveyTable from './SurveyTable'
 import Loading from './Loading'
+import { checkbox_active, checkbox_inactive } from './images'
 import surveyViewHtml from './surveyViewHtml'
 
 useStrings(i18n)
@@ -115,7 +116,7 @@ class HomeView extends PureComponent {
             </View>
             {this.state.allowAnom && <View style={s.anomBox}>
               {this.renderAnomIcon()}
-              <Text>Submit Survey Anonymously</Text>
+              <Text>{t('submitAnom')}</Text>
             </View>}
             {!this.state.surveyLoading && (
               <TouchableOpacity
@@ -139,10 +140,7 @@ class HomeView extends PureComponent {
         <TouchableOpacity onPress={() => this.setState({takeAnom: false})}>
           <Image
             style={s.checkButton}
-            source={{
-              uri:
-                'https://dml2n2dpleynv.cloudfront.net/extensions/question-and-answer/checkbox_active.png',
-            }}
+            source={checkbox_active}
           />
         </TouchableOpacity>
       )
@@ -151,10 +149,7 @@ class HomeView extends PureComponent {
       <TouchableOpacity onPress={() => this.setState({takeAnom: true})}>
         <Image
           style={s.checkButton}
-          source={{
-            uri:
-              'https://dml2n2dpleynv.cloudfront.net/extensions/question-and-answer/checkbox_inactive.png',
-          }}
+          source={checkbox_inactive}
         />
       </TouchableOpacity>
     )
@@ -259,7 +254,7 @@ const s = StyleSheet.create({
   },
   anomBox: {
     flexDirection: 'row',
-    backgroundColor: "white",
+    backgroundColor: 'white',
     paddingTop: 15,
     paddingBottom: 15
   },

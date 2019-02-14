@@ -237,9 +237,7 @@ class App extends PureComponent {
               className={
                 a.key === this.state.configKey ? 'grayRightButtonCellSmall' : 'rightButtonCellSmall'
               }
-              // name={a.key}
-              // value={a.info}
-              onClick={() => this.loadBuilder(a, { history })}
+              onClick={() => this.loadBuilder(a, history)}
             >
               Edit
             </button>
@@ -278,7 +276,7 @@ class App extends PureComponent {
     }
   }
 
-  loadBuilder = (survey, { history }) => {
+  loadBuilder = (survey, history) => {
     this.setState({
       config: survey.info,
       configKey: survey.key,

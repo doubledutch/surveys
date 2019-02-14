@@ -17,7 +17,7 @@ import 'icheck/skins/square/blue.css'
 
 import * as widgets from 'surveyjs-widgets'
 
-import AnomIcon from './anomicon'
+import AnomIcon from './AnomIcon'
 
 widgets.icheck(SurveyKo, $)
 widgets.jquerybarrating(SurveyKo, $)
