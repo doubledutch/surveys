@@ -189,6 +189,7 @@ class HomeView extends PureComponent {
           newResults.push({
             question: questionTitle,
             answer,
+            id: question.name
           })
         }
       })
@@ -199,7 +200,7 @@ class HomeView extends PureComponent {
           newResults,
           creator: this.state.takeAnom ? {firstName: "", lastName:"Anonymous", email: ""} : this.state.currentUser,
           timeTaken: new Date().getTime(),
-          schemaVersion: 2
+          schemaVersion: 3
         })
         .then(() => this.setState({}))
         .catch(x => console.error(x))
