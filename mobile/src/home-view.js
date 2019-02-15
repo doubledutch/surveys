@@ -189,6 +189,7 @@ class HomeView extends PureComponent {
           newResults.push({
             question: questionTitle,
             answer,
+            id: question.name
           })
         }
       })
