@@ -151,7 +151,7 @@ class SurveyResults extends Component {
         email: item.email,
         timeTaken: new Date(item.timeTaken).toDateString(),
       }
-      item.newResults.forEach(item => {
+      item.newResults.forEach((item, i) => {
         const title = item.question
         let answer = ''
         const origAnswer = getAnswer(item)
@@ -166,8 +166,8 @@ class SurveyResults extends Component {
         } else {
           answer = origAnswer.toString()
         }
-        newItem[title] = answer
-        newItem.surveyTitle = JSON.parse(this.props.config).title
+        const adjustedTitleForExport = newItem[title] ? `${title}-Question:${i}` : title
+        newItem[adjustedTitleForExport] = answer
       })
       parsedResults.push(newItem)
     })
