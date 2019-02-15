@@ -24,6 +24,7 @@ import {
   WebView,
   AsyncStorage,
   View,
+  Image
 } from 'react-native'
 
 // rn-client must be imported before FirebaseConnector
@@ -32,6 +33,7 @@ import { provideFirebaseConnectorToReactComponent } from '@doubledutch/firebase-
 import i18n from './i18n'
 import SurveyTable from './SurveyTable'
 import Loading from './Loading'
+import { checkbox_active, checkbox_inactive } from './images'
 import surveyViewHtml from './surveyViewHtml'
 
 useStrings(i18n)
@@ -45,6 +47,8 @@ class HomeView extends PureComponent {
     disable: true,
     results: [],
     surveyLoading: true,
+    takeAnom: false,
+    allowAnom: false
   }
 
   componentDidMount() {
@@ -110,11 +114,15 @@ class HomeView extends PureComponent {
                 onLoadEnd={this.surveyLoadEnd}
               />
             </View>
+            {this.state.allowAnom && <View style={s.anomBox}>
+              {this.renderAnomIcon()}
+              <Text>{t('submitAnom')}</Text>
+            </View>}
             {!this.state.surveyLoading && (
               <TouchableOpacity
                 style={[s.backButton, { backgroundColor: this.state.primaryColor }]}
                 onPress={() =>
-                  this.setState({ showTable: true, config: '', configKey: '', disable: true })
+                  this.setState({ showTable: true, config: '', configKey: '', disable: true, allowAnom: false })
                 }
               >
                 <Text style={s.closeText}>{t('exit')}</Text>
@@ -123,6 +131,27 @@ class HomeView extends PureComponent {
           </KeyboardAvoidingView>
         )}
       </KeyboardAvoidingView>
+    )
+  }
+
+  renderAnomIcon = () => {
+    if (this.state.takeAnom) {
+      return (
+        <TouchableOpacity onPress={() => this.setState({takeAnom: false})}>
+          <Image
+            style={s.checkButton}
+            source={checkbox_active}
+          />
+        </TouchableOpacity>
+      )
+    }
+    return (
+      <TouchableOpacity onPress={() => this.setState({takeAnom: true})}>
+        <Image
+          style={s.checkButton}
+          source={checkbox_inactive}
+        />
+      </TouchableOpacity>
     )
   }
 
@@ -168,7 +197,7 @@ class HomeView extends PureComponent {
         .child(this.state.configKey)
         .push({
           newResults,
-          creator: this.state.currentUser,
+          creator: this.state.takeAnom ? {firstName: "", lastName:"Anonymous", email: ""} : this.state.currentUser,
           timeTaken: new Date().getTime(),
           schemaVersion: 2
         })
@@ -192,7 +221,7 @@ class HomeView extends PureComponent {
         })
       }
     })
-    this.setState({ config: JSON.stringify(parsedInfo), configKey: item.key, disable: false })
+    this.setState({ config: JSON.stringify(parsedInfo), configKey: item.key, disable: false, allowAnom: item.allowAnom })
   }
 
   injectedJavaScript = () => `
@@ -223,6 +252,12 @@ const s = StyleSheet.create({
     flex: 1,
     backgroundColor: '#EFEFEF',
   },
+  anomBox: {
+    flexDirection: 'row',
+    backgroundColor: 'white',
+    paddingTop: 15,
+    paddingBottom: 15
+  },
   web: {
     flex: 1,
   },
@@ -243,6 +278,13 @@ const s = StyleSheet.create({
   closeText: {
     color: 'white',
     fontSize: 16,
+  },
+  checkButton: {
+    justifyContent: 'center',
+    marginLeft: 15,
+    marginRight: 15,
+    height: 19,
+    width: 19,
   },
   task: {
     flex: 1,

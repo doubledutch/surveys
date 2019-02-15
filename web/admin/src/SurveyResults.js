@@ -78,9 +78,11 @@ class SurveyResults extends Component {
           )}
         </ul>
         <div className="csvLinkBox">
-          <button className="button" onClick={() => this.prepareCsv(newResults)}>
-            {t('export')}
-          </button>
+          {newResults.length > 0 && (
+            <button className="button" onClick={() => this.prepareCsv(newResults)}>
+              {t('export')}
+            </button>
+          )}
           {this.state.exporting ? (
             <CSVDownload data={this.state.exportList} filename="results.csv" target="_blank" />
           ) : null}
@@ -145,7 +147,9 @@ class SurveyResults extends Component {
   parseResultsForExport = results => {
     const parsedResults = []
     results.forEach(item => {
+      const surveyTitle = JSON.parse(this.props.config).title
       const newItem = {
+        surveyTitle,
         firstName: item.creator.firstName,
         lastName: item.creator.lastName,
         email: item.email,
