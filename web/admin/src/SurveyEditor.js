@@ -16,7 +16,7 @@ import 'jquery-bar-rating'
 import 'icheck/skins/square/blue.css'
 
 import * as widgets from 'surveyjs-widgets'
-import AnomIcon from './CheckIcon'
+import CheckIcon from './CheckIcon'
 
 widgets.icheck(SurveyKo, $)
 widgets.jquerybarrating(SurveyKo, $)
@@ -52,10 +52,10 @@ class SurveyEditor extends Component {
     this.setState({ allowAnom: this.props.allowAnom || false })
     const editorOptions = {
       showEmbededSurveyTab: false,
-      showPropertyGrid: false,
+      showPropertyGrid: true,
       showPagesToolbox: true,
       useTabsInElementEditor: true,
-      showJSONEditorTab: false,
+      showJSONEditorTab: true,
       questionTypes: [
         'text',
         'checkbox',
@@ -108,7 +108,7 @@ class SurveyEditor extends Component {
         </div>
         <div className="settingsContainer">
           <p className="boxTitleBold">{t('allow_anom')}</p>
-          <AnomIcon
+          <CheckIcon
             allowAnom={this.state.allowAnom}
             offApprove={this.reSaveOff}
             onApprove={this.reSaveOn}

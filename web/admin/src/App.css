@@ -180,10 +180,10 @@ button.displayButton:focus, button.displayButton:active {
   position: absolute;
   top: 0;
   left: 0;
-  height: 16px;
-  width: 16px;
+  height: 22px;
+  width: 22px;
   background-color: white;
-  border-radius: 50%;
+  border-radius: 11px;
   border: 1px solid #4A90E2;
 }
 
@@ -214,7 +214,7 @@ button.displayButton:focus, button.displayButton:active {
   left: 1px;
   width: 18px;
   height: 18px;
-  border-radius: 50%;
+  border-radius: 9px;
   background: #4A90E2;
 }
 
