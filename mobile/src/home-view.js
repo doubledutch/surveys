@@ -198,11 +198,11 @@ class HomeView extends PureComponent {
         .child(this.state.configKey)
         .push({
           newResults,
-          creator: this.state.takeAnom ? {firstName: "", lastName:"Anonymous", email: ""} : this.state.currentUser,
+          creator: this.state.takeAnom ? {firstName: "", lastName:"Anonymous", email: "", id: ""} : this.state.currentUser,
           timeTaken: new Date().getTime(),
           schemaVersion: 3
         })
-        .then(() => this.setState({}))
+        .then(() => this.setState({allowAnom: false}))
         .catch(x => console.error(x))
     }
   }
