@@ -52,7 +52,7 @@ class SurveyEditor extends Component {
     this.setState({ allowAnom: this.props.allowAnom || false })
     const editorOptions = {
       showEmbededSurveyTab: false,
-      showPropertyGrid: true,
+      showPropertyGrid: false,
       showPagesToolbox: true,
       useTabsInElementEditor: true,
       showJSONEditorTab: true,
