@@ -30,6 +30,8 @@ class SurveyEditor extends Component {
     super(props)
     this.state = {
       allowAnom: false,
+      showControls: false,
+      localConfig: this.props.config || '',
     }
     const mainColor = '#73aaf3'
     const mainHoverColor = '#73aaf3'
@@ -52,7 +54,7 @@ class SurveyEditor extends Component {
     this.setState({ allowAnom: this.props.allowAnom || false })
     const editorOptions = {
       showEmbededSurveyTab: false,
-      showPropertyGrid: false,
+      showPropertyGrid: this.state.showControls,
       showPagesToolbox: true,
       useTabsInElementEditor: true,
       showJSONEditorTab: true,
@@ -74,7 +76,37 @@ class SurveyEditor extends Component {
     this.editor.haveCommercialLicense = true
     this.editor.isAutoSave = true
     this.editor.saveSurveyFunc = this.saveMySurvey
-    this.editor.text = this.props.config || ''
+    this.editor.text = this.state.localConfig
+  }
+
+  componentDidUpdate(nextProps, nextState) {
+    if (this.state.showControls !== nextState.showControls) {
+      const editorOptions = {
+        showEmbededSurveyTab: false,
+        showPropertyGrid: this.state.showControls,
+        showPagesToolbox: true,
+        useTabsInElementEditor: true,
+        showJSONEditorTab: true,
+        questionTypes: [
+          'text',
+          'checkbox',
+          'radiogroup',
+          'dropdown',
+          'boolean',
+          'matrix',
+          'matrixdynamic',
+          'imagepicker',
+          'comment',
+          'expression',
+          'multipletext',
+        ],
+      }
+      this.editor = new SurveyJSEditor.SurveyEditor('editorElement', editorOptions)
+      this.editor.haveCommercialLicense = true
+      this.editor.isAutoSave = true
+      this.editor.saveSurveyFunc = this.saveMySurvey
+      this.editor.text = this.state.localConfig
+    }
   }
 
   render() {
@@ -113,9 +145,29 @@ class SurveyEditor extends Component {
             offApprove={this.reSaveOff}
             onApprove={this.reSaveOn}
           />
+          <p className="boxTitleBold">{t('allow_controls')}</p>
+          <CheckIcon
+            allowAnom={this.state.showControls}
+            offApprove={this.controlsOff}
+            onApprove={this.controlsOn}
+          />
         </div>
       </div>
     )
+  }
+
+  controlsOn = () => {
+    const showControls = true
+    if (showControls !== this.state.showControls) {
+      this.setState({ showControls, localConfig: this.editor.text })
+    }
+  }
+
+  controlsOff = () => {
+    const showControls = false
+    if (showControls !== this.state.showControls) {
+      this.setState({ showControls, localConfig: this.editor.text })
+    }
   }
 
   reSaveOn = () => {

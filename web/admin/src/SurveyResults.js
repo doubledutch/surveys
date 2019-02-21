@@ -128,21 +128,21 @@ class SurveyResults extends Component {
             {t('hide_results')}
           </button>
         </div>
-        {results.map(item => {
+        {results.map(data => {
           let answer = ''
-          const origAnswer = getAnswer(item)
+          const origAnswer = getAnswer(item.schemaVersion, data)
           if (typeof origAnswer === 'object' && !origAnswer.length) {
             answer = JSON.stringify(origAnswer)
-          } else if (typeof item.answer === 'object' && origAnswer.length) {
-            answer = origAnswer.map(answer =>
-              typeof answer === 'object' && !answer.length
-                ? JSON.stringify(answer)
-                : answer.toString(),
+          } else if (typeof origAnswer === 'object' && origAnswer.length) {
+            answer = origAnswer.map(answerItem =>
+              typeof answerItem === 'object' && !answerItem.length
+                ? JSON.stringify(answerItem)
+                : answerItem.toString(),
             )
           } else answer = origAnswer.toString()
           return (
             <div className="subCell">
-              <li className="subCellText">{`${item.question}: ${answer}`}</li>
+              <li className="subCellText">{`${data.question}: ${answer}`}</li>
             </div>
           )
         })}
@@ -155,7 +155,6 @@ class SurveyResults extends Component {
     // This new variable is to take into account question keys so that we can properly parse duplicate questions in a survey
     const idExists = results.every(item => item.schemaVersion > 2)
     results.forEach(item => {
-      const surveyTitle = JSON.parse(this.props.config).title
       const newItem = {
         surveyTitle: JSON.parse(this.props.config).title,
         firstName: item.creator.firstName,
@@ -163,24 +162,27 @@ class SurveyResults extends Component {
         email: item.email,
         timeTaken: new Date(item.timeTaken).toDateString(),
       }
-      item.newResults.forEach((item, i) => {
-        const title = item.question
+      item.newResults.forEach((data, i) => {
+        const title = data.question
         let answer = ''
-        const origAnswer = getAnswer(item)
+        const origAnswer = getAnswer(item.schemaVersion, data)
         if (typeof origAnswer === 'object' && !origAnswer.length) {
           answer = stringifyForCsv(origAnswer)
         } else if (typeof origAnswer === 'object' && origAnswer.length) {
-          answer = origAnswer.map(answer =>
-            typeof answer === 'object' && !answer.length
-              ? stringifyForCsv(answer)
-              : answer.toString(),
-          )
+          answer = origAnswer
+            .map(newAnswer =>
+              typeof newAnswer === 'object' && !newAnswer.length
+                ? stringifyForCsv(newAnswer)
+                : newAnswer.toString(),
+            )
+            .join('; ')
         } else {
           answer = origAnswer.toString()
         }
         let adjustedTitleForExport = newItem[title] ? `${title}-Question:${i}` : title
+        adjustedTitleForExport = adjustedTitleForExport.replace(/\./g, '')
         if (idExists) {
-          adjustedTitleForExport = item.id
+          adjustedTitleForExport = data.id
         }
         newItem[adjustedTitleForExport] = answer
       })
@@ -242,7 +244,8 @@ class SurveyResults extends Component {
   }
 }
 
-const getAnswer = item => (item.schemaVersion > 1 ? JSON.parse(item.answer) : item.answer)
+const getAnswer = (schemaVersion, item) =>
+  schemaVersion > 1 ? JSON.parse(item.answer) : item.answer
 
 function stringifyForCsv(obj) {
   return Object.entries(obj)
