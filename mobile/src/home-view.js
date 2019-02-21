@@ -165,7 +165,7 @@ class HomeView extends PureComponent {
   }
 
   closeSurveyModal = () => {
-    this.setState({ showTable: false })
+    this.setState({ showTable: false, takeAnom: false })
   }
 
   saveResults = resultsString => {
