@@ -102,7 +102,6 @@ class SurveyEditor extends Component {
         ],
       }
       this.editor = new SurveyJSEditor.SurveyEditor('editorElement', editorOptions)
-      this.editor = new SurveyJSEditor.SurveyEditor('editorElement', editorOptions)
       this.editor.haveCommercialLicense = true
       this.editor.isAutoSave = true
       this.editor.saveSurveyFunc = this.saveMySurvey
