@@ -70,6 +70,13 @@ class HomeView extends PureComponent {
           const surveys = Object.entries(data.val() || {}).map(([key, val]) => ({ ...val, key }))
           this.setState({ surveys })
           this.saveLocalSurveys({ surveys })
+          if (this.state.configKey) {
+            const localSurvey = surveys.find(survey => survey.key === this.state.configKey)
+            const disableSurveySelect = localSurvey ? !localSurvey.isViewable : true
+            if (disableSurveySelect){
+              this.setState({disabled: true, config: '', configKey: ''})
+            }
+          }
         })
       })
     })
@@ -165,7 +172,7 @@ class HomeView extends PureComponent {
   }
 
   closeSurveyModal = () => {
-    this.setState({ showTable: false })
+    this.setState({ showTable: false, takeAnom: false })
   }
 
   saveResults = resultsString => {
