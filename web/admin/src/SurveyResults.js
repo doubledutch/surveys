@@ -179,8 +179,10 @@ class SurveyResults extends Component {
         } else {
           answer = origAnswer.toString()
         }
-        let adjustedTitleForExport = newItem[title] ? `${title}-Question:${i}` : title
-        adjustedTitleForExport = adjustedTitleForExport.replace(/\./g, ' ')
+        let adjustedTitleForExport = title.replace(/\./g, ' ')
+        adjustedTitleForExport = newItem[adjustedTitleForExport]
+          ? `${adjustedTitleForExport}-Question:${i}`
+          : adjustedTitleForExport
         if (idExists) {
           adjustedTitleForExport = data.id
         }
