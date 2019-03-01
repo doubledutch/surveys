@@ -1,0 +1,23 @@
+{
+  "surveys" : "Encuestas",
+  "new_survey" : "Encuesta nueva",
+  "no_surveys" : "No se han encontrado encuestas",
+  "dup_alert" : "Ya existe una encuesta con este nombre. Por favor, cambia el nombre para publicarla",
+  "publish" : "publicar",
+  "unpublish" : "despublicar",
+  "delete_alert" : "¿Estás seguro de que quieres eliminar la encuesta?",
+  "confirm_alert" : "¿Estás seguro de que quieres ${state} esta encuesta?",
+  "editor" : "Editor",
+  "done" : "¡Lo has conseguido!",
+  "delete" : "Eliminar sesión",
+  "last_published" : "Publicado por última vez: ${time}",
+  "results" : "Resultados",
+  "hide" : "Esconder",
+  "show" : "Mostrar sección",
+  "select" : "Selecciona una encuesta para ver las respuestas",
+  "no_responses" : "No se han encontrado respuestas",
+  "export" : "Exportar resultados",
+  "show_results" : "Mostrar resultados",
+  "hide_results" : "Ocultar resultados",
+  "no_survey_select_message" : "Por favor, diseña una encuesta para acceder a la sección de respuestas"
+}
