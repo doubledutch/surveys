@@ -1,0 +1,23 @@
+{
+  "surveys" : "Enquêtes",
+  "new_survey" : "Nieuwe enquête",
+  "no_surveys" : "Geen enquêtes gevonden",
+  "dup_alert" : "Er bestaat al een enquête met deze naam. Wijzig de naam om te publiceren",
+  "publish" : "publiceren",
+  "unpublish" : "publicatie ongedaan maken",
+  "delete_alert" : "Weet u zeker dat u deze enquête wilt verwijderen?",
+  "confirm_alert" : "Weet u zeker dat u deze enquête wilt ${state}?",
+  "editor" : "Editor",
+  "done" : "Klaar",
+  "delete" : "Sessie verwijderen",
+  "last_published" : "Laatst gepubliceerd: ${time}",
+  "results" : "Resultaten",
+  "hide" : "Verbergen",
+  "show" : "Gedeelte weergeven",
+  "select" : "Selecteer een enquête om antwoorden te zien",
+  "no_responses" : "Geen antwoorden gevonden",
+  "export" : "Resultaten exporteren",
+  "show_results" : "Resultaten weergeven",
+  "hide_results" : "Resultaten verbergen",
+  "no_survey_select_message" : "Maak een enquête voor toegang tot het antwoordgedeelte"
+}

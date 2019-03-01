@@ -1,0 +1,23 @@
+{
+  "surveys" : "Sondaggi",
+  "new_survey" : "Nuovo sondaggio",
+  "no_surveys" : "Nessun sondaggio trovato",
+  "dup_alert" : "Esiste già un sondaggio con questo nome. Usa un altro nome per pubblicarlo",
+  "publish" : "pubblica",
+  "unpublish" : "annulla pubblicazione",
+  "delete_alert" : "Vuoi davvero eliminare questo sondaggio?",
+  "confirm_alert" : "Vuoi davvero ${state} questo sondaggio?",
+  "editor" : "Editore",
+  "done" : "Ce l'hai fatta!",
+  "delete" : "Elimina sessione",
+  "last_published" : "Ultima pubblicazione: ${time}",
+  "results" : "Risultati",
+  "hide" : "Nascondi",
+  "show" : "Mostra sezione",
+  "select" : "Seleziona un sondaggio per vedere le risposte",
+  "no_responses" : "Nessuna risposta trovata",
+  "export" : "Esporta i risultati",
+  "show_results" : "Mostra i risultati",
+  "hide_results" : "Nascondi i risultati",
+  "no_survey_select_message" : "Crea un sondaggio per accedere alla sezione delle risposte"
+}

@@ -1,0 +1,23 @@
+{
+  "surveys" : "Umfragen",
+  "new_survey" : "Neue Umfrage",
+  "no_surveys" : "Keine Umfragen gefunden",
+  "dup_alert" : "Eine Umfrage mit diesem Namen ist bereits vorhanden. Bitte umbenennen, um zu veröffentlichen",
+  "publish" : "veröffentlichen",
+  "unpublish" : "entfernen",
+  "delete_alert" : "Möchten Sie diese Umfrage wirklich löschen?",
+  "confirm_alert" : "Sind Sie sicher, dass Sie diese Umfrage ${state} möchten?",
+  "editor" : "Bearbeiter",
+  "done" : "Fertig",
+  "delete" : "Sitzung löschen",
+  "last_published" : "Letzte Veröffentlichung: ${time}",
+  "results" : "Ergebnisse",
+  "hide" : "Bereich ausblenden",
+  "show" : "Abschnitt anzeigen",
+  "select" : "Wählen Sie eine Umfrage aus, um die Antworten anzuzeigen",
+  "no_responses" : "Keine Antworten gefunden",
+  "export" : "Ergebnisse exportieren",
+  "show_results" : "Zeige Ergebnisse",
+  "hide_results" : "Ergebnisse ausblenden",
+  "no_survey_select_message" : "Erstellen Sie eine Umfrage, um auf den Antwortbereich zuzugreifen"
+}
