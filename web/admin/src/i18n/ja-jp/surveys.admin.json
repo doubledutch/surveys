@@ -1,0 +1,23 @@
+{
+  "surveys" : "アンケート",
+  "new_survey" : "新しいアンケート",
+  "no_surveys" : "アンケートが見つかりません",
+  "dup_alert" : "この名前のアンケートは既に存在しています。名前を変更して公開してください",
+  "publish" : "公開",
+  "unpublish" : "非公開",
+  "delete_alert" : "このアンケートを削除してもよろしいですか？",
+  "confirm_alert" : "このアンケートを${state}してもよろしいですか？",
+  "editor" : "編集者",
+  "done" : "お疲れ様でした！",
+  "delete" : "セッションを削除",
+  "last_published" : "最終公開日：${time}",
+  "results" : "結果",
+  "hide" : "セクションを非表示",
+  "show" : "セクションを表示",
+  "select" : "アンケートを選択して回答を見る",
+  "no_responses" : "回答が見つかりません",
+  "export" : "結果をエクスポート",
+  "show_results" : "結果を表示",
+  "hide_results" : "結果を非表示",
+  "no_survey_select_message" : "アンケートを作成して回答セクションにアクセスしてください"
+}

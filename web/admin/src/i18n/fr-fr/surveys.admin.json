@@ -1,0 +1,23 @@
+{
+  "surveys" : "Enquêtes",
+  "new_survey" : "Nouvelle enquête",
+  "no_surveys" : "Aucune enquête trouvée",
+  "dup_alert" : "Une enquête portant ce nom existe déjà. Veuillez la renommer pour la publier",
+  "publish" : "Publier",
+  "unpublish" : "annuler la publication de",
+  "delete_alert" : "Êtes-vous sûr de vouloir supprimer la question ?",
+  "confirm_alert" : "Êtes-vous sûr de vouloir ${state} cette enquête ?",
+  "editor" : "Éditeur",
+  "done" : "Vous avez réussi !",
+  "delete" : "Supprimer la session",
+  "last_published" : "Dernière publication : ${time}",
+  "results" : "Résultats",
+  "hide" : "Masquer",
+  "show" : "Afficher la section",
+  "select" : "Sélectionnez une enquête pour voir les réponses",
+  "no_responses" : "Aucune réponse trouvée",
+  "export" : "Exporter les résultats",
+  "show_results" : "Afficher les résultats",
+  "hide_results" : "Masquer les résultats",
+  "no_survey_select_message" : "Veuillez créer une enquête pour accéder à la section des réponses"
+}
