@@ -217,10 +217,6 @@ class SurveyResults extends Component {
   }
 
   prepareCsv = results => {
-    if (this.state.exporting) {
-      return
-    }
-
     const attendeeClickPromises = results.map(result =>
       this.props.client
         .getAttendee(result.creator.id)
