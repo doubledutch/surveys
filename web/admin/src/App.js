@@ -52,6 +52,8 @@ class App extends PureComponent {
       showBuilder: false,
       search: '',
       allowAnom: false,
+      eventData: {},
+      publishDate: new Date(),
     }
     this.signin = props.fbc
       .signinAdmin()
@@ -62,54 +64,57 @@ class App extends PureComponent {
   componentDidMount() {
     const { fbc } = this.props
     this.signin.then(() => {
-      client.getAttendees().then(users => {
-        this.setState({ attendees: users })
-        const survRef = fbc.database.public.adminRef('surveys')
-        const survDraftRef = fbc.database.public.adminRef('surveysDraft')
+      client.getCurrentEvent().then(evt => {
+        this.setState({ eventData: evt })
+        client.getAttendees().then(users => {
+          this.setState({ attendees: users })
+          const survRef = fbc.database.public.adminRef('surveys')
+          const survDraftRef = fbc.database.public.adminRef('surveysDraft')
 
-        mapPerUserPrivateAdminablePushedDataToObjectOfStateObjects(
-          fbc,
-          'results',
-          this,
-          'results',
-          (userId, key, value) => key,
-          userId => userId,
-        )
+          mapPerUserPrivateAdminablePushedDataToObjectOfStateObjects(
+            fbc,
+            'results',
+            this,
+            'results',
+            (userId, key, value) => key,
+            userId => userId,
+          )
 
-        survRef.on('child_added', data => {
-          this.setState({ surveys: [{ ...data.val(), key: data.key }, ...this.state.surveys] })
-        })
-
-        survRef.on('child_changed', data => {
-          const surveys = this.state.surveys.slice()
-          for (const i in surveys) {
-            if (surveys[i].key === data.key) {
-              surveys[i] = Object.assign({}, data.val())
-              surveys[i].key = data.key
-              this.setState({ surveys })
-            }
-          }
-        })
-        survRef.on('child_removed', data => {
-          this.setState({ surveys: this.state.surveys.filter(x => x.key !== data.key) })
-        })
-        survDraftRef.on('child_added', data => {
-          this.setState({
-            surveysDraft: [{ ...data.val(), key: data.key }, ...this.state.surveysDraft],
+          survRef.on('child_added', data => {
+            this.setState({ surveys: [{ ...data.val(), key: data.key }, ...this.state.surveys] })
           })
-        })
-        survDraftRef.on('child_changed', data => {
-          const surveys = this.state.surveysDraft.slice()
-          for (const i in surveys) {
-            if (surveys[i].key === data.key) {
-              surveys[i] = Object.assign({}, data.val())
-              surveys[i].key = data.key
-              this.setState({ surveysDraft: surveys })
+
+          survRef.on('child_changed', data => {
+            const surveys = this.state.surveys.slice()
+            for (const i in surveys) {
+              if (surveys[i].key === data.key) {
+                surveys[i] = Object.assign({}, data.val())
+                surveys[i].key = data.key
+                this.setState({ surveys })
+              }
             }
-          }
-        })
-        survDraftRef.on('child_removed', data => {
-          this.setState({ surveysDraft: this.state.surveysDraft.filter(x => x.key !== data.key) })
+          })
+          survRef.on('child_removed', data => {
+            this.setState({ surveys: this.state.surveys.filter(x => x.key !== data.key) })
+          })
+          survDraftRef.on('child_added', data => {
+            this.setState({
+              surveysDraft: [{ ...data.val(), key: data.key }, ...this.state.surveysDraft],
+            })
+          })
+          survDraftRef.on('child_changed', data => {
+            const surveys = this.state.surveysDraft.slice()
+            for (const i in surveys) {
+              if (surveys[i].key === data.key) {
+                surveys[i] = Object.assign({}, data.val())
+                surveys[i].key = data.key
+                this.setState({ surveysDraft: surveys })
+              }
+            }
+          })
+          survDraftRef.on('child_removed', data => {
+            this.setState({ surveysDraft: this.state.surveysDraft.filter(x => x.key !== data.key) })
+          })
         })
       })
     })
@@ -179,6 +184,8 @@ class App extends PureComponent {
                     handleChange={this.handleChange}
                     showHomePage={this.showHomePage}
                     deleteSurvey={this.deleteSurvey}
+                    eventData={this.state.eventData}
+                    publishDate={this.state.publishDate}
                   />
                 )
               }}
@@ -213,7 +220,8 @@ class App extends PureComponent {
         const isPublished = publishedVersion
           ? publishedVersion.info === a.info &&
             publishedVersion.isViewable &&
-            publishedVersion.allowAnom === a.allowAnom
+            publishedVersion.allowAnom === a.allowAnom &&
+            publishedVersion.publishDate === a.publishDate
           : false
         return (
           <div
@@ -281,6 +289,7 @@ class App extends PureComponent {
       config: survey.info,
       configKey: survey.key,
       allowAnom: survey.allowAnom,
+      publishDate: survey.publishDate ? new Date(survey.publishDate) : new Date(),
       showBuilder: true,
     })
     history.push(`/content/builder`)
@@ -305,6 +314,7 @@ class App extends PureComponent {
 
   publishConfig = (survey, isPublished) => {
     const info = survey.info
+    const publishDate = survey.publishDate
     const allowAnom = survey.allowAnom || false
     const state = isPublished ? t('unpublish') : t('publish')
     const name = JSON.parse(info).title
@@ -322,11 +332,11 @@ class App extends PureComponent {
       this.props.fbc.database.public
         .adminRef('surveys')
         .child(survey.key)
-        .update({ info, isViewable, lastUpdate: new Date().getTime(), allowAnom })
+        .update({ info, isViewable, lastUpdate: new Date().getTime(), allowAnom, publishDate })
     }
   }
 
-  saveDraft = (data, allowAnom) => {
+  saveDraft = (data, allowAnom, publishDate) => {
     const { fbc } = this.props
     let info = JSON.parse(data)
     info.title = info.title ? info.title : t('new_survey')
@@ -335,12 +345,22 @@ class App extends PureComponent {
       fbc.database.public
         .adminRef('surveysDraft')
         .child(this.state.configKey)
-        .update({ info, lastUpdate: new Date().getTime(), allowAnom })
+        .update({
+          info,
+          lastUpdate: new Date().getTime(),
+          allowAnom,
+          publishDate: publishDate.getTime(),
+        })
       this.setState({ config: info })
     } else {
       fbc.database.public
         .adminRef('surveysDraft')
-        .push({ info, lastUpdate: new Date().getTime(), allowAnom })
+        .push({
+          info,
+          lastUpdate: new Date().getTime(),
+          allowAnom,
+          publishDate: publishDate.getTime(),
+        })
         .then(ref => {
           this.setState({ config: info, configKey: ref.key })
         })

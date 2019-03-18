@@ -16,6 +16,7 @@ import 'jquery-bar-rating'
 import 'icheck/skins/square/blue.css'
 
 import * as widgets from 'surveyjs-widgets'
+import DateTimePicker from '@doubledutch/react-components/lib/DateTimePicker'
 import CheckIcon from './CheckIcon'
 
 widgets.icheck(SurveyKo, $)
@@ -32,6 +33,7 @@ class SurveyEditor extends Component {
       allowAnom: false,
       showControls: false,
       localConfig: this.props.config || '',
+      currentTime: null,
     }
     const mainColor = '#73aaf3'
     const mainHoverColor = '#73aaf3'
@@ -51,7 +53,10 @@ class SurveyEditor extends Component {
   }
 
   componentDidMount() {
-    this.setState({ allowAnom: this.props.allowAnom || false })
+    this.setState({
+      allowAnom: this.props.allowAnom || false,
+      currentTime: this.props.publishDate || new Date(),
+    })
     const editorOptions = {
       showEmbededSurveyTab: false,
       showPropertyGrid: this.state.showControls,
@@ -107,11 +112,15 @@ class SurveyEditor extends Component {
       this.editor.saveSurveyFunc = this.saveMySurvey
       this.editor.text = this.state.localConfig
     }
+    if (this.props.publishDate !== nextProps.publishDate) {
+      this.setState({ currentTime: nextProps.publishDate })
+    }
   }
 
   render() {
     const publishedVersion = this.props.surveys.find(survey => survey.key === this.props.configKey)
     const publishedTime = publishedVersion ? new Date(publishedVersion.lastUpdate) : undefined
+
     return (
       <div className="tableContainer">
         <div className="headerRow">
@@ -139,18 +148,30 @@ class SurveyEditor extends Component {
           {this.props.isEditorBoxDisplay && <div id="editorElement" />}
         </div>
         <div className="settingsContainer">
-          <p className="boxTitleBold">{t('allow_anom')}</p>
-          <CheckIcon
-            allowAnom={this.state.allowAnom}
-            offApprove={this.reSaveOff}
-            onApprove={this.reSaveOn}
-          />
-          <p className="boxTitleBold">{t('allow_controls')}</p>
-          <CheckIcon
-            allowAnom={this.state.showControls}
-            offApprove={this.controlsOff}
-            onApprove={this.controlsOn}
-          />
+          <div className="settingsSubContainer">
+            <p className="boxTitleBold">{t('allow_anom')}</p>
+            <CheckIcon
+              allowAnom={this.state.allowAnom}
+              offApprove={this.reSaveOff}
+              onApprove={this.reSaveOn}
+            />
+            <p className="boxTitleBold">{t('allow_controls')}</p>
+            <CheckIcon
+              allowAnom={this.state.showControls}
+              offApprove={this.controlsOff}
+              onApprove={this.controlsOn}
+            />
+          </div>
+          {this.state.currentTime && (
+            <div>
+              <p className="boxTitleBold">{t('publish_time')}</p>
+              <DateTimePicker
+                value={this.state.currentTime}
+                onChange={this.handleNewDate}
+                timeZone={this.props.eventData.timeZone}
+              />
+            </div>
+          )}
         </div>
       </div>
     )
@@ -170,11 +191,16 @@ class SurveyEditor extends Component {
     }
   }
 
+  handleNewDate = date => {
+    this.setState({ currentTime: date })
+    this.props.saveConfig(this.editor.text, true, date)
+  }
+
   reSaveOn = () => {
     const allowAnom = true
     if (allowAnom !== this.state.allowAnom) {
       this.setState({ allowAnom })
-      this.props.saveConfig(this.editor.text, true)
+      this.props.saveConfig(this.editor.text, true, this.state.currentTime)
     }
   }
 
@@ -182,13 +208,13 @@ class SurveyEditor extends Component {
     const allowAnom = false
     if (allowAnom !== this.state.allowAnom) {
       this.setState({ allowAnom })
-      this.props.saveConfig(this.editor.text, false)
+      this.props.saveConfig(this.editor.text, false, this.state.currentTime)
     }
   }
 
   saveMySurvey = () => {
     const { allowAnom } = this.state
-    this.props.saveConfig(this.editor.text, allowAnom)
+    this.props.saveConfig(this.editor.text, allowAnom, this.state.currentTime)
   }
 }
 
