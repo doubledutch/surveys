@@ -182,23 +182,23 @@ class HomeView extends PureComponent {
   }
 
   exportResults = (results) => {
-    let message = results.newResults
+    const message = results.newResults
       .map(data => {
-          let answer = ''
-          const origAnswer = getAnswer(results.schemaVersion, data)
-          if (typeof origAnswer === 'object' && !origAnswer.length) {
-            answer = JSON.stringify(origAnswer)
-          } else if (typeof origAnswer === 'object' && origAnswer.length) {
-            answer = origAnswer.map(answerItem =>
-              typeof answerItem === 'object' && !answerItem.length
-                ? JSON.stringify(answerItem)
-                : answerItem.toString(),
-            )
-          } else answer = origAnswer.toString()
-          return `${data.question}: ${answer}\n`
-        })
-        .join('\n\n')
-    Share.share({ message, title: 'Exported Results', subject: 'Exported Results'}, {})
+        let answer = ''
+        const origAnswer = getAnswer(results.schemaVersion, data)
+        if (typeof origAnswer === 'object' && !origAnswer.length) {
+          answer = JSON.stringify(origAnswer)
+        } else if (typeof origAnswer === 'object' && origAnswer.length) {
+          answer = origAnswer.map(answerItem =>
+            typeof answerItem === 'object' && !answerItem.length
+              ? JSON.stringify(answerItem)
+              : answerItem.toString(),
+          )
+        } else answer = origAnswer.toString()
+        return `${data.question}: ${answer}\n`
+      })
+      .join('\n\n')
+    Share.share({ message, title: t("exported_results"), subject: t("exported_results"), {})
   }
   
 
