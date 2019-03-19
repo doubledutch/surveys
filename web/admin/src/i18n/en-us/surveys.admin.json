@@ -21,5 +21,6 @@
   "hide_results": "Hide Results",
   "no_survey_select_message": "Please build a survey to access response section",
   "allow_anom": "Allow Attendees to take Survey Anonymously",
-  "allow_controls": "View additional survey controls"
+  "allow_controls": "View additional survey controls",
+  "publish_time": "Set Publish Time"
 }

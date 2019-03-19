@@ -67,7 +67,11 @@ class HomeView extends PureComponent {
           this.setState(({ results }) => ({ results: [...results, data.key] }))
         })
         survRef.on('value', data => {
-          const surveys = Object.entries(data.val() || {}).map(([key, val]) => ({ ...val, key }))
+          const today = new Date().getTime()
+          const surveys = Object.entries(data.val() || {}).map(([key, val]) => ({ ...val, key })).filter(survey => {
+            if (survey.publishDate) return survey.publishDate < today
+            else return true
+          })
           this.setState({ surveys })
           this.saveLocalSurveys({ surveys })
           if (this.state.configKey) {

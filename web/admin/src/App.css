@@ -151,6 +151,12 @@ button.displayButton:focus, button.displayButton:active {
 
 .settingsContainer{
   margin-top: 20px;
+  display: flex;
+  flex-flow: nowrap;
+}
+
+.settingsSubContainer {
+  margin-right: 100px;
 }
 
 /* Customize the label (the container) */
