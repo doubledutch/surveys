@@ -314,7 +314,7 @@ class App extends PureComponent {
 
   publishConfig = (survey, isPublished) => {
     const info = survey.info
-    const publishDate = survey.publishDate
+    const publishDate = survey.publishDate || new Date().getTime()
     const allowAnom = survey.allowAnom || false
     const state = isPublished ? t('unpublish') : t('publish')
     const name = JSON.parse(info).title

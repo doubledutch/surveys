@@ -19,6 +19,7 @@ import {
   KeyboardAvoidingView,
   Platform,
   StyleSheet,
+  Share,
   TouchableOpacity,
   Text,
   WebView,
@@ -48,7 +49,9 @@ class HomeView extends PureComponent {
     results: [],
     surveyLoading: true,
     takeAnom: false,
-    allowAnom: false
+    allowAnom: false,
+    surveyResults: null,
+    showSurveyResultsOption: false
   }
 
   componentDidMount() {
@@ -90,10 +93,6 @@ class HomeView extends PureComponent {
     const { suggestedTitle } = this.props
     if (!this.state.currentUser || !this.state.primaryColor || !this.state.surveys)
       return <Loading />
-    const htmlSource = { html: surveyViewHtml }
-    if (Platform.OS == 'android') {
-      htmlSource.baseUrl = 'file:///android_asset'
-    }
     const surveys = this.state.surveys.sort((a, b) => b.lastUpdate - a.lastUpdate)
     return (
       <KeyboardAvoidingView
@@ -111,35 +110,51 @@ class HomeView extends PureComponent {
             configKey={this.state.configKey}
             disable={this.state.disable}
           />
-        ) : (
-          <KeyboardAvoidingView style={s.container}>
-            {this.state.surveyLoading && <Loading />}
-            <View style={this.state.surveyLoading ? s.webHidden : s.web}>
-              <WebView
-                ref={input => (this.webview = input)}
-                originWhitelist={['*']}
-                source={htmlSource}
-                injectedJavaScript={this.injectedJavaScript()}
-                onMessage={e => this.saveResults(e.nativeEvent.data)}
-                onLoad={this.sendInfo}
-                onLoadEnd={this.surveyLoadEnd}
-              />
-            </View>
-            {this.state.allowAnom && <View style={s.anomBox}>
-              {this.renderAnomIcon()}
-              <Text>{t('submitAnom')}</Text>
-            </View>}
-            {!this.state.surveyLoading && (
-              <TouchableOpacity
-                style={[s.backButton, { backgroundColor: this.state.primaryColor }]}
-                onPress={() =>
-                  this.setState({ showTable: true, config: '', configKey: '', disable: true, allowAnom: false })
-                }
-              >
-                <Text style={s.closeText}>{t('exit')}</Text>
-              </TouchableOpacity>
-            )}
-          </KeyboardAvoidingView>
+        ) : this.renderSurvey()}
+      </KeyboardAvoidingView>
+    )
+  }
+
+  renderSurvey = () => {
+    const htmlSource = { html: surveyViewHtml }
+    if (Platform.OS == 'android') {
+      htmlSource.baseUrl = 'file:///android_asset'
+    }
+    return (
+      <KeyboardAvoidingView style={s.container}>
+        {this.state.surveyLoading && <Loading />}
+        <View style={this.state.surveyLoading ? s.webHidden : s.web}>
+          <WebView
+            ref={input => (this.webview = input)}
+            originWhitelist={['*']}
+            source={htmlSource}
+            injectedJavaScript={this.injectedJavaScript()}
+            onMessage={e => this.saveResults(e.nativeEvent.data)}
+            onLoad={this.sendInfo}
+            onLoadEnd={this.surveyLoadEnd}
+          />
+        </View>
+        {this.state.allowAnom && <View style={s.anomBox}>
+          {this.renderAnomIcon()}
+          <Text>{t('submitAnom')}</Text>
+        </View>}
+        {this.state.showSurveyResultsOption && this.state.surveyResults && (
+          <TouchableOpacity
+            style={[s.backButton, { backgroundColor: this.state.primaryColor }]}
+            onPress={() => this.exportResults(this.state.surveyResults)}
+          >
+            <Text style={s.closeText}>Exports Results</Text>
+          </TouchableOpacity>
+        )}
+        {!this.state.surveyLoading && (
+          <TouchableOpacity
+            style={[s.backButton, { backgroundColor: this.state.primaryColor }]}
+            onPress={() =>
+              this.setState({ showTable: true, config: '', configKey: '', disable: true, allowAnom: false })
+            }
+          >
+            <Text style={s.closeText}>{t('exit')}</Text>
+          </TouchableOpacity>
         )}
       </KeyboardAvoidingView>
     )
@@ -166,6 +181,27 @@ class HomeView extends PureComponent {
     )
   }
 
+  exportResults = (results) => {
+    const message = results.newResults
+      .map(data => {
+        let answer = ''
+        const origAnswer = getAnswer(results.schemaVersion, data)
+        if (typeof origAnswer === 'object' && !origAnswer.length) {
+          answer = JSON.stringify(origAnswer)
+        } else if (typeof origAnswer === 'object' && origAnswer.length) {
+          answer = origAnswer.map(answerItem =>
+            typeof answerItem === 'object' && !answerItem.length
+              ? JSON.stringify(answerItem)
+              : answerItem.toString(),
+          )
+        } else answer = origAnswer.toString()
+        return `${data.question}: ${answer}\n`
+      })
+      .join('\n\n')
+    Share.share({ message, title: t("exported_results"), subject: t("exported_results"), {})
+  }
+  
+
   surveyLoadEnd = () => {
     this.setState({ surveyLoading: false })
   }
@@ -176,7 +212,7 @@ class HomeView extends PureComponent {
   }
 
   closeSurveyModal = () => {
-    this.setState({ showTable: false, takeAnom: false })
+    this.setState({ showTable: false, takeAnom: false, showSurveyResultsOption: false })
   }
 
   saveResults = resultsString => {
@@ -213,7 +249,7 @@ class HomeView extends PureComponent {
           timeTaken: new Date().getTime(),
           schemaVersion: 3
         })
-        .then(() => this.setState({allowAnom: false}))
+        .then(() => this.setState({allowAnom: false, surveyResults: {newResults, schemaVersion : 3}, showSurveyResultsOption: true}))
         .catch(x => console.error(x))
     }
   }
@@ -235,6 +271,8 @@ class HomeView extends PureComponent {
     })
     this.setState({ config: JSON.stringify(parsedInfo), configKey: item.key, disable: false, allowAnom: item.allowAnom })
   }
+
+
 
   injectedJavaScript = () => `
   `
@@ -346,3 +384,6 @@ export default provideFirebaseConnectorToReactComponent(
   (props, fbc) => <HomeView {...props} fbc={fbc} />,
   PureComponent,
 )
+
+const getAnswer = (schemaVersion, item) =>
+  schemaVersion > 1 ? JSON.parse(item.answer) : item.answer
