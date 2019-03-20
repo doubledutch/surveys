@@ -372,5 +372,10 @@ button.displayButton:focus, button.displayButton:active {
   text-align: center;
   margin-top: 90px;
   font-size: 18px;
+}
 
+.pdfBox {
+  margin-bottom: 20px;
+  border: 1px solid #E3ECF8;
+  border-radius: 4px;
 }

@@ -78,21 +78,30 @@ class SurveyResults extends Component {
             this.state.expandedItem === item ? this.expandedCell(item) : this.standardCell(item),
           )}
         </ul>
-        <div className="csvLinkBox">
-          {newResults.length > 0 && (
+        {newResults.length > 0 && (
+          <div className="csvLinkBox">
+            <a
+              className="dd-bordered"
+              href={this.bigScreenUrl()}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              View All Results
+            </a>
             <button className="button" onClick={() => this.prepareCsv(newResults)}>
               {t('export')}
             </button>
-          )}
-          {this.state.exporting ? (
-            <CSVDownload
-              data={this.state.exportList}
-              headers={this.state.exportHeaders}
-              filename="results.csv"
-              target="_blank"
-            />
-          ) : null}
-        </div>
+
+            {this.state.exporting ? (
+              <CSVDownload
+                data={this.state.exportList}
+                headers={this.state.exportHeaders}
+                filename="results.csv"
+                target="_blank"
+              />
+            ) : null}
+          </div>
+        )}
       </div>
     )
   }
@@ -192,6 +201,13 @@ class SurveyResults extends Component {
     })
     return parsedResults
   }
+
+  bigScreenUrl = () =>
+    this.props.longLivedToken
+      ? `?page=exportResultsScreen&configKey=${encodeURIComponent(
+          this.props.configKey,
+        )}&token=${encodeURIComponent(this.props.longLivedToken)}`
+      : null
 
   prepareHeaders = results => {
     // This function is to take into account question keys so that we can properly parse duplicate questions in a survey for export
