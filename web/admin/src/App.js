@@ -23,7 +23,7 @@ import { mapPerUserPrivateAdminablePushedDataToObjectOfStateObjects } from '@dou
 import { HashRouter as Router, Redirect, Route } from 'react-router-dom'
 import i18n from './i18n'
 import 'react-tabs/style/react-tabs.css'
-
+import ExportResultsScreen from './ExportResultsScreen'
 import SurveyWrapper from './SurveyWrapper'
 import SurveyEditor from './SurveyEditor'
 import SurveyResults from './SurveyResults'
@@ -34,6 +34,10 @@ import $ from 'jquery'
 import 'jquery-ui/ui/widgets/datepicker.js'
 import 'select2/dist/js/select2.js'
 import 'jquery-bar-rating'
+import { parseQueryString } from './utils'
+
+const { token } = parseQueryString()
+if (token) client.longLivedToken = token
 
 useStrings(i18n)
 
@@ -43,7 +47,7 @@ class App extends PureComponent {
     this.state = {
       surveys: [],
       surveysDraft: [],
-      results: [],
+      results: {},
       config: '',
       configKey: '',
       isSurveysBoxDisplay: true,
@@ -51,6 +55,9 @@ class App extends PureComponent {
       isResultsBoxDisplay: true,
       showBuilder: false,
       search: '',
+      allowAnom: false,
+      eventData: {},
+      publishDate: new Date(),
     }
     this.signin = props.fbc
       .signinAdmin()
@@ -60,139 +67,155 @@ class App extends PureComponent {
 
   componentDidMount() {
     const { fbc } = this.props
+
     this.signin.then(() => {
-      client.getAttendees().then(users => {
-        this.setState({ attendees: users })
-        const survRef = fbc.database.public.adminRef('surveys')
-        const survDraftRef = fbc.database.public.adminRef('surveysDraft')
+      fbc.getLongLivedAdminToken().then(longLivedToken => {
+        this.setState({ longLivedToken })
+        client.getAttendees().then(users => {
+          this.setState({ attendees: users })
+          const survRef = fbc.database.public.adminRef('surveys')
+          const survDraftRef = fbc.database.public.adminRef('surveysDraft')
 
-        mapPerUserPrivateAdminablePushedDataToObjectOfStateObjects(
-          fbc,
-          'results',
-          this,
-          'results',
-          (userId, key, value) => key,
-          userId => userId,
-        )
+          mapPerUserPrivateAdminablePushedDataToObjectOfStateObjects(
+            fbc,
+            'results',
+            this,
+            'results',
+            (userId, key, value) => key,
+            userId => userId,
+          )
 
-        survRef.on('child_added', data => {
-          this.setState({ surveys: [{ ...data.val(), key: data.key }, ...this.state.surveys] })
-        })
-
-        survRef.on('child_changed', data => {
-          const surveys = this.state.surveys.slice()
-          for (const i in surveys) {
-            if (surveys[i].key === data.key) {
-              surveys[i] = Object.assign({}, data.val())
-              surveys[i].key = data.key
-              this.setState({ surveys })
-            }
-          }
-        })
-        survRef.on('child_removed', data => {
-          this.setState({ surveys: this.state.surveys.filter(x => x.key !== data.key) })
-        })
-        survDraftRef.on('child_added', data => {
-          this.setState({
-            surveysDraft: [{ ...data.val(), key: data.key }, ...this.state.surveysDraft],
+          survRef.on('child_added', data => {
+            this.setState({ surveys: [{ ...data.val(), key: data.key }, ...this.state.surveys] })
           })
-        })
-        survDraftRef.on('child_changed', data => {
-          const surveys = this.state.surveysDraft.slice()
-          for (const i in surveys) {
-            if (surveys[i].key === data.key) {
-              surveys[i] = Object.assign({}, data.val())
-              surveys[i].key = data.key
-              this.setState({ surveysDraft: surveys })
+
+          survRef.on('child_changed', data => {
+            const surveys = this.state.surveys.slice()
+            for (const i in surveys) {
+              if (surveys[i].key === data.key) {
+                surveys[i] = Object.assign({}, data.val())
+                surveys[i].key = data.key
+                this.setState({ surveys })
+              }
             }
-          }
-        })
-        survDraftRef.on('child_removed', data => {
-          this.setState({ surveysDraft: this.state.surveysDraft.filter(x => x.key !== data.key) })
+          })
+          survRef.on('child_removed', data => {
+            this.setState({ surveys: this.state.surveys.filter(x => x.key !== data.key) })
+          })
+          survDraftRef.on('child_added', data => {
+            this.setState({
+              surveysDraft: [{ ...data.val(), key: data.key }, ...this.state.surveysDraft],
+            })
+          })
+          survDraftRef.on('child_changed', data => {
+            const surveys = this.state.surveysDraft.slice()
+            for (const i in surveys) {
+              if (surveys[i].key === data.key) {
+                surveys[i] = Object.assign({}, data.val())
+                surveys[i].key = data.key
+                this.setState({ surveysDraft: surveys })
+              }
+            }
+          })
+          survDraftRef.on('child_removed', data => {
+            this.setState({
+              surveysDraft: this.state.surveysDraft.filter(x => x.key !== data.key),
+            })
+          })
         })
       })
     })
   }
 
   render() {
+    const qs = parseQueryString()
     return (
       <div className="App">
-        <Router>
-          <div>
-            <Route
-              exact
-              path="/"
-              render={({ history }) => (
-                <div>
-                  <div className="tableContainer">
-                    <div className="headerRow">
-                      <h2 className="boxTitle">{t('surveys')}</h2>
-                      {this.state.isSurveysBoxDisplay && (
-                        <button
-                          className="dd-bordered leftMargin"
-                          onClick={() => this.addNewSurvey({ history })}
-                        >
-                          {t('new_survey')}
-                        </button>
-                      )}
-                      <div style={{ flex: 1 }} />
-                      <input
-                        className="searchBox"
-                        value={this.state.search}
-                        onChange={this.searchTable}
-                        placeholder="Search"
-                      />
-                    </div>
-                    {this.state.isSurveysBoxDisplay && (
-                      <div>
-                        <ul className="surveyTable">{this.renderSurveyTable({ history })}</ul>
+        {qs.page === 'exportResults' ? (
+          <ExportResultsScreen fbc={this.props.fbc} configKey={qs.configKey} />
+        ) : (
+          <Router>
+            <div>
+              <Route
+                exact
+                path="/"
+                render={({ history }) => (
+                  <div>
+                    <div className="tableContainer">
+                      <div className="headerRow">
+                        <h2 className="boxTitle">{t('surveys')}</h2>
+                        {this.state.isSurveysBoxDisplay && (
+                          <button
+                            className="dd-bordered leftMargin"
+                            onClick={() => this.addNewSurvey({ history })}
+                          >
+                            {t('new_survey')}
+                          </button>
+                        )}
+                        <div style={{ flex: 1 }} />
+                        <input
+                          className="searchBox"
+                          value={this.state.search}
+                          onChange={this.searchTable}
+                          placeholder="Search"
+                        />
                       </div>
-                    )}
+                      {this.state.isSurveysBoxDisplay && (
+                        <div>
+                          <ul className="surveyTable">{this.renderSurveyTable({ history })}</ul>
+                        </div>
+                      )}
+                    </div>
+                    <SurveyResults
+                      client={client}
+                      isResultsBoxDisplay={this.state.isResultsBoxDisplay}
+                      handleChange={this.handleChange}
+                      results={this.state.results}
+                      configKey={this.state.configKey}
+                      config={this.state.config}
+                      surveys={this.state.surveys}
+                      longLivedToken={this.state.longLivedToken}
+                      html5AppUrl={this.state.html5AppUrl}
+                    />
                   </div>
-                  <SurveyResults
-                    client={client}
-                    isResultsBoxDisplay={this.state.isResultsBoxDisplay}
-                    handleChange={this.handleChange}
-                    results={this.state.results}
-                    configKey={this.state.configKey}
-                    config={this.state.config}
-                    surveys={this.state.surveys}
-                  />
-                </div>
-              )}
-            />
-            <Route
-              exact
-              path="/content/builder"
-              render={({ history }) => {
-                if (!this.state.showBuilder) return <Redirect to="/" />
-                return (
-                  <SurveyEditor
-                    surveys={this.state.surveys}
-                    configKey={this.state.configKey}
-                    saveConfig={this.saveDraft}
-                    config={this.state.config}
-                    history={history}
-                    isEditorBoxDisplay={this.state.isEditorBoxDisplay}
-                    handleChange={this.handleChange}
-                    showHomePage={this.showHomePage}
-                    deleteSurvey={this.deleteSurvey}
-                  />
-                )
-              }}
-            />
-          </div>
-        </Router>
+                )}
+              />
+              <Route
+                exact
+                path="/content/builder"
+                render={({ history }) => {
+                  if (!this.state.showBuilder) return <Redirect to="/" />
+                  return (
+                    <SurveyEditor
+                      surveys={this.state.surveys}
+                      configKey={this.state.configKey}
+                      saveConfig={this.saveDraft}
+                      config={this.state.config}
+                      allowAnom={this.state.allowAnom}
+                      history={history}
+                      isEditorBoxDisplay={this.state.isEditorBoxDisplay}
+                      handleChange={this.handleChange}
+                      showHomePage={this.showHomePage}
+                      deleteSurvey={this.deleteSurvey}
+                      eventData={this.state.eventData}
+                      publishDate={this.state.publishDate}
+                    />
+                  )
+                }}
+              />
+            </div>
+          </Router>
+        )}
       </div>
     )
   }
 
   searchTable = event => {
-    this.setState({ search: event.target.value, config: '', configKey: '' })
+    this.setState({ search: event.target.value, config: '', configKey: '', allowAnom: false })
   }
 
   showHomePage = history => {
-    this.setState({ showBuilder: false, config: '', configKey: '' })
+    this.setState({ showBuilder: false, config: '', configKey: '', allowAnom: false })
     history.push(`/`)
   }
 
@@ -209,7 +232,10 @@ class App extends PureComponent {
         const parsedData = JSON.parse(a.info)
         const publishedVersion = this.state.surveys.find(survey => survey.key === a.key)
         const isPublished = publishedVersion
-          ? publishedVersion.info === a.info && publishedVersion.isViewable
+          ? publishedVersion.info === a.info &&
+            publishedVersion.isViewable &&
+            publishedVersion.allowAnom === a.allowAnom &&
+            publishedVersion.publishDate === a.publishDate
           : false
         return (
           <div
@@ -217,11 +243,17 @@ class App extends PureComponent {
             name={a.key}
             value={a.info}
             className="buttonRow"
-            onClick={event => this.loadConfig(event, a.key, a.info)}
+            onClick={event => this.loadConfig(event, a.key, a.info, a.allowAnom)}
           >
             <p className={a.key === this.state.configKey ? 'grayButtonCell' : 'buttonCell'}>
               {parsedData.title}
             </p>
+            <input
+              className={a.key === this.state.configKey ? 'grayButtonInput' : 'buttonInput'}
+              id={a.key}
+              type="text"
+              value={`dd://extensions/surveys?surveyId=${a.key}`}
+            />
             <span
               className={a.key === this.state.configKey ? 'grayRightButtonCell' : 'rightButtonCell'}
             >
@@ -233,9 +265,7 @@ class App extends PureComponent {
               className={
                 a.key === this.state.configKey ? 'grayRightButtonCellSmall' : 'rightButtonCellSmall'
               }
-              name={a.key}
-              value={a.info}
-              onClick={event => this.loadBuilder(event, { history })}
+              onClick={() => this.loadBuilder(a, history)}
             >
               Edit
             </button>
@@ -274,8 +304,14 @@ class App extends PureComponent {
     }
   }
 
-  loadBuilder = (event, { history }) => {
-    this.setState({ config: event.target.value, configKey: event.target.name, showBuilder: true })
+  loadBuilder = (survey, history) => {
+    this.setState({
+      config: survey.info,
+      configKey: survey.key,
+      allowAnom: survey.allowAnom,
+      publishDate: survey.publishDate ? new Date(survey.publishDate) : new Date(),
+      showBuilder: true,
+    })
     history.push(`/content/builder`)
   }
 
@@ -298,6 +334,8 @@ class App extends PureComponent {
 
   publishConfig = (survey, isPublished) => {
     const info = survey.info
+    const publishDate = survey.publishDate || new Date().getTime()
+    const allowAnom = survey.allowAnom || false
     const state = isPublished ? t('unpublish') : t('publish')
     const name = JSON.parse(info).title
     const isDup = this.state.surveysDraft.find(
@@ -314,11 +352,11 @@ class App extends PureComponent {
       this.props.fbc.database.public
         .adminRef('surveys')
         .child(survey.key)
-        .update({ info, isViewable, lastUpdate: new Date().getTime() })
+        .update({ info, isViewable, lastUpdate: new Date().getTime(), allowAnom, publishDate })
     }
   }
 
-  saveDraft = data => {
+  saveDraft = (data, allowAnom, publishDate) => {
     const { fbc } = this.props
     let info = JSON.parse(data)
     info.title = info.title ? info.title : t('new_survey')
@@ -327,12 +365,22 @@ class App extends PureComponent {
       fbc.database.public
         .adminRef('surveysDraft')
         .child(this.state.configKey)
-        .update({ info, lastUpdate: new Date().getTime() })
+        .update({
+          info,
+          lastUpdate: new Date().getTime(),
+          allowAnom,
+          publishDate: publishDate.getTime(),
+        })
       this.setState({ config: info })
     } else {
       fbc.database.public
         .adminRef('surveysDraft')
-        .push({ info, lastUpdate: new Date().getTime() })
+        .push({
+          info,
+          lastUpdate: new Date().getTime(),
+          allowAnom,
+          publishDate: publishDate.getTime(),
+        })
         .then(ref => {
           this.setState({ config: info, configKey: ref.key })
         })

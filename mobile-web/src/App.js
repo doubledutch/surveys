@@ -26,7 +26,6 @@ import "select2/dist/css/select2.css";
 import "jquery-ui/themes/base/all.css";
 import "nouislider/distribute/nouislider.css";
 
-
 import $ from 'jquery';
 import jquery from 'jquery';
 window.$ = window.jQuery = jquery;

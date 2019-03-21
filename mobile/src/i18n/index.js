@@ -1,12 +1,12 @@
-import enUS from './en-us/surveys.admin.json'
+import enUS from './en-us/surveys.mobile.json'
 
-import arINT from './ar-int/surveys.admin.json'
-import deDE from './de-de/surveys.admin.json'
-import esES from './es-es/surveys.admin.json'
-import frFR from './fr-fr/surveys.admin.json'
-import itIT from './it-it/surveys.admin.json'
-import jaJP from './ja-jp/surveys.admin.json'
-import nlNL from './nl-nl/surveys.admin.json'
+import arINT from './ar-int/surveys.mobile.json'
+import deDE from './de-de/surveys.mobile.json'
+import esES from './es-es/surveys.mobile.json'
+import frFR from './fr-fr/surveys.mobile.json'
+import itIT from './it-it/surveys.mobile.json'
+import jaJP from './ja-jp/surveys.mobile.json'
+import nlNL from './nl-nl/surveys.mobile.json'
 
 export default {
   '': enUS,

@@ -19,11 +19,13 @@ import {
   KeyboardAvoidingView,
   Platform,
   StyleSheet,
+  Share,
   TouchableOpacity,
   Text,
   WebView,
   AsyncStorage,
   View,
+  Image
 } from 'react-native'
 
 // rn-client must be imported before FirebaseConnector
@@ -32,6 +34,7 @@ import { provideFirebaseConnectorToReactComponent } from '@doubledutch/firebase-
 import i18n from './i18n'
 import SurveyTable from './SurveyTable'
 import Loading from './Loading'
+import { checkbox_active, checkbox_inactive } from './images'
 import surveyViewHtml from './surveyViewHtml'
 
 useStrings(i18n)
@@ -45,10 +48,14 @@ class HomeView extends PureComponent {
     disable: true,
     results: [],
     surveyLoading: true,
+    takeAnom: false,
+    allowAnom: false,
+    surveyResults: null,
+    showSurveyResultsOption: false
   }
 
   componentDidMount() {
-    const { fbc } = this.props
+    const { fbc, surveyId } = this.props
     client.getCurrentEvent().then(currentEvent => this.setState({ currentEvent }))
     client.getPrimaryColor().then(primaryColor => this.setState({ primaryColor }))
     const signin = fbc.signin()
@@ -63,9 +70,27 @@ class HomeView extends PureComponent {
           this.setState(({ results }) => ({ results: [...results, data.key] }))
         })
         survRef.on('value', data => {
-          const surveys = Object.entries(data.val() || {}).map(([key, val]) => ({ ...val, key }))
+          const today = new Date().getTime()
+          const surveys = Object.entries(data.val() || {}).map(([key, val]) => ({ ...val, key })).filter(survey => {
+            if (survey.publishDate) return survey.publishDate < today
+            else return true
+          })
+          if (surveyId) {
+            const directSurvey = surveys.find(survey => survey.key === surveyId)
+            if (directSurvey){
+              this.selectSurvey(directSurvey)
+              this.setState({showTable: false})
+            }
+          }
           this.setState({ surveys })
           this.saveLocalSurveys({ surveys })
+          if (this.state.configKey) {
+            const localSurvey = surveys.find(survey => survey.key === this.state.configKey)
+            const disableSurveySelect = localSurvey ? !localSurvey.isViewable : true
+            if (disableSurveySelect){
+              this.setState({disabled: true, config: '', configKey: ''})
+            }
+          }
         })
       })
     })
@@ -75,10 +100,6 @@ class HomeView extends PureComponent {
     const { suggestedTitle } = this.props
     if (!this.state.currentUser || !this.state.primaryColor || !this.state.surveys)
       return <Loading />
-    const htmlSource = { html: surveyViewHtml }
-    if (Platform.OS == 'android') {
-      htmlSource.baseUrl = 'file:///android_asset'
-    }
     const surveys = this.state.surveys.sort((a, b) => b.lastUpdate - a.lastUpdate)
     return (
       <KeyboardAvoidingView
@@ -96,35 +117,97 @@ class HomeView extends PureComponent {
             configKey={this.state.configKey}
             disable={this.state.disable}
           />
-        ) : (
-          <KeyboardAvoidingView style={s.container}>
-            {this.state.surveyLoading && <Loading />}
-            <View style={this.state.surveyLoading ? s.webHidden : s.web}>
-              <WebView
-                ref={input => (this.webview = input)}
-                originWhitelist={['*']}
-                source={htmlSource}
-                injectedJavaScript={this.injectedJavaScript()}
-                onMessage={e => this.saveResults(e.nativeEvent.data)}
-                onLoad={this.sendInfo}
-                onLoadEnd={this.surveyLoadEnd}
-              />
-            </View>
-            {!this.state.surveyLoading && (
-              <TouchableOpacity
-                style={[s.backButton, { backgroundColor: this.state.primaryColor }]}
-                onPress={() =>
-                  this.setState({ showTable: true, config: '', configKey: '', disable: true })
-                }
-              >
-                <Text style={s.closeText}>{t('exit')}</Text>
-              </TouchableOpacity>
-            )}
-          </KeyboardAvoidingView>
+        ) : this.renderSurvey()}
+      </KeyboardAvoidingView>
+    )
+  }
+
+  renderSurvey = () => {
+    const htmlSource = { html: surveyViewHtml }
+    if (Platform.OS == 'android') {
+      htmlSource.baseUrl = 'file:///android_asset'
+    }
+    return (
+      <KeyboardAvoidingView style={s.container}>
+        {this.state.surveyLoading && <Loading />}
+        <View style={this.state.surveyLoading ? s.webHidden : s.web}>
+          <WebView
+            ref={input => (this.webview = input)}
+            originWhitelist={['*']}
+            source={htmlSource}
+            injectedJavaScript={this.injectedJavaScript()}
+            onMessage={e => this.saveResults(e.nativeEvent.data)}
+            onLoad={this.sendInfo}
+            onLoadEnd={this.surveyLoadEnd}
+          />
+        </View>
+        {this.state.allowAnom && <View style={s.anomBox}>
+          {this.renderAnomIcon()}
+          <Text>{t('submitAnom')}</Text>
+        </View>}
+        {this.state.showSurveyResultsOption && this.state.surveyResults && (
+          <TouchableOpacity
+            style={[s.backButton, { backgroundColor: this.state.primaryColor }]}
+            onPress={() => this.exportResults(this.state.surveyResults)}
+          >
+            <Text style={s.closeText}>Exports Results</Text>
+          </TouchableOpacity>
+        )}
+        {!this.state.surveyLoading && (
+          <TouchableOpacity
+            style={[s.backButton, { backgroundColor: this.state.primaryColor }]}
+            onPress={() =>
+              this.setState({ showTable: true, config: '', configKey: '', disable: true, allowAnom: false })
+            }
+          >
+            <Text style={s.closeText}>{t('exit')}</Text>
+          </TouchableOpacity>
         )}
       </KeyboardAvoidingView>
     )
   }
+
+  renderAnomIcon = () => {
+    if (this.state.takeAnom) {
+      return (
+        <TouchableOpacity onPress={() => this.setState({takeAnom: false})}>
+          <Image
+            style={s.checkButton}
+            source={checkbox_active}
+          />
+        </TouchableOpacity>
+      )
+    }
+    return (
+      <TouchableOpacity onPress={() => this.setState({takeAnom: true})}>
+        <Image
+          style={s.checkButton}
+          source={checkbox_inactive}
+        />
+      </TouchableOpacity>
+    )
+  }
+
+  exportResults = (results) => {
+    const message = results.newResults
+      .map(data => {
+        let answer = ''
+        const origAnswer = getAnswer(results.schemaVersion, data)
+        if (typeof origAnswer === 'object' && !origAnswer.length) {
+          answer = JSON.stringify(origAnswer)
+        } else if (typeof origAnswer === 'object' && origAnswer.length) {
+          answer = origAnswer.map(answerItem =>
+            typeof answerItem === 'object' && !answerItem.length
+              ? JSON.stringify(answerItem)
+              : answerItem.toString(),
+          )
+        } else answer = origAnswer.toString()
+        return `${data.question}: ${answer}\n`
+      })
+      .join('\n\n')
+    Share.share({ message, title: t("exported_results"), subject: t("exported_results")}, {})
+  }
+  
 
   surveyLoadEnd = () => {
     this.setState({ surveyLoading: false })
@@ -136,7 +219,7 @@ class HomeView extends PureComponent {
   }
 
   closeSurveyModal = () => {
-    this.setState({ showTable: false })
+    this.setState({ showTable: false, takeAnom: false, showSurveyResultsOption: false })
   }
 
   saveResults = resultsString => {
@@ -154,12 +237,13 @@ class HomeView extends PureComponent {
           question => question.name === item.replace('-Comment', ''),
         )
         if (question) {
-          const answer = origResults[item]
+          const answer = JSON.stringify(origResults[item])
           let questionTitle = question.title ? question.title : question.name
           questionTitle = question.label ? question.label : questionTitle
           newResults.push({
             question: questionTitle,
             answer,
+            id: question.name
           })
         }
       })
@@ -168,10 +252,11 @@ class HomeView extends PureComponent {
         .child(this.state.configKey)
         .push({
           newResults,
-          creator: this.state.currentUser,
+          creator: this.state.takeAnom ? {firstName: "", lastName:"Anonymous", email: "", id: ""} : this.state.currentUser,
           timeTaken: new Date().getTime(),
+          schemaVersion: 3
         })
-        .then(() => this.setState({}))
+        .then(() => this.setState({allowAnom: false, surveyResults: {newResults, schemaVersion : 3}, showSurveyResultsOption: true}))
         .catch(x => console.error(x))
     }
   }
@@ -191,8 +276,10 @@ class HomeView extends PureComponent {
         })
       }
     })
-    this.setState({ config: JSON.stringify(parsedInfo), configKey: item.key, disable: false })
+    this.setState({ config: JSON.stringify(parsedInfo), configKey: item.key, disable: false, allowAnom: item.allowAnom })
   }
+
+
 
   injectedJavaScript = () => `
   `
@@ -222,6 +309,12 @@ const s = StyleSheet.create({
     flex: 1,
     backgroundColor: '#EFEFEF',
   },
+  anomBox: {
+    flexDirection: 'row',
+    backgroundColor: 'white',
+    paddingTop: 15,
+    paddingBottom: 15
+  },
   web: {
     flex: 1,
   },
@@ -242,6 +335,13 @@ const s = StyleSheet.create({
   closeText: {
     color: 'white',
     fontSize: 16,
+  },
+  checkButton: {
+    justifyContent: 'center',
+    marginLeft: 15,
+    marginRight: 15,
+    height: 19,
+    width: 19,
   },
   task: {
     flex: 1,
@@ -291,3 +391,6 @@ export default provideFirebaseConnectorToReactComponent(
   (props, fbc) => <HomeView {...props} fbc={fbc} />,
   PureComponent,
 )
+
+const getAnswer = (schemaVersion, item) =>
+  schemaVersion > 1 ? JSON.parse(item.answer) : item.answer

@@ -88,6 +88,7 @@ export default class SurveyTable extends Component {
         <FlatList
           style={{ backgroundColor: '#EFEFEF' }}
           data={surveysOrdered}
+          extraData={this.state.survey}
           ListFooterComponent={<View style={{ height: 100 }} />}
           renderItem={({ item }) => (
             <TouchableOpacity
@@ -139,7 +140,7 @@ export default class SurveyTable extends Component {
       const queryResult = []
       this.props.surveys.forEach(content => {
         const title = JSON.parse(content.info).title
-        if (title) {
+        if (title && content.isViewable) {
           if (title.toLowerCase().indexOf(queryText) !== -1) {
             queryResult.push(content)
           }
@@ -259,8 +260,6 @@ const s = StyleSheet.create({
     marginBottom: 20,
     justifyContent: 'center',
     backgroundColor: '#9B9B9B',
-    paddingTop: 8,
-    paddingBottom: 8,
     paddingLeft: 8,
     paddingRight: 8,
     height: 22,

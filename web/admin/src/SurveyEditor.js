@@ -16,6 +16,8 @@ import 'jquery-bar-rating'
 import 'icheck/skins/square/blue.css'
 
 import * as widgets from 'surveyjs-widgets'
+import DateTimePicker from '@doubledutch/react-components/lib/DateTimePicker'
+import CheckIcon from './CheckIcon'
 
 widgets.icheck(SurveyKo, $)
 widgets.jquerybarrating(SurveyKo, $)
@@ -25,8 +27,14 @@ widgets.bootstrapslider(SurveyKo)
 class SurveyEditor extends Component {
   editor
 
-  constructor() {
-    super()
+  constructor(props) {
+    super(props)
+    this.state = {
+      allowAnom: false,
+      showControls: false,
+      localConfig: this.props.config || '',
+      currentTime: null,
+    }
     const mainColor = '#73aaf3'
     const mainHoverColor = '#73aaf3'
     const textColor = '#4a4a4a'
@@ -45,12 +53,16 @@ class SurveyEditor extends Component {
   }
 
   componentDidMount() {
+    this.setState({
+      allowAnom: this.props.allowAnom || false,
+      currentTime: this.props.publishDate || new Date(),
+    })
     const editorOptions = {
       showEmbededSurveyTab: false,
-      showPropertyGrid: false,
+      showPropertyGrid: this.state.showControls,
       showPagesToolbox: true,
       useTabsInElementEditor: true,
-      showJSONEditorTab: false,
+      showJSONEditorTab: true,
       questionTypes: [
         'text',
         'checkbox',
@@ -69,12 +81,46 @@ class SurveyEditor extends Component {
     this.editor.haveCommercialLicense = true
     this.editor.isAutoSave = true
     this.editor.saveSurveyFunc = this.saveMySurvey
-    this.editor.text = this.props.config || ''
+    this.editor.text = this.state.localConfig
+  }
+
+  componentDidUpdate(nextProps, nextState) {
+    if (this.state.showControls !== nextState.showControls) {
+      const editorOptions = {
+        showEmbededSurveyTab: false,
+        showPropertyGrid: this.state.showControls,
+        showPagesToolbox: true,
+        useTabsInElementEditor: true,
+        showJSONEditorTab: true,
+        questionTypes: [
+          'text',
+          'checkbox',
+          'radiogroup',
+          'dropdown',
+          'boolean',
+          'matrix',
+          'matrixdynamic',
+          'imagepicker',
+          'comment',
+          'expression',
+          'multipletext',
+        ],
+      }
+      this.editor = new SurveyJSEditor.SurveyEditor('editorElement', editorOptions)
+      this.editor.haveCommercialLicense = true
+      this.editor.isAutoSave = true
+      this.editor.saveSurveyFunc = this.saveMySurvey
+      this.editor.text = this.state.localConfig
+    }
+    if (this.props.publishDate !== nextProps.publishDate) {
+      this.setState({ currentTime: nextProps.publishDate })
+    }
   }
 
   render() {
     const publishedVersion = this.props.surveys.find(survey => survey.key === this.props.configKey)
     const publishedTime = publishedVersion ? new Date(publishedVersion.lastUpdate) : undefined
+
     return (
       <div className="tableContainer">
         <div className="headerRow">
@@ -101,12 +147,74 @@ class SurveyEditor extends Component {
         <div className="editorBox">
           {this.props.isEditorBoxDisplay && <div id="editorElement" />}
         </div>
+        <div className="settingsContainer">
+          <div className="settingsSubContainer">
+            <p className="boxTitleBold">{t('allow_anom')}</p>
+            <CheckIcon
+              allowAnom={this.state.allowAnom}
+              offApprove={this.reSaveOff}
+              onApprove={this.reSaveOn}
+            />
+            <p className="boxTitleBold">{t('allow_controls')}</p>
+            <CheckIcon
+              allowAnom={this.state.showControls}
+              offApprove={this.controlsOff}
+              onApprove={this.controlsOn}
+            />
+          </div>
+          {this.state.currentTime && (
+            <div>
+              <p className="boxTitleBold">{t('publish_time')}</p>
+              <DateTimePicker
+                value={this.state.currentTime}
+                onChange={this.handleNewDate}
+                timeZone={this.props.eventData.timeZone}
+              />
+            </div>
+          )}
+        </div>
       </div>
     )
   }
 
+  controlsOn = () => {
+    const showControls = true
+    if (showControls !== this.state.showControls) {
+      this.setState({ showControls, localConfig: this.editor.text })
+    }
+  }
+
+  controlsOff = () => {
+    const showControls = false
+    if (showControls !== this.state.showControls) {
+      this.setState({ showControls, localConfig: this.editor.text })
+    }
+  }
+
+  handleNewDate = date => {
+    this.setState({ currentTime: date })
+    this.props.saveConfig(this.editor.text, true, date)
+  }
+
+  reSaveOn = () => {
+    const allowAnom = true
+    if (allowAnom !== this.state.allowAnom) {
+      this.setState({ allowAnom })
+      this.props.saveConfig(this.editor.text, true, this.state.currentTime)
+    }
+  }
+
+  reSaveOff = () => {
+    const allowAnom = false
+    if (allowAnom !== this.state.allowAnom) {
+      this.setState({ allowAnom })
+      this.props.saveConfig(this.editor.text, false, this.state.currentTime)
+    }
+  }
+
   saveMySurvey = () => {
-    this.props.saveConfig(this.editor.text)
+    const { allowAnom } = this.state
+    this.props.saveConfig(this.editor.text, allowAnom, this.state.currentTime)
   }
 }
 

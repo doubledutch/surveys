@@ -16,7 +16,8 @@
 
 import React, { Component } from 'react'
 import { translate as t } from '@doubledutch/admin-client'
-import { CSVLink, CSVDownload } from 'react-csv'
+import { CSVDownload } from '@doubledutch/react-csv'
+import TableCell from './TableCell'
 
 class SurveyResults extends Component {
   constructor() {
@@ -26,6 +27,7 @@ class SurveyResults extends Component {
       expandedItem: '',
       exporting: false,
       exportList: [],
+      exportHeaders: null,
     }
   }
 
@@ -73,108 +75,116 @@ class SurveyResults extends Component {
           {this.props.configKey.length > 0 && results.length === 0 && (
             <p className="helpText">{t('no_responses')}</p>
           )}
-          {newResults.map(item =>
-            this.state.expandedItem === item ? this.expandedCell(item) : this.standardCell(item),
-          )}
+          {newResults.map(item => (
+            <TableCell
+              expandedItem={this.state.expandedItem}
+              item={item}
+              loadExpandedCell={this.loadExpandedCell}
+            />
+          ))}
         </ul>
-        <div className="csvLinkBox">
-          <button className="button" onClick={() => this.prepareCsv(newResults)}>
-            {t('export')}
-          </button>
-          {this.state.exporting ? (
-            <CSVDownload data={this.state.exportList} target="_blank" />
-          ) : null}
-        </div>
-      </div>
-    )
-  }
+        {newResults.length > 0 && (
+          <div className="csvLinkBox">
+            <a
+              className="dd-bordered"
+              href={this.bigScreenUrl()}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              View All Results
+            </a>
+            <button className="button" onClick={() => this.prepareCsv(newResults)}>
+              {t('export')}
+            </button>
 
-  standardCell = item => (
-    <div key={item.timeTaken} className="buttonRow">
-      <div className="buttonCell">
-        <p className="buttonText">
-          {`${item.creator.firstName} ${item.creator.lastName} - ${new Date(
-            item.timeTaken,
-          ).toDateString()}`}
-        </p>
-      </div>
-      <button className="rightButtonCell" onClick={() => this.loadExpandedCell(item)}>
-        {t('show_results')}
-      </button>
-    </div>
-  )
-
-  expandedCell = item => {
-    const results = item.newResults
-    return (
-      <div>
-        <div key={item.timeTaken} className="buttonRow">
-          <div className="grayButtonCell">
-            <p className="buttonText">
-              {`${item.creator.firstName} ${item.creator.lastName} - ${new Date(
-                item.timeTaken,
-              ).toDateString()}`}
-            </p>
+            {this.state.exporting ? (
+              <CSVDownload
+                data={this.state.exportList}
+                headers={this.state.exportHeaders}
+                filename="results.csv"
+                target="_blank"
+              />
+            ) : null}
           </div>
-          <button className="grayRightButtonCell" onClick={() => this.loadExpandedCell(item)}>
-            {t('hide_results')}
-          </button>
-        </div>
-        {results.map(item => {
-          let answer = ''
-          if (typeof item.answer === 'object' && !item.answer.length) {
-            answer = JSON.stringify(item.answer)
-          } else if (typeof item.answer === 'object' && item.answer.length) {
-            answer = item.answer.map(answer =>
-              typeof answer === 'object' && !answer.length
-                ? JSON.stringify(answer)
-                : answer.toString(),
-            )
-          } else answer = item.answer.toString()
-          return (
-            <div className="subCell">
-              <li className="subCellText">{`${item.question}: ${answer}`}</li>
-            </div>
-          )
-        })}
+        )}
       </div>
     )
   }
 
   parseResultsForExport = results => {
     const parsedResults = []
+    // This new variable is to take into account question keys so that we can properly parse duplicate questions in a survey
+    const idExists = results.every(item => item.schemaVersion > 2)
     results.forEach(item => {
       const newItem = {
+        surveyTitle: JSON.parse(this.props.config).title,
         firstName: item.creator.firstName,
         lastName: item.creator.lastName,
         email: item.email,
         timeTaken: new Date(item.timeTaken).toDateString(),
       }
-      item.newResults.forEach(item => {
-        const title = item.question
+      item.newResults.forEach((data, i) => {
+        const title = data.question
         let answer = ''
-        if (typeof item.answer === 'object' && !item.answer.length) {
-          answer = stringifyForCsv(item.answer)
-        } else if (typeof item.answer === 'object' && item.answer.length) {
-          answer = item.answer.map(answer =>
-            typeof answer === 'object' && !answer.length
-              ? stringifyForCsv(answer)
-              : answer.toString(),
-          )
-        } else answer = item.answer.toString()
-        newItem[title] = answer
-        newItem.surveyTitle = JSON.parse(this.props.config).title
+        const origAnswer = getAnswer(item.schemaVersion, data)
+        if (typeof origAnswer === 'object' && !origAnswer.length) {
+          answer = stringifyForCsv(origAnswer)
+        } else if (typeof origAnswer === 'object' && origAnswer.length) {
+          answer = origAnswer
+            .map(newAnswer =>
+              typeof newAnswer === 'object' && !newAnswer.length
+                ? stringifyForCsv(newAnswer)
+                : newAnswer.toString(),
+            )
+            .join('; ')
+        } else {
+          answer = origAnswer.toString()
+        }
+        let adjustedTitleForExport = title.replace(/\./g, ' ')
+        adjustedTitleForExport = newItem[adjustedTitleForExport]
+          ? `${adjustedTitleForExport}-Question:${i}`
+          : adjustedTitleForExport
+        if (idExists) {
+          adjustedTitleForExport = data.id
+        }
+        newItem[adjustedTitleForExport] = answer
       })
       parsedResults.push(newItem)
     })
     return parsedResults
   }
 
-  prepareCsv = results => {
-    if (this.state.exporting) {
-      return
+  bigScreenUrl = () =>
+    this.props.longLivedToken
+      ? `?page=exportResults&configKey=${encodeURIComponent(
+          this.props.configKey,
+        )}&token=${encodeURIComponent(this.props.longLivedToken)}`
+      : null
+
+  prepareHeaders = results => {
+    // This function is to take into account question keys so that we can properly parse duplicate questions in a survey for export
+    const headers = [
+      { label: 'Survey Title', key: 'surveyTitle' },
+      { label: 'First Name', key: 'firstName' },
+      { label: 'Last Name', key: 'lastName' },
+      { label: 'Email', key: 'email' },
+      { label: 'Time', key: 'timeTaken' },
+    ]
+    const idExists = results.every(item => item.schemaVersion > 2)
+    if (idExists) {
+      let origQuestions = []
+      JSON.parse(this.props.config).pages.forEach(
+        page => (origQuestions = origQuestions.concat(page.elements)),
+      )
+      origQuestions.forEach(question => {
+        headers.push({ label: question.title ? question.title : question.name, key: question.name })
+      })
+      return headers
     }
-    let newList = []
+    return null
+  }
+
+  prepareCsv = results => {
     const attendeeClickPromises = results.map(result =>
       this.props.client
         .getAttendee(result.creator.id)
@@ -184,9 +194,13 @@ class SurveyResults extends Component {
 
     Promise.all(attendeeClickPromises).then(newResults => {
       // Build CSV and trigger download...
-      newList = this.parseResultsForExport(newResults)
-      this.setState({ exporting: true, exportList: newList })
-      setTimeout(() => this.setState({ exporting: false, newList: [] }), 3000)
+      const newList = this.parseResultsForExport(newResults)
+      const headers = this.prepareHeaders(newResults)
+      this.setState({ exporting: true, exportList: newList, exportHeaders: headers })
+      setTimeout(
+        () => this.setState({ exporting: false, exportList: [], exportHeaders: null }),
+        3000,
+      )
     })
   }
 
@@ -195,6 +209,9 @@ class SurveyResults extends Component {
     this.setState({ expandedItem: item })
   }
 }
+
+const getAnswer = (schemaVersion, item) =>
+  schemaVersion > 1 ? JSON.parse(item.answer) : item.answer
 
 function stringifyForCsv(obj) {
   return Object.entries(obj)
