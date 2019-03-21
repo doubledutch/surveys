@@ -16,6 +16,7 @@
 
 import React, { PureComponent } from 'react'
 import { mapPerUserPrivateAdminablePushedDataToObjectOfStateObjects } from '@doubledutch/firebase-connector'
+import TableCell from './TableCell'
 
 export default class ExportResultsScreen extends PureComponent {
   state = { results: {} }
@@ -33,40 +34,13 @@ export default class ExportResultsScreen extends PureComponent {
 
   render() {
     const surveyResults = this.returnResults()
-    return <div>{surveyResults.map(item => this.expandedCell(item))}</div>
-  }
-
-  expandedCell = item => {
-    const results = item.newResults
     return (
-      <div className="pdfBox">
-        <div key={item.timeTaken} className="buttonRow">
-          <div className="grayButtonCell">
-            <p className="buttonText">
-              {`${item.creator.firstName} ${item.creator.lastName} - ${new Date(
-                item.timeTaken,
-              ).toDateString()}`}
-            </p>
+      <div>
+        {surveyResults.map(item => (
+          <div className="pdfBox">
+            <TableCell item={item} expandedItem={item} isPDF />
           </div>
-        </div>
-        {results.map(data => {
-          let answer = ''
-          const origAnswer = getAnswer(item.schemaVersion, data)
-          if (typeof origAnswer === 'object' && !origAnswer.length) {
-            answer = JSON.stringify(origAnswer)
-          } else if (typeof origAnswer === 'object' && origAnswer.length) {
-            answer = origAnswer.map(answerItem =>
-              typeof answerItem === 'object' && !answerItem.length
-                ? JSON.stringify(answerItem)
-                : answerItem.toString(),
-            )
-          } else answer = origAnswer.toString()
-          return (
-            <div className="subCell">
-              <li className="subCellText">{`${data.question}: ${answer}`}</li>
-            </div>
-          )
-        })}
+        ))}
       </div>
     )
   }
@@ -86,6 +60,3 @@ export default class ExportResultsScreen extends PureComponent {
     return newResults
   }
 }
-
-const getAnswer = (schemaVersion, item) =>
-  schemaVersion > 1 ? JSON.parse(item.answer) : item.answer

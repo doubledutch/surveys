@@ -131,7 +131,7 @@ class App extends PureComponent {
     const qs = parseQueryString()
     return (
       <div className="App">
-        {qs.page ? (
+        {qs.page === 'exportResults' ? (
           <ExportResultsScreen fbc={this.props.fbc} configKey={qs.configKey} />
         ) : (
           <Router>
@@ -224,14 +224,6 @@ class App extends PureComponent {
     history.push(`/content/builder`)
   }
 
-  copyToClipboard = survey => {
-    const text = `dd://extensions/surveys?surveyID=${survey.key}`
-    window.prompt(
-      'Copy and share the link below to provide a direct link to the survey from other app sections',
-      text,
-    )
-  }
-
   renderSurveyTable = ({ history }) => {
     let surveys = this.state.surveysDraft.sort((a, b) => b.lastUpdate - a.lastUpdate)
     if (this.state.search.length) surveys = this.filterSurveys(surveys, this.state.search)
@@ -256,6 +248,12 @@ class App extends PureComponent {
             <p className={a.key === this.state.configKey ? 'grayButtonCell' : 'buttonCell'}>
               {parsedData.title}
             </p>
+            <input
+              className={a.key === this.state.configKey ? 'grayButtonInput' : 'buttonInput'}
+              id={a.key}
+              type="text"
+              value={`dd://extensions/surveys?surveyId=${a.key}`}
+            />
             <span
               className={a.key === this.state.configKey ? 'grayRightButtonCell' : 'rightButtonCell'}
             >
@@ -263,14 +261,6 @@ class App extends PureComponent {
                 {isPublished ? 'Live' : 'Draft'}
               </p>
             </span>
-            <button
-              className={
-                a.key === this.state.configKey ? 'grayRightButtonCellSmall' : 'rightButtonCellSmall'
-              }
-              onClick={() => this.copyToClipboard(a)}
-            >
-              Copy Link
-            </button>
             <button
               className={
                 a.key === this.state.configKey ? 'grayRightButtonCellSmall' : 'rightButtonCellSmall'

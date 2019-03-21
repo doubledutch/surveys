@@ -55,7 +55,7 @@ class HomeView extends PureComponent {
   }
 
   componentDidMount() {
-    const { fbc, surveyID } = this.props
+    const { fbc, surveyId } = this.props
     client.getCurrentEvent().then(currentEvent => this.setState({ currentEvent }))
     client.getPrimaryColor().then(primaryColor => this.setState({ primaryColor }))
     const signin = fbc.signin()
@@ -75,8 +75,8 @@ class HomeView extends PureComponent {
             if (survey.publishDate) return survey.publishDate < today
             else return true
           })
-          if (surveyID) {
-            const directSurvey = surveys.find(survey => survey.key === surveyID)
+          if (surveyId) {
+            const directSurvey = surveys.find(survey => survey.key === surveyId)
             if (directSurvey){
               this.selectSurvey(directSurvey)
               this.setState({showTable: false})
