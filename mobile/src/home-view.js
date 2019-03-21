@@ -55,7 +55,7 @@ class HomeView extends PureComponent {
   }
 
   componentDidMount() {
-    const { fbc } = this.props
+    const { fbc, surveyId } = this.props
     client.getCurrentEvent().then(currentEvent => this.setState({ currentEvent }))
     client.getPrimaryColor().then(primaryColor => this.setState({ primaryColor }))
     const signin = fbc.signin()
@@ -75,6 +75,13 @@ class HomeView extends PureComponent {
             if (survey.publishDate) return survey.publishDate < today
             else return true
           })
+          if (surveyId) {
+            const directSurvey = surveys.find(survey => survey.key === surveyId)
+            if (directSurvey){
+              this.selectSurvey(directSurvey)
+              this.setState({showTable: false})
+            }
+          }
           this.setState({ surveys })
           this.saveLocalSurveys({ surveys })
           if (this.state.configKey) {
@@ -198,7 +205,7 @@ class HomeView extends PureComponent {
         return `${data.question}: ${answer}\n`
       })
       .join('\n\n')
-    Share.share({ message, title: t("exported_results"), subject: t("exported_results"), {})
+    Share.share({ message, title: t("exported_results"), subject: t("exported_results")}, {})
   }
   
 

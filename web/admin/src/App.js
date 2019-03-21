@@ -23,7 +23,7 @@ import { mapPerUserPrivateAdminablePushedDataToObjectOfStateObjects } from '@dou
 import { HashRouter as Router, Redirect, Route } from 'react-router-dom'
 import i18n from './i18n'
 import 'react-tabs/style/react-tabs.css'
-
+import ExportResultsScreen from './ExportResultsScreen'
 import SurveyWrapper from './SurveyWrapper'
 import SurveyEditor from './SurveyEditor'
 import SurveyResults from './SurveyResults'
@@ -34,6 +34,10 @@ import $ from 'jquery'
 import 'jquery-ui/ui/widgets/datepicker.js'
 import 'select2/dist/js/select2.js'
 import 'jquery-bar-rating'
+import { parseQueryString } from './utils'
+
+const { token } = parseQueryString()
+if (token) client.longLivedToken = token
 
 useStrings(i18n)
 
@@ -43,7 +47,7 @@ class App extends PureComponent {
     this.state = {
       surveys: [],
       surveysDraft: [],
-      results: [],
+      results: {},
       config: '',
       configKey: '',
       isSurveysBoxDisplay: true,
@@ -63,9 +67,10 @@ class App extends PureComponent {
 
   componentDidMount() {
     const { fbc } = this.props
+
     this.signin.then(() => {
-      client.getCurrentEvent().then(evt => {
-        this.setState({ eventData: evt })
+      fbc.getLongLivedAdminToken().then(longLivedToken => {
+        this.setState({ longLivedToken })
         client.getAttendees().then(users => {
           this.setState({ attendees: users })
           const survRef = fbc.database.public.adminRef('surveys')
@@ -113,7 +118,9 @@ class App extends PureComponent {
             }
           })
           survDraftRef.on('child_removed', data => {
-            this.setState({ surveysDraft: this.state.surveysDraft.filter(x => x.key !== data.key) })
+            this.setState({
+              surveysDraft: this.state.surveysDraft.filter(x => x.key !== data.key),
+            })
           })
         })
       })
@@ -121,77 +128,84 @@ class App extends PureComponent {
   }
 
   render() {
+    const qs = parseQueryString()
     return (
       <div className="App">
-        <Router>
-          <div>
-            <Route
-              exact
-              path="/"
-              render={({ history }) => (
-                <div>
-                  <div className="tableContainer">
-                    <div className="headerRow">
-                      <h2 className="boxTitle">{t('surveys')}</h2>
-                      {this.state.isSurveysBoxDisplay && (
-                        <button
-                          className="dd-bordered leftMargin"
-                          onClick={() => this.addNewSurvey({ history })}
-                        >
-                          {t('new_survey')}
-                        </button>
-                      )}
-                      <div style={{ flex: 1 }} />
-                      <input
-                        className="searchBox"
-                        value={this.state.search}
-                        onChange={this.searchTable}
-                        placeholder="Search"
-                      />
-                    </div>
-                    {this.state.isSurveysBoxDisplay && (
-                      <div>
-                        <ul className="surveyTable">{this.renderSurveyTable({ history })}</ul>
+        {qs.page === 'exportResults' ? (
+          <ExportResultsScreen fbc={this.props.fbc} configKey={qs.configKey} />
+        ) : (
+          <Router>
+            <div>
+              <Route
+                exact
+                path="/"
+                render={({ history }) => (
+                  <div>
+                    <div className="tableContainer">
+                      <div className="headerRow">
+                        <h2 className="boxTitle">{t('surveys')}</h2>
+                        {this.state.isSurveysBoxDisplay && (
+                          <button
+                            className="dd-bordered leftMargin"
+                            onClick={() => this.addNewSurvey({ history })}
+                          >
+                            {t('new_survey')}
+                          </button>
+                        )}
+                        <div style={{ flex: 1 }} />
+                        <input
+                          className="searchBox"
+                          value={this.state.search}
+                          onChange={this.searchTable}
+                          placeholder="Search"
+                        />
                       </div>
-                    )}
+                      {this.state.isSurveysBoxDisplay && (
+                        <div>
+                          <ul className="surveyTable">{this.renderSurveyTable({ history })}</ul>
+                        </div>
+                      )}
+                    </div>
+                    <SurveyResults
+                      client={client}
+                      isResultsBoxDisplay={this.state.isResultsBoxDisplay}
+                      handleChange={this.handleChange}
+                      results={this.state.results}
+                      configKey={this.state.configKey}
+                      config={this.state.config}
+                      surveys={this.state.surveys}
+                      longLivedToken={this.state.longLivedToken}
+                      html5AppUrl={this.state.html5AppUrl}
+                    />
                   </div>
-                  <SurveyResults
-                    client={client}
-                    isResultsBoxDisplay={this.state.isResultsBoxDisplay}
-                    handleChange={this.handleChange}
-                    results={this.state.results}
-                    configKey={this.state.configKey}
-                    config={this.state.config}
-                    surveys={this.state.surveys}
-                  />
-                </div>
-              )}
-            />
-            <Route
-              exact
-              path="/content/builder"
-              render={({ history }) => {
-                if (!this.state.showBuilder) return <Redirect to="/" />
-                return (
-                  <SurveyEditor
-                    surveys={this.state.surveys}
-                    configKey={this.state.configKey}
-                    saveConfig={this.saveDraft}
-                    config={this.state.config}
-                    allowAnom={this.state.allowAnom}
-                    history={history}
-                    isEditorBoxDisplay={this.state.isEditorBoxDisplay}
-                    handleChange={this.handleChange}
-                    showHomePage={this.showHomePage}
-                    deleteSurvey={this.deleteSurvey}
-                    eventData={this.state.eventData}
-                    publishDate={this.state.publishDate}
-                  />
-                )
-              }}
-            />
-          </div>
-        </Router>
+                )}
+              />
+              <Route
+                exact
+                path="/content/builder"
+                render={({ history }) => {
+                  if (!this.state.showBuilder) return <Redirect to="/" />
+                  return (
+                    <SurveyEditor
+                      surveys={this.state.surveys}
+                      configKey={this.state.configKey}
+                      saveConfig={this.saveDraft}
+                      config={this.state.config}
+                      allowAnom={this.state.allowAnom}
+                      history={history}
+                      isEditorBoxDisplay={this.state.isEditorBoxDisplay}
+                      handleChange={this.handleChange}
+                      showHomePage={this.showHomePage}
+                      deleteSurvey={this.deleteSurvey}
+                      eventData={this.state.eventData}
+                      publishDate={this.state.publishDate}
+                    />
+                  )
+                }}
+              />
+            </div>
+          </Router>
+        )}
       </div>
     )
   }
@@ -234,6 +248,12 @@ class App extends PureComponent {
             <p className={a.key === this.state.configKey ? 'grayButtonCell' : 'buttonCell'}>
               {parsedData.title}
             </p>
+            <input
+              className={a.key === this.state.configKey ? 'grayButtonInput' : 'buttonInput'}
+              id={a.key}
+              type="text"
+              value={`dd://extensions/surveys?surveyId=${a.key}`}
+            />
             <span
               className={a.key === this.state.configKey ? 'grayRightButtonCell' : 'rightButtonCell'}
             >

@@ -335,9 +335,35 @@ button.displayButton:focus, button.displayButton:active {
 .grayButtonCell {
   border: none;
   border-bottom: 1px solid #E3ECF8;
-  flex: 1;
   display: flex;
+  flex: 1;
   padding: 0px 20px;
+  margin: 0px;
+  height: 40px;
+  background-color: #E2E2E2;
+  align-items: center;
+}
+
+.buttonInput {
+  border: none;
+  border-bottom: 1px solid #E3ECF8;
+  display: flex;
+  flex: 1;
+  font-size: 12px;
+  color: #ADADAD;
+  margin: 0px;
+  height: 40px;
+  background-color: white;
+  align-items: center;
+}
+
+.grayButtonInput {
+  border: none;
+  border-bottom: 1px solid #E3ECF8;
+  display: flex;
+  flex: 1;
+  font-size: 12px;
+  color: #ADADAD;
   margin: 0px;
   height: 40px;
   background-color: #E2E2E2;
@@ -372,5 +398,10 @@ button.displayButton:focus, button.displayButton:active {
   text-align: center;
   margin-top: 90px;
   font-size: 18px;
+}
 
+.pdfBox {
+  margin-bottom: 20px;
+  border: 1px solid #E3ECF8;
+  border-radius: 4px;
 }

@@ -16,7 +16,8 @@
 
 import React, { Component } from 'react'
 import { translate as t } from '@doubledutch/admin-client'
-import { CSVLink, CSVDownload } from '@doubledutch/react-csv'
+import { CSVDownload } from '@doubledutch/react-csv'
+import TableCell from './TableCell'
 
 class SurveyResults extends Component {
   constructor() {
@@ -74,78 +75,38 @@ class SurveyResults extends Component {
           {this.props.configKey.length > 0 && results.length === 0 && (
             <p className="helpText">{t('no_responses')}</p>
           )}
-          {newResults.map(item =>
-            this.state.expandedItem === item ? this.expandedCell(item) : this.standardCell(item),
-          )}
+          {newResults.map(item => (
+            <TableCell
+              expandedItem={this.state.expandedItem}
+              item={item}
+              loadExpandedCell={this.loadExpandedCell}
+            />
+          ))}
         </ul>
-        <div className="csvLinkBox">
-          {newResults.length > 0 && (
+        {newResults.length > 0 && (
+          <div className="csvLinkBox">
+            <a
+              className="dd-bordered"
+              href={this.bigScreenUrl()}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              View All Results
+            </a>
             <button className="button" onClick={() => this.prepareCsv(newResults)}>
               {t('export')}
             </button>
-          )}
-          {this.state.exporting ? (
-            <CSVDownload
-              data={this.state.exportList}
-              headers={this.state.exportHeaders}
-              filename="results.csv"
-              target="_blank"
-            />
-          ) : null}
-        </div>
-      </div>
-    )
-  }
 
-  standardCell = item => (
-    <div key={item.timeTaken} className="buttonRow">
-      <div className="buttonCell">
-        <p className="buttonText">
-          {`${item.creator.firstName} ${item.creator.lastName} - ${new Date(
-            item.timeTaken,
-          ).toDateString()}`}
-        </p>
-      </div>
-      <button className="rightButtonCell" onClick={() => this.loadExpandedCell(item)}>
-        {t('show_results')}
-      </button>
-    </div>
-  )
-
-  expandedCell = item => {
-    const results = item.newResults
-    return (
-      <div>
-        <div key={item.timeTaken} className="buttonRow">
-          <div className="grayButtonCell">
-            <p className="buttonText">
-              {`${item.creator.firstName} ${item.creator.lastName} - ${new Date(
-                item.timeTaken,
-              ).toDateString()}`}
-            </p>
+            {this.state.exporting ? (
+              <CSVDownload
+                data={this.state.exportList}
+                headers={this.state.exportHeaders}
+                filename="results.csv"
+                target="_blank"
+              />
+            ) : null}
           </div>
-          <button className="grayRightButtonCell" onClick={() => this.loadExpandedCell(item)}>
-            {t('hide_results')}
-          </button>
-        </div>
-        {results.map(data => {
-          let answer = ''
-          const origAnswer = getAnswer(item.schemaVersion, data)
-          if (typeof origAnswer === 'object' && !origAnswer.length) {
-            answer = JSON.stringify(origAnswer)
-          } else if (typeof origAnswer === 'object' && origAnswer.length) {
-            answer = origAnswer.map(answerItem =>
-              typeof answerItem === 'object' && !answerItem.length
-                ? JSON.stringify(answerItem)
-                : answerItem.toString(),
-            )
-          } else answer = origAnswer.toString()
-          return (
-            <div className="subCell">
-              <li className="subCellText">{`${data.question}: ${answer}`}</li>
-            </div>
-          )
-        })}
+        )}
       </div>
     )
   }
@@ -192,6 +153,13 @@ class SurveyResults extends Component {
     })
     return parsedResults
   }
+
+  bigScreenUrl = () =>
+    this.props.longLivedToken
+      ? `?page=exportResults&configKey=${encodeURIComponent(
+          this.props.configKey,
+        )}&token=${encodeURIComponent(this.props.longLivedToken)}`
+      : null
 
   prepareHeaders = results => {
     // This function is to take into account question keys so that we can properly parse duplicate questions in a survey for export
