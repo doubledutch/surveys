@@ -36,6 +36,7 @@ export default class SurveyTable extends Component {
       search: false,
       survey: '',
       newList: [],
+      inputHeight: 0
     }
   }
 
@@ -168,7 +169,7 @@ export default class SurveyTable extends Component {
       marginTop: 5,
     }
     const iosStyle = {
-      marginTop: 10,
+      marginTop: 4,
       marginBottom: 10,
     }
     if (this.props.surveys.length > 0) {
