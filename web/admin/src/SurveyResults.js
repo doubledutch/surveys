@@ -147,7 +147,7 @@ class SurveyResults extends Component {
         if (idExists) {
           adjustedTitleForExport = data.id
         }
-        newItem[adjustedTitleForExport.trim()] = answer.replace(/"/g, "'")
+        newItem[adjustedTitleForExport.trim()] = answer.replace(/"/g, '\\"')
       })
       parsedResults.push(newItem)
     })
