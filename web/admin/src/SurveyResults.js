@@ -147,7 +147,7 @@ class SurveyResults extends Component {
         if (idExists) {
           adjustedTitleForExport = data.id
         }
-        newItem[adjustedTitleForExport] = answer
+        newItem[adjustedTitleForExport.trim()] = answer.replace(/"/g, '""')
       })
       parsedResults.push(newItem)
     })
@@ -177,7 +177,10 @@ class SurveyResults extends Component {
         page => (origQuestions = origQuestions.concat(page.elements)),
       )
       origQuestions.forEach(question => {
-        headers.push({ label: question.title ? question.title : question.name, key: question.name })
+        headers.push({
+          label: question.title ? question.title.trim() : question.name.trim(),
+          key: question.name.trim(),
+        })
       })
       return headers
     }
