@@ -74,9 +74,9 @@ class HomeView extends PureComponent {
           const surveys = Object.entries(data.val() || {})
             .map(([key, val]) => ({ ...val, key }))
             .filter(survey => {
-            if (survey.publishDate) return survey.publishDate < today
-            return true
-          })
+              if (survey.publishDate) return survey.publishDate < today
+              return true
+            })
           if (surveyId) {
             const directSurvey = surveys.find(survey => survey.key === surveyId)
             if (directSurvey) {
@@ -228,6 +228,7 @@ class HomeView extends PureComponent {
   }
 
   sendInfo = () => {
+    const origConfig = JSON.parse(this.state.config)
     const containsMatrix = !!origConfig.pages.find(page =>
       page.elements.find(item => item.type === 'matrixdynamic'),
     )
