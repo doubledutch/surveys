@@ -66,33 +66,35 @@ class HomeView extends PureComponent {
         this.loadLocalSurveys()
         const survRef = fbc.database.public.adminRef('surveys')
         const resultsRef = fbc.database.private.adminableUserRef('results')
-        resultsRef.on('child_added', data => {
-          this.setState(({ results }) => ({ results: [...results, data.key] }))
-        })
-        survRef.on('value', data => {
-          const today = new Date().getTime()
-          const surveys = Object.entries(data.val() || {})
-            .map(([key, val]) => ({ ...val, key }))
-            .filter(survey => {
-              if (survey.publishDate) return survey.publishDate < today
-              return true
-            })
-          if (surveyId) {
-            const directSurvey = surveys.find(survey => survey.key === surveyId)
-            if (directSurvey) {
-              this.selectSurvey(directSurvey)
-              this.setState({ showTable: false })
+        resultsRef.on('value', data => {
+          const results = Object.entries(data.val() || {}).map(([key, val]) => key)
+          this.setState({ results })
+          survRef.on('value', data => {
+            const today = new Date().getTime()
+            const surveys = Object.entries(data.val() || {})
+              .map(([key, val]) => ({ ...val, key }))
+              .filter(survey => {
+                if (survey.publishDate) return survey.publishDate < today
+                return true
+              })
+            if (surveyId) {
+              const directSurvey = surveys.find(survey => survey.key === surveyId)
+              const previouslyCompleted = results.find(survey => survey === surveyId)
+              if (directSurvey && !previouslyCompleted) {
+                this.selectSurvey(directSurvey)
+                this.setState({ showTable: false })
+              }
             }
-          }
-          this.setState({ surveys })
-          this.saveLocalSurveys({ surveys })
-          if (this.state.configKey) {
-            const localSurvey = surveys.find(survey => survey.key === this.state.configKey)
-            const disableSurveySelect = localSurvey ? !localSurvey.isViewable : true
-            if (disableSurveySelect) {
-              this.setState({ disabled: true, config: '', configKey: '' })
+            this.setState({ surveys })
+            this.saveLocalSurveys({ surveys })
+            if (this.state.configKey && !surveyId) {
+              const localSurvey = surveys.find(survey => survey.key === this.state.configKey)
+              const disableSurveySelect = localSurvey ? !localSurvey.isViewable : true
+              if (disableSurveySelect) {
+                this.setState({ disabled: true, config: '', configKey: '' })
+              }
             }
-          }
+          })
         })
       })
     })
@@ -100,6 +102,7 @@ class HomeView extends PureComponent {
 
   render() {
     const { suggestedTitle } = this.props
+    const { showTable, results, primaryColor, configKey, disable } = this.state
     if (!this.state.currentUser || !this.state.primaryColor || !this.state.surveys)
       return <Loading />
     const surveys = this.state.surveys.sort((a, b) => b.lastUpdate - a.lastUpdate)
@@ -109,15 +112,15 @@ class HomeView extends PureComponent {
         behavior={Platform.select({ ios: 'padding', android: null })}
       >
         <TitleBar title={suggestedTitle || 'Surveys'} client={client} signin={this.signin} />
-        {this.state.showTable ? (
+        {showTable ? (
           <SurveyTable
-            results={this.state.results}
-            primaryColor={this.state.primaryColor}
+            results={results}
+            primaryColor={primaryColor}
             surveys={surveys}
             closeSurveyModal={this.closeSurveyModal}
             selectSurvey={this.selectSurvey}
-            configKey={this.state.configKey}
-            disable={this.state.disable}
+            configKey={configKey}
+            disable={disable}
           />
         ) : (
           this.renderSurvey()
@@ -230,7 +233,7 @@ class HomeView extends PureComponent {
   sendInfo = () => {
     const origConfig = JSON.parse(this.state.config)
     const containsMatrix = !!origConfig.pages.find(page =>
-      page.elements.find(item => item.type === 'matrixdynamic'),
+      page.elements.find(item => item.type === 'matrixdynamic' || item.type === 'matrix'),
     )
     const config = JSON.stringify({ survey: this.state.config, color: this.state.primaryColor })
     this.setState({ containsMatrix })
