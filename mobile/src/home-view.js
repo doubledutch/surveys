@@ -52,6 +52,7 @@ class HomeView extends PureComponent {
     allowAnom: false,
     surveyResults: null,
     showSurveyResultsOption: false,
+    origSurvey: null,
   }
 
   componentDidMount() {
@@ -69,43 +70,50 @@ class HomeView extends PureComponent {
         resultsRef.on('value', data => {
           const results = Object.entries(data.val() || {}).map(([key, val]) => key)
           this.setState({ results })
-          survRef.on('value', data => {
-            const today = new Date().getTime()
-            const surveys = Object.entries(data.val() || {})
-              .map(([key, val]) => ({ ...val, key }))
-              .filter(survey => {
-                if (survey.publishDate) return survey.publishDate < today
-                return true
-              })
-            if (surveyId) {
-              const directSurvey = surveys.find(survey => survey.key === surveyId)
-              const previouslyCompleted = results.find(survey => survey === surveyId)
-              if (directSurvey && !previouslyCompleted) {
-                this.selectSurvey(directSurvey)
-                this.setState({ showTable: false })
-              }
+        })
+        survRef.on('value', data => {
+          const today = new Date().getTime()
+          const surveys = Object.entries(data.val() || {})
+            .map(([key, val]) => ({ ...val, key }))
+            .filter(survey => {
+              if (survey.publishDate) return survey.publishDate < today
+              return true
+            })
+          this.setState({ surveys })
+          this.saveLocalSurveys({ surveys })
+          if (this.state.origSurvey && !surveyId) {
+            const localSurvey = surveys.find(survey => survey.key === origSurvey.key)
+            const disableSurveySelect = localSurvey ? !localSurvey.isViewable : true
+            if (disableSurveySelect) {
+              this.setState({ disabled: true, origSurvey: null })
             }
-            this.setState({ surveys })
-            this.saveLocalSurveys({ surveys })
-            if (this.state.configKey && !surveyId) {
-              const localSurvey = surveys.find(survey => survey.key === this.state.configKey)
-              const disableSurveySelect = localSurvey ? !localSurvey.isViewable : true
-              if (disableSurveySelect) {
-                this.setState({ disabled: true, config: '', configKey: '' })
-              }
-            }
-          })
+          }
         })
       })
     })
   }
 
   render() {
-    const { suggestedTitle } = this.props
-    const { showTable, results, primaryColor, configKey, disable } = this.state
+    const { suggestedTitle, surveyId } = this.props
+    const { results, primaryColor, origSurvey } = this.state
+    let { showTable } = this.state
+
     if (!this.state.currentUser || !this.state.primaryColor || !this.state.surveys)
       return <Loading />
     const surveys = this.state.surveys.sort((a, b) => b.lastUpdate - a.lastUpdate)
+    let selectedSurvey = {}
+    if (surveyId) {
+      const directSurvey = this.state.surveys.find(survey => survey.key === surveyId)
+      const previouslyCompleted = this.state.results.find(survey => survey === surveyId)
+      if (directSurvey && !previouslyCompleted) {
+        selectedSurvey = this.selectSurvey(directSurvey)
+        showTable = false
+      }
+    }
+    if (origSurvey) {
+      selectedSurvey = this.selectSurvey(origSurvey)
+    }
+
     return (
       <KeyboardAvoidingView
         style={s.container}
@@ -118,18 +126,18 @@ class HomeView extends PureComponent {
             primaryColor={primaryColor}
             surveys={surveys}
             closeSurveyModal={this.closeSurveyModal}
-            selectSurvey={this.selectSurvey}
-            configKey={configKey}
-            disable={disable}
+            selectSurvey={this.saveSurveyObject}
+            configKey={selectedSurvey.configKey}
+            disable={selectedSurvey.disable}
           />
         ) : (
-          this.renderSurvey()
+          this.renderSurvey(selectedSurvey)
         )}
       </KeyboardAvoidingView>
     )
   }
 
-  renderSurvey = () => {
+  renderSurvey = selectedSurvey => {
     const { surveyLoading, containsMatrix } = this.state
     const htmlSource = { html: surveyViewHtml }
     if (Platform.OS == 'android') {
@@ -152,8 +160,8 @@ class HomeView extends PureComponent {
             originWhitelist={['*']}
             source={htmlSource}
             injectedJavaScript={this.injectedJavaScript()}
-            onMessage={e => this.saveResults(e.nativeEvent.data)}
-            onLoad={this.sendInfo}
+            onMessage={e => this.saveResults(e.nativeEvent.data, selectedSurvey)}
+            onLoad={e => this.sendInfo(selectedSurvey)}
             onLoadEnd={this.surveyLoadEnd}
           />
         </View>
@@ -177,8 +185,6 @@ class HomeView extends PureComponent {
             onPress={() =>
               this.setState({
                 showTable: true,
-                config: '',
-                configKey: '',
                 disable: true,
                 allowAnom: false,
               })
@@ -230,12 +236,12 @@ class HomeView extends PureComponent {
     this.setState({ surveyLoading: false })
   }
 
-  sendInfo = () => {
-    const origConfig = JSON.parse(this.state.config)
+  sendInfo = selectedSurvey => {
+    const origConfig = JSON.parse(selectedSurvey.config)
     const containsMatrix = !!origConfig.pages.find(page =>
       page.elements.find(item => item.type === 'matrixdynamic' || item.type === 'matrix'),
     )
-    const config = JSON.stringify({ survey: this.state.config, color: this.state.primaryColor })
+    const config = JSON.stringify({ survey: selectedSurvey.config, color: this.state.primaryColor })
     this.setState({ containsMatrix })
     this.webview.postMessage(config)
   }
@@ -244,11 +250,12 @@ class HomeView extends PureComponent {
     this.setState({ showTable: false, takeAnom: false, showSurveyResultsOption: false })
   }
 
-  saveResults = resultsString => {
+  saveResults = (resultsString, selectedSurvey) => {
     const origResults = JSON.parse(resultsString)
     const resultsKeys = Object.keys(origResults)
+    const key = this.props.surveyId ? this.props.surveyId : this.state.origSurvey.key
     let newQuestionsArray = []
-    const config = JSON.parse(this.state.config)
+    const config = JSON.parse(selectedSurvey.config)
     config.pages.forEach(page => {
       newQuestionsArray = newQuestionsArray.concat(page.elements)
     })
@@ -271,7 +278,7 @@ class HomeView extends PureComponent {
       })
       this.props.fbc.database.private
         .adminableUserRef('results')
-        .child(this.state.configKey)
+        .child(key)
         .push({
           newResults,
           creator: this.state.takeAnom
@@ -291,6 +298,10 @@ class HomeView extends PureComponent {
     }
   }
 
+  saveSurveyObject = survey => {
+    this.setState({ origSurvey: survey })
+  }
+
   selectSurvey = item => {
     const parsedInfo = JSON.parse(item.info)
     parsedInfo.pages.forEach(page => {
@@ -306,12 +317,12 @@ class HomeView extends PureComponent {
         })
       }
     })
-    this.setState({
+    return {
       config: JSON.stringify(parsedInfo),
       configKey: item.key,
       disable: false,
       allowAnom: item.allowAnom,
-    })
+    }
   }
 
   injectedJavaScript = () => `
