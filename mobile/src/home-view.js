@@ -156,6 +156,7 @@ class HomeView extends PureComponent {
         )}
         <View style={surveyLoading ? s.webHidden : s.web}>
           <WebView
+            useWebKit
             ref={input => (this.webview = input)}
             originWhitelist={['*']}
             source={htmlSource}
@@ -187,6 +188,7 @@ class HomeView extends PureComponent {
                 showTable: true,
                 disable: true,
                 allowAnom: false,
+                origConfig: null,
               })
             }
           >
