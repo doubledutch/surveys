@@ -233,10 +233,10 @@ class App extends PureComponent {
         const publishedVersion = this.state.surveys.find(survey => survey.key === a.key)
         const isPublished = publishedVersion
           ? publishedVersion.info === a.info &&
-            publishedVersion.isViewable &&
             publishedVersion.allowAnom === a.allowAnom &&
             publishedVersion.publishDate === a.publishDate
           : false
+        const isPublishedHidden = isPublished && !publishedVersion.isViewable
         return (
           <div
             key={a.key}
@@ -248,17 +248,20 @@ class App extends PureComponent {
             <p className={a.key === this.state.configKey ? 'grayButtonCell' : 'buttonCell'}>
               {parsedData.title}
             </p>
-            <input
-              className={a.key === this.state.configKey ? 'grayButtonInput' : 'buttonInput'}
-              id={a.key}
-              type="text"
-              value={`dd://extensions/surveys?surveyId=${a.key}`}
-            />
+            {publishedVersion && (
+              <input
+                className={a.key === this.state.configKey ? 'grayButtonInput' : 'buttonInput'}
+                id={a.key}
+                type="text"
+                value={`dd://extensions/surveys?surveyId=${publishedVersion.key}`}
+              />
+            )}
             <span
               className={a.key === this.state.configKey ? 'grayRightButtonCell' : 'rightButtonCell'}
             >
               <p className={isPublished ? 'publishedText' : 'draftText'}>
                 {isPublished ? 'Live' : 'Draft'}
+                {isPublishedHidden ? ' (Hidden)' : ''}
               </p>
             </span>
             <button
@@ -269,12 +272,35 @@ class App extends PureComponent {
             >
               Edit
             </button>
-            <button
-              className={a.key === this.state.configKey ? 'grayRightButtonCell' : 'rightButtonCell'}
-              onClick={() => this.publishConfig(a, isPublished)}
-            >
-              {isPublished ? 'Unpublish' : 'Publish'}
-            </button>
+            {isPublished && !isPublishedHidden ? (
+              <button
+                className={
+                  a.key === this.state.configKey ? 'grayRightButtonCell' : 'rightButtonCell'
+                }
+                onClick={() => this.publishConfig(a, true, false)}
+              >
+                Unpublish
+              </button>
+            ) : (
+              <button
+                className={
+                  a.key === this.state.configKey ? 'grayRightButtonCell' : 'rightButtonCell'
+                }
+                onClick={() => this.publishConfig(a, false, true)}
+              >
+                Publish
+              </button>
+            )}
+            {!isPublished && (
+              <button
+                className={
+                  a.key === this.state.configKey ? 'grayRightButtonCell' : 'rightButtonCell'
+                }
+                onClick={() => this.publishConfig(a, false, false)}
+              >
+                Publish as Hidden
+              </button>
+            )}
           </div>
         )
       })
@@ -332,7 +358,7 @@ class App extends PureComponent {
     }
   }
 
-  publishConfig = (survey, isPublished) => {
+  publishConfig = (survey, isPublished, isViewable) => {
     const info = survey.info
     const publishDate = survey.publishDate || new Date().getTime()
     const allowAnom = survey.allowAnom || false
@@ -344,7 +370,6 @@ class App extends PureComponent {
     if (isDup && !isPublished) {
       window.alert(t('dup_alert'))
     } else if (window.confirm(t('confirm_alert', { state }))) {
-      const isViewable = !isPublished
       this.props.fbc.database.public
         .adminRef('surveysDraft')
         .child(survey.key)
@@ -352,7 +377,13 @@ class App extends PureComponent {
       this.props.fbc.database.public
         .adminRef('surveys')
         .child(survey.key)
-        .update({ info, isViewable, lastUpdate: new Date().getTime(), allowAnom, publishDate })
+        .update({
+          info,
+          isViewable,
+          lastUpdate: new Date().getTime(),
+          allowAnom,
+          publishDate,
+        })
     }
   }
 

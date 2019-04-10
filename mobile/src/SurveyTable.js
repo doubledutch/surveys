@@ -36,7 +36,7 @@ export default class SurveyTable extends Component {
       search: false,
       survey: '',
       newList: [],
-      inputHeight: 0
+      inputHeight: 0,
     }
   }
 
@@ -89,7 +89,9 @@ export default class SurveyTable extends Component {
         <FlatList
           style={{ backgroundColor: '#EFEFEF', flex: 1 }}
           data={surveysOrdered}
-          ref={(ref) => { this.flatListRef = ref; }}
+          ref={ref => {
+            this.flatListRef = ref
+          }}
           ListFooterComponent={<View style={{ height: 100 }} />}
           renderItem={({ item }) => (
             <TouchableOpacity
@@ -137,10 +139,10 @@ export default class SurveyTable extends Component {
 
   updateList = value => {
     const queryText = value.toLowerCase()
+    const queryResult = []
     if (queryText.length > 0) {
-      const queryResult = []
       this.props.surveys.forEach(content => {
-        const title = JSON.parse(content.info).title
+        const { title } = JSON.parse(content.info)
         if (title && content.isViewable) {
           if (title.toLowerCase().indexOf(queryText) !== -1) {
             queryResult.push(content)
@@ -148,7 +150,7 @@ export default class SurveyTable extends Component {
         }
       })
       this.setState({ search: true, newList: queryResult, survey: value })
-      this.flatListRef.scrollToIndex({animated: true, index: 0});
+      if (queryResult.length) this.flatListRef.scrollToIndex({ animated: true, index: 0 })
     } else {
       this.setState({ search: false, survey: value })
     }
