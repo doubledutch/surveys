@@ -70,10 +70,10 @@ class HomeView extends PureComponent {
           this.setState({ surveys })
           this.saveLocalSurveys({ surveys })
           if (this.state.origSurvey && !surveyId) {
-            const localSurvey = surveys.find(survey => survey.key === origSurvey.key)
+            const localSurvey = surveys.find(survey => survey.key === this.state.origSurvey.key)
             const disableSurveySelect = localSurvey ? !localSurvey.isViewable : true
             if (disableSurveySelect) {
-              this.setState({ disabled: true, origSurvey: null })
+              this.setState({ disabled: true, origSurvey: null, showTable: true })
             }
           }
         })
