@@ -15,18 +15,7 @@
  */
 
 import React, { PureComponent } from 'react'
-import {
-  KeyboardAvoidingView,
-  Platform,
-  StyleSheet,
-  Share,
-  TouchableOpacity,
-  Text,
-  WebView,
-  AsyncStorage,
-  View,
-  Image,
-} from 'react-native'
+import { KeyboardAvoidingView, Platform, StyleSheet, AsyncStorage } from 'react-native'
 
 // rn-client must be imported before FirebaseConnector
 import client, { TitleBar, translate as t, useStrings } from '@doubledutch/rn-client'
@@ -34,8 +23,7 @@ import { provideFirebaseConnectorToReactComponent } from '@doubledutch/firebase-
 import i18n from './i18n'
 import SurveyTable from './SurveyTable'
 import Loading from './Loading'
-import { checkbox_active, checkbox_inactive } from './images'
-import surveyViewHtml from './surveyViewHtml'
+import Survey from './Survey'
 
 useStrings(i18n)
 
@@ -49,10 +37,10 @@ class HomeView extends PureComponent {
     results: [],
     surveyLoading: true,
     takeAnom: false,
-    allowAnom: false,
     surveyResults: null,
     showSurveyResultsOption: false,
     origSurvey: null,
+    origPropLaunch: true,
   }
 
   componentDidMount() {
@@ -95,21 +83,29 @@ class HomeView extends PureComponent {
 
   render() {
     const { suggestedTitle, surveyId } = this.props
-    const { results, primaryColor, origSurvey } = this.state
+    const {
+      results,
+      primaryColor,
+      origSurvey,
+      showSurveyResultsOption,
+      surveyResults,
+      origPropLaunch,
+    } = this.state
     let { showTable } = this.state
 
     if (!this.state.currentUser || !this.state.primaryColor || !this.state.surveys)
       return <Loading />
     const surveys = this.state.surveys.sort((a, b) => b.lastUpdate - a.lastUpdate)
     let selectedSurvey = {}
-    if (surveyId) {
+    if (surveyId && origPropLaunch) {
       const directSurvey = this.state.surveys.find(survey => survey.key === surveyId)
       const previouslyCompleted = this.state.results.find(survey => survey === surveyId)
-      if (directSurvey && !previouslyCompleted) {
+      if ((directSurvey && !previouslyCompleted) || showSurveyResultsOption) {
         selectedSurvey = this.selectSurvey(directSurvey)
         showTable = false
       }
     }
+
     if (origSurvey) {
       selectedSurvey = this.selectSurvey(origSurvey)
     }
@@ -125,137 +121,43 @@ class HomeView extends PureComponent {
             results={results}
             primaryColor={primaryColor}
             surveys={surveys}
-            closeSurveyModal={this.closeSurveyModal}
             selectSurvey={this.saveSurveyObject}
-            configKey={selectedSurvey.configKey}
-            disable={selectedSurvey.disable}
+            openSurveyModal={this.openSurveyModal}
+            configKey={selectedSurvey ? selectedSurvey.configKey : undefined}
+            disable={selectedSurvey ? selectedSurvey.disable : undefined}
           />
         ) : (
-          this.renderSurvey(selectedSurvey)
-        )}
-      </KeyboardAvoidingView>
-    )
-  }
-
-  renderSurvey = selectedSurvey => {
-    const { surveyLoading, containsMatrix } = this.state
-    const htmlSource = { html: surveyViewHtml }
-    if (Platform.OS == 'android') {
-      htmlSource.baseUrl = 'file:///android_asset'
-    }
-    return (
-      <KeyboardAvoidingView style={s.container}>
-        {surveyLoading && <Loading />}
-        {containsMatrix && (
-          <View style={{ backgroundColor: 'white' }}>
-            <Text>
-              *Note: This survey contains questions that may require horizontal scrolling to
-              complete
-            </Text>
-          </View>
-        )}
-        <View style={surveyLoading ? s.webHidden : s.web}>
-          <WebView
-            useWebKit
-            ref={input => (this.webview = input)}
-            originWhitelist={['*']}
-            source={htmlSource}
-            injectedJavaScript={this.injectedJavaScript()}
-            onMessage={e => this.saveResults(e.nativeEvent.data, selectedSurvey)}
-            onLoad={e => this.sendInfo(selectedSurvey)}
-            onLoadEnd={this.surveyLoadEnd}
+          <Survey
+            selectedSurvey={selectedSurvey}
+            surveyResults={surveyResults}
+            saveResults={this.saveResults}
+            showSurveyResultsOption={showSurveyResultsOption}
+            primaryColor={primaryColor}
+            closeSurveyModal={this.closeSurveyModal}
           />
-        </View>
-        {this.state.allowAnom && (
-          <View style={s.anomBox}>
-            {this.renderAnomIcon()}
-            <Text>{t('submitAnom')}</Text>
-          </View>
-        )}
-        {this.state.showSurveyResultsOption && this.state.surveyResults && (
-          <TouchableOpacity
-            style={[s.backButton, { backgroundColor: this.state.primaryColor }]}
-            onPress={() => this.exportResults(this.state.surveyResults)}
-          >
-            <Text style={s.closeText}>Exports Results</Text>
-          </TouchableOpacity>
-        )}
-        {!this.state.surveyLoading && (
-          <TouchableOpacity
-            style={[s.backButton, { backgroundColor: this.state.primaryColor }]}
-            onPress={() =>
-              this.setState({
-                showTable: true,
-                disable: true,
-                allowAnom: false,
-                origConfig: null,
-              })
-            }
-          >
-            <Text style={s.closeText}>{t('exit')}</Text>
-          </TouchableOpacity>
         )}
       </KeyboardAvoidingView>
     )
-  }
-
-  renderAnomIcon = () => {
-    if (this.state.takeAnom) {
-      return (
-        <TouchableOpacity onPress={() => this.setState({ takeAnom: false })}>
-          <Image style={s.checkButton} source={checkbox_active} />
-        </TouchableOpacity>
-      )
-    }
-    return (
-      <TouchableOpacity onPress={() => this.setState({ takeAnom: true })}>
-        <Image style={s.checkButton} source={checkbox_inactive} />
-      </TouchableOpacity>
-    )
-  }
-
-  exportResults = results => {
-    const message = results.newResults
-      .map(data => {
-        let answer = ''
-        const origAnswer = getAnswer(results.schemaVersion, data)
-        if (typeof origAnswer === 'object' && !origAnswer.length) {
-          answer = JSON.stringify(origAnswer)
-        } else if (typeof origAnswer === 'object' && origAnswer.length) {
-          answer = origAnswer.map(answerItem =>
-            typeof answerItem === 'object' && !answerItem.length
-              ? JSON.stringify(answerItem)
-              : answerItem.toString(),
-          )
-        } else answer = origAnswer.toString()
-        return `${data.question}: ${answer}\n`
-      })
-      .join('\n\n')
-    Share.share({ message, title: t('exported_results'), subject: t('exported_results') }, {})
-  }
-
-  surveyLoadEnd = () => {
-    this.setState({ surveyLoading: false })
-  }
-
-  sendInfo = selectedSurvey => {
-    const origConfig = JSON.parse(selectedSurvey.config)
-    const containsMatrix = !!origConfig.pages.find(page =>
-      page.elements.find(item => item.type === 'matrixdynamic' || item.type === 'matrix'),
-    )
-    const config = JSON.stringify({ survey: selectedSurvey.config, color: this.state.primaryColor })
-    this.setState({ containsMatrix })
-    this.webview.postMessage(config)
   }
 
   closeSurveyModal = () => {
-    this.setState({ showTable: false, takeAnom: false, showSurveyResultsOption: false })
+    this.setState({
+      showTable: true,
+      origSurvey: null,
+      showSurveyResultsOption: false,
+      origPropLaunch: false,
+    })
   }
 
-  saveResults = (resultsString, selectedSurvey) => {
+  openSurveyModal = () => {
+    this.setState({ showTable: false })
+  }
+
+  saveResults = (resultsString, selectedSurvey, takeAnom) => {
     const origResults = JSON.parse(resultsString)
     const resultsKeys = Object.keys(origResults)
-    const key = this.props.surveyId ? this.props.surveyId : this.state.origSurvey.key
+    const { surveyId } = this.props
+    const key = surveyId && origPropLaunch ? surveyId : this.state.origSurvey.key
     let newQuestionsArray = []
     const config = JSON.parse(selectedSurvey.config)
     config.pages.forEach(page => {
@@ -278,24 +180,21 @@ class HomeView extends PureComponent {
           })
         }
       })
+      this.setState({
+        surveyResults: { newResults, schemaVersion: 3 },
+        showSurveyResultsOption: true,
+      })
       this.props.fbc.database.private
         .adminableUserRef('results')
         .child(key)
         .push({
           newResults,
-          creator: this.state.takeAnom
+          creator: takeAnom
             ? { firstName: '', lastName: 'Anonymous', email: '', id: '' }
             : this.state.currentUser,
           timeTaken: new Date().getTime(),
           schemaVersion: 3,
         })
-        .then(() =>
-          this.setState({
-            allowAnom: false,
-            surveyResults: { newResults, schemaVersion: 3 },
-            showSurveyResultsOption: true,
-          }),
-        )
         .catch(x => console.error(x))
     }
   }
@@ -327,9 +226,6 @@ class HomeView extends PureComponent {
     }
   }
 
-  injectedJavaScript = () => `
-  `
-
   loadLocalSurveys() {
     return AsyncStorage.getItem(this.leadStorageKey()).then(value => {
       if (value) {
@@ -355,58 +251,7 @@ const s = StyleSheet.create({
     flex: 1,
     backgroundColor: '#EFEFEF',
   },
-  anomBox: {
-    flexDirection: 'row',
-    backgroundColor: 'white',
-    paddingTop: 15,
-    paddingBottom: 15,
-  },
-  web: {
-    flex: 1,
-  },
-  webHidden: {
-    height: 1,
-    width: 1,
-  },
   scroll: {
-    flex: 1,
-  },
-  backButton: {
-    height: 40,
-    margin: 15,
-    borderRadius: 5,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  closeText: {
-    color: 'white',
-    fontSize: 16,
-  },
-  checkButton: {
-    justifyContent: 'center',
-    marginLeft: 15,
-    marginRight: 15,
-    height: 19,
-    width: 19,
-  },
-  task: {
-    flex: 1,
-    flexDirection: 'row',
-    marginBottom: 10,
-  },
-  checkmark: {
-    textAlign: 'center',
-    fontSize,
-  },
-  creatorAvatar: {
-    marginRight: 4,
-  },
-  creatorEmoji: {
-    marginRight: 4,
-    fontSize,
-  },
-  taskText: {
-    fontSize,
     flex: 1,
   },
   compose: {
@@ -438,5 +283,5 @@ export default provideFirebaseConnectorToReactComponent(
   PureComponent,
 )
 
-const getAnswer = (schemaVersion, item) =>
-  schemaVersion > 1 ? JSON.parse(item.answer) : item.answer
+// const getAnswer = (schemaVersion, item) =>
+//   schemaVersion > 1 ? JSON.parse(item.answer) : item.answer
