@@ -113,8 +113,8 @@ export default class SurveyTable extends Component {
         />
         <View style={{ borderTopColor: '#b7b7b7', borderTopWidth: 1, backgroundColor: '#EFEFEF' }}>
           <TouchableOpacity
-            disabled={this.props.disable}
-            onPress={this.props.closeSurveyModal}
+            disabled={!this.props.configKey}
+            onPress={this.props.openSurveyModal}
             style={[s.bigButton, colorStyle]}
           >
             <Text style={{ fontSize: 14, textAlign: 'center', color: 'white' }}>
@@ -380,12 +380,6 @@ const s = StyleSheet.create({
     color: '#364247',
     marginLeft: 5,
     marginTop: 16,
-  },
-  checkmark: {
-    textAlign: 'center',
-    height: 16,
-    width: 16,
-    marginTop: 4,
   },
   compose: {
     flexDirection: 'row',
