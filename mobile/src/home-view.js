@@ -33,7 +33,6 @@ class HomeView extends PureComponent {
     showTable: true,
     config: '',
     configKey: '',
-    disable: true,
     results: [],
     surveyLoading: true,
     takeAnom: false,
@@ -73,7 +72,7 @@ class HomeView extends PureComponent {
             const localSurvey = surveys.find(survey => survey.key === this.state.origSurvey.key)
             const disableSurveySelect = localSurvey ? !localSurvey.isViewable : true
             if (disableSurveySelect) {
-              this.setState({ disabled: true, origSurvey: null, showTable: true })
+              this.setState({ origSurvey: null, showTable: true })
             }
           }
         })
@@ -124,7 +123,6 @@ class HomeView extends PureComponent {
             selectSurvey={this.saveSurveyObject}
             openSurveyModal={this.openSurveyModal}
             configKey={selectedSurvey ? selectedSurvey.configKey : undefined}
-            disable={selectedSurvey ? selectedSurvey.disable : undefined}
           />
         ) : (
           <Survey
@@ -157,7 +155,7 @@ class HomeView extends PureComponent {
     const origResults = JSON.parse(resultsString)
     const resultsKeys = Object.keys(origResults)
     const { surveyId } = this.props
-    const key = surveyId && origPropLaunch ? surveyId : this.state.origSurvey.key
+    const key = surveyId && this.state.origPropLaunch ? surveyId : this.state.origSurvey.key
     let newQuestionsArray = []
     const config = JSON.parse(selectedSurvey.config)
     config.pages.forEach(page => {
@@ -221,7 +219,6 @@ class HomeView extends PureComponent {
     return {
       config: JSON.stringify(parsedInfo),
       configKey: item.key,
-      disable: false,
       allowAnom: item.allowAnom,
     }
   }

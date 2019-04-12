@@ -113,7 +113,7 @@ export default class SurveyTable extends Component {
         />
         <View style={{ borderTopColor: '#b7b7b7', borderTopWidth: 1, backgroundColor: '#EFEFEF' }}>
           <TouchableOpacity
-            disabled={this.props.disable}
+            disabled={!this.props.configKey}
             onPress={this.props.openSurveyModal}
             style={[s.bigButton, colorStyle]}
           >
