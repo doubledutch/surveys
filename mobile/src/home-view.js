@@ -279,6 +279,3 @@ export default provideFirebaseConnectorToReactComponent(
   (props, fbc) => <HomeView {...props} fbc={fbc} />,
   PureComponent,
 )
-
-// const getAnswer = (schemaVersion, item) =>
-//   schemaVersion > 1 ? JSON.parse(item.answer) : item.answer
