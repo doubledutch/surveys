@@ -34,6 +34,7 @@ class SurveyEditor extends Component {
       showControls: false,
       localConfig: this.props.config || '',
       currentTime: null,
+      disable: false,
     }
     const mainColor = '#73aaf3'
     const mainHoverColor = '#73aaf3'
@@ -137,10 +138,7 @@ class SurveyEditor extends Component {
           >
             {t('delete')}
           </button>
-          <button
-            className="dd-bordered"
-            onClick={() => this.props.showHomePage(this.props.history)}
-          >
+          <button className="dd-bordered" onClick={this.showHomePage} disabled={this.state.disable}>
             {t('done')}
           </button>
         </div>
@@ -182,6 +180,11 @@ class SurveyEditor extends Component {
     if (showControls !== this.state.showControls) {
       this.setState({ showControls, localConfig: this.editor.text })
     }
+  }
+
+  showHomePage = () => {
+    this.setState({ disable: true })
+    this.props.showHomePage(this.props.history)
   }
 
   controlsOff = () => {

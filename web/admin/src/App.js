@@ -253,6 +253,7 @@ class App extends PureComponent {
                 className={a.key === this.state.configKey ? 'grayButtonInput' : 'buttonInput'}
                 id={a.key}
                 type="text"
+                disabled
                 value={`dd://extensions/surveys?surveyId=${publishedVersion.key}`}
               />
             )}

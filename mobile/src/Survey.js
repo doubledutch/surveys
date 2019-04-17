@@ -74,7 +74,7 @@ export default class Survey extends PureComponent {
             onLoadEnd={this.surveyLoadEnd}
           />
         </View>
-        {selectedSurvey.allowAnom && (
+        {selectedSurvey.allowAnom && !showSurveyResultsOption && !surveyResults && (
           <View style={s.anomBox}>
             {this.renderAnomIcon()}
             <Text>{t('submitAnom')}</Text>
