@@ -54,7 +54,7 @@ export default class Survey extends PureComponent {
     return (
       <KeyboardAvoidingView style={s.container}>
         {surveyLoading && <Loading />}
-        {containsMatrix && (
+        {containsMatrix && !showSurveyResultsOption && !surveyResults && (
           <View style={{ backgroundColor: 'white' }}>
             <Text>
               *Note: This survey contains questions that may require horizontal scrolling to
@@ -74,7 +74,7 @@ export default class Survey extends PureComponent {
             onLoadEnd={this.surveyLoadEnd}
           />
         </View>
-        {selectedSurvey.allowAnom && (
+        {selectedSurvey.allowAnom && !showSurveyResultsOption && !surveyResults && (
           <View style={s.anomBox}>
             {this.renderAnomIcon()}
             <Text>{t('submitAnom')}</Text>

@@ -220,7 +220,7 @@ class App extends PureComponent {
   }
 
   addNewSurvey = ({ history }) => {
-    this.setState({ showBuilder: true, config: '' })
+    this.setState({ showBuilder: true, config: '', configKey: '' })
     history.push(`/content/builder`)
   }
 
@@ -253,6 +253,7 @@ class App extends PureComponent {
                 className={a.key === this.state.configKey ? 'grayButtonInput' : 'buttonInput'}
                 id={a.key}
                 type="text"
+                disabled
                 value={`dd://extensions/surveys?surveyId=${publishedVersion.key}`}
               />
             )}
@@ -359,6 +360,7 @@ class App extends PureComponent {
   }
 
   publishConfig = (survey, isPublished, isViewable) => {
+    const canPublish = !!JSON.parse(survey.info).pages[0].elements
     const info = survey.info
     const publishDate = survey.publishDate || new Date().getTime()
     const allowAnom = survey.allowAnom || false
@@ -367,7 +369,9 @@ class App extends PureComponent {
     const isDup = this.state.surveysDraft.find(
       item => JSON.parse(item.info).title === name && survey.key !== item.key,
     )
-    if (isDup && !isPublished) {
+    if (!canPublish) {
+      window.alert(t('blank_alert'))
+    } else if (isDup && !isPublished) {
       window.alert(t('dup_alert'))
     } else if (window.confirm(t('confirm_alert', { state }))) {
       this.props.fbc.database.public
