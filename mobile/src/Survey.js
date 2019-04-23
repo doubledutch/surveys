@@ -54,7 +54,7 @@ export default class Survey extends PureComponent {
     return (
       <KeyboardAvoidingView style={s.container}>
         {surveyLoading && <Loading />}
-        {containsMatrix && (
+        {containsMatrix && !showSurveyResultsOption && !surveyResults && (
           <View style={{ backgroundColor: 'white' }}>
             <Text>
               *Note: This survey contains questions that may require horizontal scrolling to
