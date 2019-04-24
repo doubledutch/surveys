@@ -150,10 +150,7 @@ export default class SurveyTable extends Component {
         }
       })
       this.setState({ search: true, newList: queryResult, survey: value })
-      if (queryResult.length) this.flatListRef.scrollToIndex({ animated: true, index: 0 })
-    } else {
-      this.setState({ search: false, survey: value })
-    }
+    } else this.setState({ search: false, survey: value })
   }
 
   renderModalHeader = () => {
