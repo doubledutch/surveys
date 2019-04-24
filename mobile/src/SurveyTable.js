@@ -89,9 +89,6 @@ export default class SurveyTable extends Component {
         <FlatList
           style={{ backgroundColor: '#EFEFEF', flex: 1 }}
           data={surveysOrdered}
-          ref={ref => {
-            this.flatListRef = ref
-          }}
           ListFooterComponent={<View style={{ height: 100 }} />}
           renderItem={({ item }) => (
             <TouchableOpacity
@@ -150,10 +147,7 @@ export default class SurveyTable extends Component {
         }
       })
       this.setState({ search: true, newList: queryResult, survey: value })
-      if (queryResult.length) this.flatListRef.scrollToIndex({ animated: true, index: 0 })
-    } else {
-      this.setState({ search: false, survey: value })
-    }
+    } else this.setState({ search: false, survey: value })
   }
 
   renderModalHeader = () => {
