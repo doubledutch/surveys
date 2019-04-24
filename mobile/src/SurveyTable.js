@@ -89,9 +89,6 @@ export default class SurveyTable extends Component {
         <FlatList
           style={{ backgroundColor: '#EFEFEF', flex: 1 }}
           data={surveysOrdered}
-          ref={ref => {
-            this.flatListRef = ref
-          }}
           ListFooterComponent={<View style={{ height: 100 }} />}
           renderItem={({ item }) => (
             <TouchableOpacity
