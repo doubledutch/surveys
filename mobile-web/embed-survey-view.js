@@ -20,7 +20,7 @@ const path = require('path')
 const index = fs.readFileSync(path.join(__dirname, 'build/index.html'), {encoding: 'utf8'})
 
 const cssRegex = /<link href="\/static\/css\/(main\..*\.css)" rel="stylesheet">/
-const jsRegex = /<script type="text\/javascript" src="\/static\/js\/(main\..*\.js)"><\/script>/
+const jsRegex = /<script src="\/static\/js\/(main\..*\.js)"><\/script>/
 
 const cssFile = index.match(cssRegex)[1]
 const jsFile = index.match(jsRegex)[1]
@@ -29,7 +29,7 @@ const css = fs.readFileSync(path.join(__dirname, `build/static/css/${cssFile}`),
 const js = fs.readFileSync(path.join(__dirname, `build/static/js/${jsFile}`), {encoding: 'utf8'})
 
 const cssTag = `<style>${css}</style>`
-const jsTag = `<script type="text/javascript">${js}</script>`
+const jsTag = `<script>${js}</script>`
 
 const bundledIndex = index
   .replace(cssRegex, () => cssTag)
