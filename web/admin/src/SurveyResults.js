@@ -80,6 +80,7 @@ class SurveyResults extends Component {
               expandedItem={this.state.expandedItem}
               item={item}
               loadExpandedCell={this.loadExpandedCell}
+              key={item.timeTaken}
             />
           ))}
         </ul>
@@ -145,7 +146,7 @@ class SurveyResults extends Component {
           ? `${adjustedTitleForExport}-Question:${i}`
           : adjustedTitleForExport
         if (idExists) {
-          adjustedTitleForExport = data.id
+          adjustedTitleForExport = data.id.replace(/\.$/, '')
         }
         newItem[adjustedTitleForExport.trim()] = answer.replace(/"/g, '""')
       })
@@ -177,9 +178,10 @@ class SurveyResults extends Component {
         page => (origQuestions = origQuestions.concat(page.elements)),
       )
       origQuestions.forEach(question => {
+        const name = question.name.replace(/\.$/, '')
         headers.push({
           label: question.title ? question.title.trim() : question.name.trim(),
-          key: question.name.trim(),
+          key: name.trim(),
         })
       })
       return headers
