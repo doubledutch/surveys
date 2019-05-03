@@ -164,9 +164,11 @@ class HomeView extends PureComponent {
     const newResults = []
     if (resultsKeys.length) {
       resultsKeys.forEach(item => {
-        const question = newQuestionsArray.find(
-          question => question.name === item.replace('-Comment', ''),
-        )
+        const question = newQuestionsArray.find(question => {
+          // check if key incorrectly has period at end which will be filtered out by surveyjs
+          const name = question.name.replace(/\.$/, '')
+          return name === item.replace('-Comment', '')
+        })
         if (question) {
           const answer = JSON.stringify(origResults[item])
           let questionTitle = question.title ? question.title : question.name
@@ -187,6 +189,7 @@ class HomeView extends PureComponent {
         .child(key)
         .push({
           newResults,
+          rawResults: origResults,
           creator: takeAnom
             ? { firstName: '', lastName: 'Anonymous', email: '', id: '' }
             : this.state.currentUser,

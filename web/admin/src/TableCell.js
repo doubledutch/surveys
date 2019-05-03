@@ -32,7 +32,7 @@ class TableCell extends Component {
           ).toDateString()}`}
         </p>
       </div>
-      {!this.props.isPDF && (
+      {!this.props.isPDF && item.newResults && (
         <button className="rightButtonCell" onClick={() => this.props.loadExpandedCell(item)}>
           {t('show_results')}
         </button>
@@ -74,7 +74,7 @@ class TableCell extends Component {
             )
           } else answer = origAnswer.toString()
           return (
-            <div className="subCell">
+            <div className="subCell" key={data.question}>
               <li className="subCellText">{`${data.question}: ${answer}`}</li>
             </div>
           )
