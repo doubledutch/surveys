@@ -174,9 +174,9 @@ class SurveyResults extends Component {
     const idExists = results.every(item => item.schemaVersion > 2)
     if (idExists) {
       let origQuestions = []
-      JSON.parse(this.props.config).pages.forEach(
-        page => (origQuestions = origQuestions.concat(page.elements)),
-      )
+      JSON.parse(this.props.config).pages.forEach(page => {
+        if (page.elements) origQuestions = origQuestions.concat(page.elements)
+      })
       origQuestions.forEach(question => {
         const name = question.name.replace(/\.$/, '')
         headers.push({
