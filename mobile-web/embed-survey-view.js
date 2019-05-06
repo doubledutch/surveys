@@ -24,11 +24,11 @@ const jsRegex = /<script src="\/static\/js\/([0-9a-z\.]*\.js)"><\/script>/g
 
 const bundledIndex = index.replace(cssRegex, (match, cssFile) => {
   const css = fs.readFileSync(path.join(__dirname, `build/static/css/${cssFile}`), {encoding: 'utf8'})
-  console.log(cssFile)
+  console.log(`Bundled ${cssFile}`)
   return `<style>${css}</style>`
 }).replace(jsRegex, (match, jsFile) => {
   const js = fs.readFileSync(path.join(__dirname, `build/static/js/${jsFile}`), {encoding: 'utf8'})
-  console.log(jsFile)
+  console.log(`Bundled ${jsFile}`)
   return `<script>${js}</script>`
 })
 
