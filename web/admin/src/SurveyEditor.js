@@ -75,11 +75,7 @@ class SurveyEditor extends Component {
     }
 
     this.editor = new SurveyJSCreator.SurveyCreator('surveyCreatorContainer', editorOptions)
-    this.editor.onShowingProperty.add(function(sender, options) {
-      if (options.obj.getType() !== 'page') {
-        options.canShow = options.property.name !== 'name'
-      }
-    })
+    hideNameField(this.editor)
     this.editor.haveCommercialLicense = true
     this.editor.isAutoSave = true
     this.editor.saveSurveyFunc = this.saveMySurvey
@@ -109,11 +105,12 @@ class SurveyEditor extends Component {
         ],
       }
       this.editor = new SurveyJSCreator.SurveyCreator('surveyCreatorContainer', editorOptions)
-      this.editor.onShowingProperty.add(function(sender, options) {
-        if (options.obj.getType() !== 'page') {
-          options.canShow = options.property.name !== 'name'
-        }
-      })
+      hideNameField(this.editor)
+      // this.editor.onShowingProperty.add(function(sender, options) {
+      //   if (options.obj.getType() !== 'page') {
+      //     options.canShow = options.property.name !== 'name'
+      //   }
+      // })
       this.editor.haveCommercialLicense = true
       this.editor.isAutoSave = true
       this.editor.saveSurveyFunc = this.saveMySurvey
@@ -225,5 +222,12 @@ class SurveyEditor extends Component {
     this.props.saveConfig(this.editor.text, allowAnom, this.state.currentTime)
   }
 }
+
+const hideNameField = editor =>
+  editor.onShowingProperty.add(function(sender, options) {
+    if (options.obj.getType() !== 'page') {
+      options.canShow = options.property.name !== 'name'
+    }
+  })
 
 export default SurveyEditor
