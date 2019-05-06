@@ -76,8 +76,8 @@ class SurveyEditor extends Component {
 
     this.editor = new SurveyJSCreator.SurveyCreator('surveyCreatorContainer', editorOptions)
     this.editor.onShowingProperty.add(function(sender, options) {
-      if (options.obj.getType() != 'page') {
-        options.canShow = options.property.name != 'name'
+      if (options.obj.getType() !== 'page') {
+        options.canShow = options.property.name !== 'name'
       }
     })
     this.editor.haveCommercialLicense = true
@@ -110,8 +110,8 @@ class SurveyEditor extends Component {
       }
       this.editor = new SurveyJSCreator.SurveyCreator('surveyCreatorContainer', editorOptions)
       this.editor.onShowingProperty.add(function(sender, options) {
-        if (options.obj.getType() != 'page') {
-          options.canShow = options.property.name != 'name'
+        if (options.obj.getType() !== 'page') {
+          options.canShow = options.property.name !== 'name'
         }
       })
       this.editor.haveCommercialLicense = true
