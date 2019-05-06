@@ -2,7 +2,6 @@ import React, { Component } from 'react'
 import { translate as t } from '@doubledutch/admin-client'
 import * as SurveyJSCreator from 'survey-creator'
 import * as SurveyKo from 'survey-knockout'
-import * as Survey from 'survey-react'
 import 'surveyjs-editor/surveyeditor.css'
 import 'jquery-ui/themes/base/all.css'
 import 'select2/dist/css/select2.css'
@@ -26,8 +25,6 @@ widgets.jqueryuidatepicker(SurveyKo, $)
 widgets.bootstrapslider(SurveyKo)
 
 class SurveyEditor extends Component {
-  editor
-
   constructor(props) {
     super(props)
     this.state = {
@@ -40,9 +37,6 @@ class SurveyEditor extends Component {
     const mainColor = '#73aaf3'
     const mainHoverColor = '#73aaf3'
     const textColor = '#4a4a4a'
-    const headerColor = '#73aaf3'
-    const headerBackgroundColor = '#4a4a4a'
-    const bodyContainerBackgroundColor = '#f8f8f8'
 
     const defaultThemeColorsEditor = SurveyJSCreator.StylesManager.ThemeColors.default
     defaultThemeColorsEditor['$primary-color'] = mainColor
@@ -59,7 +53,6 @@ class SurveyEditor extends Component {
       allowAnom: this.props.allowAnom || false,
       currentTime: this.props.publishDate || new Date(),
     })
-    Survey.JsonObject.metaData.findProperty('question', 'name').visible = false
     const editorOptions = {
       showEmbededSurveyTab: false,
       showPropertyGrid: this.state.showControls,
@@ -82,6 +75,11 @@ class SurveyEditor extends Component {
     }
 
     this.editor = new SurveyJSCreator.SurveyCreator('surveyCreatorContainer', editorOptions)
+    this.editor.onShowingProperty.add(function(sender, options) {
+      if (options.obj.getType() != 'page') {
+        options.canShow = options.property.name != 'name'
+      }
+    })
     this.editor.haveCommercialLicense = true
     this.editor.isAutoSave = true
     this.editor.saveSurveyFunc = this.saveMySurvey
@@ -90,7 +88,6 @@ class SurveyEditor extends Component {
 
   componentDidUpdate(nextProps, nextState) {
     if (this.state.showControls !== nextState.showControls) {
-      Survey.JsonObject.metaData.findProperty('question', 'name').visible = false
       const editorOptions = {
         showEmbededSurveyTab: false,
         showPropertyGrid: this.state.showControls,
@@ -111,10 +108,12 @@ class SurveyEditor extends Component {
           'multipletext',
         ],
       }
-      this.surveyCreator = new SurveyJSCreator.SurveyCreator(
-        'surveyCreatorContainer',
-        editorOptions,
-      )
+      this.editor = new SurveyJSCreator.SurveyCreator('surveyCreatorContainer', editorOptions)
+      this.editor.onShowingProperty.add(function(sender, options) {
+        if (options.obj.getType() != 'page') {
+          options.canShow = options.property.name != 'name'
+        }
+      })
       this.editor.haveCommercialLicense = true
       this.editor.isAutoSave = true
       this.editor.saveSurveyFunc = this.saveMySurvey
@@ -128,7 +127,6 @@ class SurveyEditor extends Component {
   render() {
     const publishedVersion = this.props.surveys.find(survey => survey.key === this.props.configKey)
     const publishedTime = publishedVersion ? new Date(publishedVersion.lastUpdate) : undefined
-
     return (
       <div className="tableContainer">
         <div className="headerRow">
