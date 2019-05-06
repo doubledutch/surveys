@@ -103,9 +103,10 @@ export default class Survey extends PureComponent {
   sendInfo = selectedSurvey => {
     const origConfig = JSON.parse(selectedSurvey.config)
     if (origConfig.pages) {
-      const containsMatrix = !!origConfig.pages.find(page =>
-        page.elements.find(item => item.type === 'matrixdynamic' || item.type === 'matrix'),
-      )
+      const containsMatrix = !!origConfig.pages.find(page => {
+        if (page.elements)
+          return page.elements.find(item => item.type === 'matrixdynamic' || item.type === 'matrix')
+      })
       const config = JSON.stringify({
         survey: selectedSurvey.config,
         color: this.props.primaryColor,
