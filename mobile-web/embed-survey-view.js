@@ -19,20 +19,17 @@ const path = require('path')
 
 const index = fs.readFileSync(path.join(__dirname, 'build/index.html'), {encoding: 'utf8'})
 
-const cssRegex = /<link href="\/static\/css\/(main\..*\.css)" rel="stylesheet">/
-const jsRegex = /<script src="\/static\/js\/(main\..*\.js)"><\/script>/
+const cssRegex = /<link href="\/static\/css\/([0-9a-z\.]*\.css)" rel="stylesheet">/g
+const jsRegex = /<script src="\/static\/js\/([0-9a-z\.]*\.js)"><\/script>/g
 
-const cssFile = index.match(cssRegex)[1]
-const jsFile = index.match(jsRegex)[1]
-
-const css = fs.readFileSync(path.join(__dirname, `build/static/css/${cssFile}`), {encoding: 'utf8'})
-const js = fs.readFileSync(path.join(__dirname, `build/static/js/${jsFile}`), {encoding: 'utf8'})
-
-const cssTag = `<style>${css}</style>`
-const jsTag = `<script>${js}</script>`
-
-const bundledIndex = index
-  .replace(cssRegex, () => cssTag)
-  .replace(jsRegex, () => jsTag)
+const bundledIndex = index.replace(cssRegex, (match, cssFile) => {
+  const css = fs.readFileSync(path.join(__dirname, `build/static/css/${cssFile}`), {encoding: 'utf8'})
+  console.log(`Bundled ${cssFile}`)
+  return `<style>${css}</style>`
+}).replace(jsRegex, (match, jsFile) => {
+  const js = fs.readFileSync(path.join(__dirname, `build/static/js/${jsFile}`), {encoding: 'utf8'})
+  console.log(`Bundled ${jsFile}`)
+  return `<script>${js}</script>`
+})
 
 fs.writeFileSync(path.join(__dirname, '../mobile/src/surveyViewHtml.js'), `export default ${JSON.stringify(bundledIndex)};\n`)
