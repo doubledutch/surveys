@@ -190,12 +190,15 @@ class SurveyResults extends Component {
   }
 
   prepareCsv = results => {
-    const attendeeClickPromises = results.map(result =>
-      this.props.client
-        .getAttendee(result.creator.id)
-        .then(attendee => ({ ...result, ...attendee }))
-        .catch(err => result),
-    )
+    const attendeeClickPromises = results.map(result => {
+      if (result.creator.id) {
+        return this.props.client
+          .getAttendee(result.creator.id)
+          .then(attendee => ({ ...result, ...attendee }))
+          .catch(err => result)
+      }
+      return result
+    })
 
     Promise.all(attendeeClickPromises).then(newResults => {
       // Build CSV and trigger download...
