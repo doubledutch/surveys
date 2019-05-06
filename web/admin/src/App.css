@@ -102,7 +102,7 @@ button.displayButton:focus, button.displayButton:active {
   background-color: white !important;
   line-height: 1;
   color: white;
-  text-shadow: 0 1px 0 #fff;
+  /* text-shadow: 0 1px 0 #fff; */
   filter: alpha(opacity=20);
   opacity: 0.2;
   -webkit-appearance: none;
