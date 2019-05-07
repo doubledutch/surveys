@@ -170,7 +170,7 @@ class HomeView extends PureComponent {
           return name === item.replace('-Comment', '')
         })
         if (question) {
-          const answer = getDefaultLocale(origResults[item])
+          const answer = JSON.stringify(getDefaultLocale(origResults[item]))
           let questionTitle = getDefaultLocale(question.title) || question.name
           questionTitle = question.label ? question.label : questionTitle
           newResults.push({
