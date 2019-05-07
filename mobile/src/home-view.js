@@ -21,7 +21,7 @@ import { KeyboardAvoidingView, Platform, StyleSheet, AsyncStorage } from 'react-
 import client, { TitleBar, translate as t, useStrings, locale } from '@doubledutch/rn-client'
 import { provideFirebaseConnectorToReactComponent } from '@doubledutch/firebase-connector'
 import i18n from './i18n'
-import SurveyTable, { localeTitle } from './SurveyTable'
+import SurveyTable, { getDefaultLocale } from './SurveyTable'
 import Loading from './Loading'
 import Survey from './Survey'
 
@@ -170,11 +170,8 @@ class HomeView extends PureComponent {
           return name === item.replace('-Comment', '')
         })
         if (question) {
-          const answer =
-            typeof origResults[item] === 'object'
-              ? JSON.stringify(origResults[item].default)
-              : JSON.stringify(origResults[item])
-          let questionTitle = localeTitle(question) || question.name
+          const answer = getDefaultLocale(origResults[item])
+          let questionTitle = getDefaultLocale(question.title) || question.name
           questionTitle = question.label ? question.label : questionTitle
           newResults.push({
             question: questionTitle,

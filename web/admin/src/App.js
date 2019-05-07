@@ -26,7 +26,7 @@ import 'react-tabs/style/react-tabs.css'
 import ExportResultsScreen from './ExportResultsScreen'
 import SurveyWrapper from './SurveyWrapper'
 import SurveyEditor from './SurveyEditor'
-import SurveyResults, { localeTitle } from './SurveyResults'
+import SurveyResults, { getDefaultLocale } from './SurveyResults'
 import '@doubledutch/react-components/lib/base.css'
 import 'survey-react/survey.css'
 import 'bootstrap/dist/css/bootstrap.css'
@@ -246,7 +246,7 @@ class App extends PureComponent {
             onClick={event => this.loadConfig(event, a.key, a.info, a.allowAnom)}
           >
             <p className={a.key === this.state.configKey ? 'grayButtonCell' : 'buttonCell'}>
-              {localeTitle(parsedData)}
+              {getDefaultLocale(parsedData.title)}
             </p>
             {publishedVersion && (
               <input

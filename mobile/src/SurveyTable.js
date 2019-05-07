@@ -131,7 +131,7 @@ export default class SurveyTable extends Component {
 
   returnName = item => {
     const parsedData = JSON.parse(item.info)
-    return localeTitle(parsedData)
+    return getDefaultLocale(parsedData.title)
   }
 
   updateList = value => {
@@ -226,7 +226,8 @@ export default class SurveyTable extends Component {
   }
 }
 
-export const localeTitle = obj => (typeof obj.title === 'object' ? obj.title.default : obj.title)
+export const getDefaultLocale = possiblyLocalized =>
+  typeof possiblyLocalized === 'object' ? possiblyLocalized.default : possiblyLocalized
 
 const SurveyRadio = ({ selected, primaryColor }) => (
   <View style={[s.radio, selected ? { borderColor: primaryColor } : null]}>
