@@ -18,7 +18,7 @@ import React, { PureComponent } from 'react'
 import { KeyboardAvoidingView, Platform, StyleSheet, AsyncStorage } from 'react-native'
 
 // rn-client must be imported before FirebaseConnector
-import client, { TitleBar, translate as t, useStrings } from '@doubledutch/rn-client'
+import client, { TitleBar, translate as t, useStrings, locale } from '@doubledutch/rn-client'
 import { provideFirebaseConnectorToReactComponent } from '@doubledutch/firebase-connector'
 import i18n from './i18n'
 import SurveyTable from './SurveyTable'
@@ -210,6 +210,7 @@ class HomeView extends PureComponent {
 
   selectSurvey = item => {
     const parsedInfo = JSON.parse(item.info)
+    parsedInfo.locale = locale.language
     parsedInfo.pages.forEach(page => {
       if (page.elements) {
         page.elements.forEach(question => {

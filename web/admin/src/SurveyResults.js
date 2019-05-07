@@ -181,7 +181,7 @@ class SurveyResults extends Component {
         const name = question.name.replace(/\.$/, '')
         const title = typeof question.title === 'object' ? question.title.default : question.title
         headers.push({
-          label: title || question.name.trim(),
+          label: title.trim() || question.name.trim(),
           key: name.trim(),
         })
       })
