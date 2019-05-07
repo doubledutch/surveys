@@ -106,11 +106,6 @@ class SurveyEditor extends Component {
       }
       this.editor = new SurveyJSCreator.SurveyCreator('surveyCreatorContainer', editorOptions)
       hideNameField(this.editor)
-      // this.editor.onShowingProperty.add(function(sender, options) {
-      //   if (options.obj.getType() !== 'page') {
-      //     options.canShow = options.property.name !== 'name'
-      //   }
-      // })
       this.editor.haveCommercialLicense = true
       this.editor.isAutoSave = true
       this.editor.saveSurveyFunc = this.saveMySurvey
