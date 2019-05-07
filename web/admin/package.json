@@ -20,8 +20,10 @@
     "react-router-dom": "^5.0.0",
     "react-scripts": "^2.1.8",
     "react-tabs": "^3.0.0",
-    "survey-react": "^1.0.35",
-    "surveyjs-editor": "^1.0.46",
+    "survey-creator": "^1.0.83",
+    "survey-knockout": "^1.0.83",
+    "survey-react": "^1.0.83",
+    "surveyjs-editor": "^1.0.83",
     "surveyjs-widgets": "^1.0.35"
   },
   "scripts": {

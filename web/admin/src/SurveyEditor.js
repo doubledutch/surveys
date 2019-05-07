@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { translate as t } from '@doubledutch/admin-client'
-import * as SurveyJSEditor from 'surveyjs-editor'
+import * as SurveyJSCreator from 'survey-creator'
 import * as SurveyKo from 'survey-knockout'
 import 'surveyjs-editor/surveyeditor.css'
 import 'jquery-ui/themes/base/all.css'
@@ -25,8 +25,6 @@ widgets.jqueryuidatepicker(SurveyKo, $)
 widgets.bootstrapslider(SurveyKo)
 
 class SurveyEditor extends Component {
-  editor
-
   constructor(props) {
     super(props)
     this.state = {
@@ -39,18 +37,15 @@ class SurveyEditor extends Component {
     const mainColor = '#73aaf3'
     const mainHoverColor = '#73aaf3'
     const textColor = '#4a4a4a'
-    const headerColor = '#73aaf3'
-    const headerBackgroundColor = '#4a4a4a'
-    const bodyContainerBackgroundColor = '#f8f8f8'
 
-    const defaultThemeColorsEditor = SurveyJSEditor.StylesManager.ThemeColors.default
+    const defaultThemeColorsEditor = SurveyJSCreator.StylesManager.ThemeColors.default
     defaultThemeColorsEditor['$primary-color'] = mainColor
     defaultThemeColorsEditor['$secondary-color'] = mainColor
     defaultThemeColorsEditor['$primary-hover-color'] = mainHoverColor
     defaultThemeColorsEditor['$primary-text-color'] = textColor
     defaultThemeColorsEditor['$secondary-border-color'] = mainColor
     defaultThemeColorsEditor['$selection-border-color'] = mainColor
-    SurveyJSEditor.StylesManager.applyTheme()
+    SurveyJSCreator.StylesManager.applyTheme()
   }
 
   componentDidMount() {
@@ -78,7 +73,9 @@ class SurveyEditor extends Component {
         'multipletext',
       ],
     }
-    this.editor = new SurveyJSEditor.SurveyEditor('editorElement', editorOptions)
+
+    this.editor = new SurveyJSCreator.SurveyCreator('surveyCreatorContainer', editorOptions)
+    hideNameField(this.editor)
     this.editor.haveCommercialLicense = true
     this.editor.isAutoSave = true
     this.editor.saveSurveyFunc = this.saveMySurvey
@@ -107,7 +104,8 @@ class SurveyEditor extends Component {
           'multipletext',
         ],
       }
-      this.editor = new SurveyJSEditor.SurveyEditor('editorElement', editorOptions)
+      this.editor = new SurveyJSCreator.SurveyCreator('surveyCreatorContainer', editorOptions)
+      hideNameField(this.editor)
       this.editor.haveCommercialLicense = true
       this.editor.isAutoSave = true
       this.editor.saveSurveyFunc = this.saveMySurvey
@@ -121,7 +119,6 @@ class SurveyEditor extends Component {
   render() {
     const publishedVersion = this.props.surveys.find(survey => survey.key === this.props.configKey)
     const publishedTime = publishedVersion ? new Date(publishedVersion.lastUpdate) : undefined
-
     return (
       <div className="tableContainer">
         <div className="headerRow">
@@ -143,7 +140,7 @@ class SurveyEditor extends Component {
           </button>
         </div>
         <div className="editorBox">
-          {this.props.isEditorBoxDisplay && <div id="editorElement" />}
+          {this.props.isEditorBoxDisplay && <div id="surveyCreatorContainer" />}
         </div>
         <div className="settingsContainer">
           <div className="settingsSubContainer">
@@ -220,5 +217,12 @@ class SurveyEditor extends Component {
     this.props.saveConfig(this.editor.text, allowAnom, this.state.currentTime)
   }
 }
+
+const hideNameField = editor =>
+  editor.onShowingProperty.add(function(sender, options) {
+    if (options.obj.getType() !== 'page') {
+      options.canShow = options.property.name !== 'name'
+    }
+  })
 
 export default SurveyEditor
