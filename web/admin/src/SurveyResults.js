@@ -179,8 +179,9 @@ class SurveyResults extends Component {
       })
       origQuestions.forEach(question => {
         const name = question.name.replace(/\.$/, '')
+        const title = typeof question.title === 'object' ? question.title.default : question.title
         headers.push({
-          label: question.title ? question.title.trim() : question.name.trim(),
+          label: title || question.name.trim(),
           key: name.trim(),
         })
       })

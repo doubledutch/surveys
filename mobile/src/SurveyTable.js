@@ -131,7 +131,8 @@ export default class SurveyTable extends Component {
 
   returnName = item => {
     const parsedData = JSON.parse(item.info)
-    return parsedData.title
+    const title = typeof parsedData.title === 'object' ? parsedData.title.default : parsedData.title
+    return title
   }
 
   updateList = value => {

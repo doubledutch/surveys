@@ -58,7 +58,7 @@ class SurveyEditor extends Component {
       showPropertyGrid: this.state.showControls,
       showPagesToolbox: true,
       useTabsInElementEditor: true,
-      showJSONEditorTab: true,
+      showJSONEditorTab: this.state.showControls,
       questionTypes: [
         'text',
         'checkbox',
@@ -88,7 +88,7 @@ class SurveyEditor extends Component {
         showEmbededSurveyTab: false,
         showPropertyGrid: this.state.showControls,
         showPagesToolbox: true,
-        useTabsInElementEditor: true,
+        useTabsInElementEditor: this.state.showControls,
         showJSONEditorTab: true,
         questionTypes: [
           'text',
@@ -106,11 +106,6 @@ class SurveyEditor extends Component {
       }
       this.editor = new SurveyJSCreator.SurveyCreator('surveyCreatorContainer', editorOptions)
       hideNameField(this.editor)
-      // this.editor.onShowingProperty.add(function(sender, options) {
-      //   if (options.obj.getType() !== 'page') {
-      //     options.canShow = options.property.name !== 'name'
-      //   }
-      // })
       this.editor.haveCommercialLicense = true
       this.editor.isAutoSave = true
       this.editor.saveSurveyFunc = this.saveMySurvey

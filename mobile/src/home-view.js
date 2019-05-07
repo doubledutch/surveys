@@ -170,8 +170,12 @@ class HomeView extends PureComponent {
           return name === item.replace('-Comment', '')
         })
         if (question) {
-          const answer = JSON.stringify(origResults[item])
-          let questionTitle = question.title ? question.title : question.name
+          const answer =
+            typeof origResults[item] === 'object'
+              ? JSON.stringify(origResults[item].default)
+              : JSON.stringify(origResults[item])
+          const title = typeof question.title === 'object' ? question.title.default : question.title
+          let questionTitle = title || question.name
           questionTitle = question.label ? question.label : questionTitle
           newResults.push({
             question: questionTitle,

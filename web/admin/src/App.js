@@ -237,6 +237,8 @@ class App extends PureComponent {
             publishedVersion.publishDate === a.publishDate
           : false
         const isPublishedHidden = isPublished && !publishedVersion.isViewable
+        const title =
+          typeof parsedData.title === 'object' ? parsedData.title.default : parsedData.title
         return (
           <div
             key={a.key}
@@ -246,7 +248,7 @@ class App extends PureComponent {
             onClick={event => this.loadConfig(event, a.key, a.info, a.allowAnom)}
           >
             <p className={a.key === this.state.configKey ? 'grayButtonCell' : 'buttonCell'}>
-              {parsedData.title}
+              {title}
             </p>
             {publishedVersion && (
               <input
