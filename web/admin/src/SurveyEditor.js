@@ -58,7 +58,7 @@ class SurveyEditor extends Component {
       showPropertyGrid: this.state.showControls,
       showPagesToolbox: true,
       useTabsInElementEditor: true,
-      showJSONEditorTab: true,
+      showJSONEditorTab: this.state.showControls,
       questionTypes: [
         'text',
         'checkbox',
@@ -88,7 +88,7 @@ class SurveyEditor extends Component {
         showEmbededSurveyTab: false,
         showPropertyGrid: this.state.showControls,
         showPagesToolbox: true,
-        useTabsInElementEditor: true,
+        useTabsInElementEditor: this.state.showControls,
         showJSONEditorTab: true,
         questionTypes: [
           'text',

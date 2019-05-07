@@ -116,9 +116,10 @@ class SurveyResults extends Component {
     const parsedResults = []
     // This new variable is to take into account question keys so that we can properly parse duplicate questions in a survey
     const idExists = results.every(item => item.schemaVersion > 2)
+    const title = getDefaultLocale(JSON.parse(this.props.config).title)
     results.forEach(item => {
       const newItem = {
-        surveyTitle: JSON.parse(this.props.config).title,
+        surveyTitle: title,
         firstName: item.creator.firstName,
         lastName: item.creator.lastName,
         email: item.email,
@@ -179,8 +180,9 @@ class SurveyResults extends Component {
       })
       origQuestions.forEach(question => {
         const name = question.name.replace(/\.$/, '')
+        const title = getDefaultLocale(question.title)
         headers.push({
-          label: question.title ? question.title.trim() : question.name.trim(),
+          label: title.trim() || question.name.trim(),
           key: name.trim(),
         })
       })
@@ -226,5 +228,8 @@ function stringifyForCsv(obj) {
     .map(([key, val]) => `${key}: ${val}`)
     .join('; ')
 }
+
+export const getDefaultLocale = possiblyLocalized =>
+  typeof possiblyLocalized === 'object' ? possiblyLocalized.default : possiblyLocalized
 
 export default SurveyResults

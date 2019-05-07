@@ -18,10 +18,10 @@ import React, { PureComponent } from 'react'
 import { KeyboardAvoidingView, Platform, StyleSheet, AsyncStorage } from 'react-native'
 
 // rn-client must be imported before FirebaseConnector
-import client, { TitleBar, translate as t, useStrings } from '@doubledutch/rn-client'
+import client, { TitleBar, translate as t, useStrings, locale } from '@doubledutch/rn-client'
 import { provideFirebaseConnectorToReactComponent } from '@doubledutch/firebase-connector'
 import i18n from './i18n'
-import SurveyTable from './SurveyTable'
+import SurveyTable, { getDefaultLocale } from './SurveyTable'
 import Loading from './Loading'
 import Survey from './Survey'
 
@@ -170,8 +170,8 @@ class HomeView extends PureComponent {
           return name === item.replace('-Comment', '')
         })
         if (question) {
-          const answer = JSON.stringify(origResults[item])
-          let questionTitle = question.title ? question.title : question.name
+          const answer = JSON.stringify(getDefaultLocale(origResults[item]))
+          let questionTitle = getDefaultLocale(question.title) || question.name
           questionTitle = question.label ? question.label : questionTitle
           newResults.push({
             question: questionTitle,
@@ -206,6 +206,7 @@ class HomeView extends PureComponent {
 
   selectSurvey = item => {
     const parsedInfo = JSON.parse(item.info)
+    parsedInfo.locale = locale.language
     parsedInfo.pages.forEach(page => {
       if (page.elements) {
         page.elements.forEach(question => {
