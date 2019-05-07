@@ -226,7 +226,7 @@ export default class SurveyTable extends Component {
   }
 }
 
-const localeTitle = obj => (typeof obj.title === 'object' ? obj.title.default : obj.title)
+export const localeTitle = obj => (typeof obj.title === 'object' ? obj.title.default : obj.title)
 
 const SurveyRadio = ({ selected, primaryColor }) => (
   <View style={[s.radio, selected ? { borderColor: primaryColor } : null]}>
