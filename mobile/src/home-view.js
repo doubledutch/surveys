@@ -206,7 +206,7 @@ class HomeView extends PureComponent {
 
   selectSurvey = item => {
     const parsedInfo = JSON.parse(item.info)
-    parsedInfo.locale = locale.language
+    if (parsedInfo.title.default) parsedInfo.locale = locale.language
     parsedInfo.pages.forEach(page => {
       if (page.elements) {
         page.elements.forEach(question => {
