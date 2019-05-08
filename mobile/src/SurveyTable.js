@@ -25,7 +25,7 @@ import {
   FlatList,
   KeyboardAvoidingView,
 } from 'react-native'
-import { Color, translate as t } from '@doubledutch/rn-client'
+import { Color, translate as t, locale } from '@doubledutch/rn-client'
 
 export default class SurveyTable extends Component {
   constructor(props) {
@@ -131,7 +131,13 @@ export default class SurveyTable extends Component {
 
   returnName = item => {
     const parsedData = JSON.parse(item.info)
-    return getDefaultLocale(parsedData.title)
+    const { title } = parsedData
+    if (typeof title === 'object') {
+      const localLang = locale.language
+      if (title[localLang]) return title[localLang]
+      return title.default
+    }
+    return title
   }
 
   updateList = value => {
@@ -225,9 +231,6 @@ export default class SurveyTable extends Component {
     this.setState({ survey: '', search: false })
   }
 }
-
-export const getDefaultLocale = possiblyLocalized =>
-  typeof possiblyLocalized === 'object' ? possiblyLocalized.default : possiblyLocalized
 
 const SurveyRadio = ({ selected, primaryColor }) => (
   <View style={[s.radio, selected ? { borderColor: primaryColor } : null]}>

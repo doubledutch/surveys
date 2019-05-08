@@ -21,7 +21,7 @@ import { KeyboardAvoidingView, Platform, StyleSheet, AsyncStorage } from 'react-
 import client, { TitleBar, translate as t, useStrings, locale } from '@doubledutch/rn-client'
 import { provideFirebaseConnectorToReactComponent } from '@doubledutch/firebase-connector'
 import i18n from './i18n'
-import SurveyTable, { getDefaultLocale } from './SurveyTable'
+import SurveyTable from './SurveyTable'
 import Loading from './Loading'
 import Survey from './Survey'
 
@@ -206,7 +206,7 @@ class HomeView extends PureComponent {
 
   selectSurvey = item => {
     const parsedInfo = JSON.parse(item.info)
-    parsedInfo.locale = locale.language
+    if (parsedInfo.title.default) parsedInfo.locale = locale.language
     parsedInfo.pages.forEach(page => {
       if (page.elements) {
         page.elements.forEach(question => {
@@ -245,6 +245,9 @@ class HomeView extends PureComponent {
     return `@DD:surveys_${this.state.currentEvent.id}_${this.state.currentUser.id}`
   }
 }
+
+const getDefaultLocale = possiblyLocalized =>
+  typeof possiblyLocalized === 'object' ? possiblyLocalized.default : possiblyLocalized
 
 const fontSize = 18
 const s = StyleSheet.create({
