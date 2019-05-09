@@ -171,7 +171,7 @@ class HomeView extends PureComponent {
         })
         if (question) {
           const answer = JSON.stringify(getDefaultLocale(origResults[item]))
-          let questionTitle = getDefaultLocale(question.title) || question.name
+          let questionTitle = getDefaultLocale(question.title || question.name)
           questionTitle = question.label ? question.label : questionTitle
           newResults.push({
             question: questionTitle,
@@ -247,7 +247,7 @@ class HomeView extends PureComponent {
 }
 
 const getDefaultLocale = possiblyLocalized =>
-  typeof possiblyLocalized === 'object' ? possiblyLocalized.default : possiblyLocalized
+  possiblyLocalized && possiblyLocalized.default ? possiblyLocalized.default : possiblyLocalized
 
 const fontSize = 18
 const s = StyleSheet.create({
