@@ -171,7 +171,7 @@ class HomeView extends PureComponent {
         })
         if (question) {
           const answer = JSON.stringify(getDefaultLocale(origResults[item]))
-          let questionTitle = getDefaultLocale(question.title) || question.name
+          let questionTitle = getDefaultLocale(question.title || question.name)
           questionTitle = question.label ? question.label : questionTitle
           newResults.push({
             question: questionTitle,
