@@ -180,9 +180,9 @@ class SurveyResults extends Component {
       })
       origQuestions.forEach(question => {
         const name = question.name.replace(/\.$/, '')
-        const title = getDefaultLocale(question.title)
+        const title = getDefaultLocale(question.title) || question.name
         headers.push({
-          label: title.trim() || question.name.trim(),
+          label: title.trim(),
           key: name.trim(),
         })
       })
@@ -230,6 +230,8 @@ function stringifyForCsv(obj) {
 }
 
 export const getDefaultLocale = possiblyLocalized =>
-  typeof possiblyLocalized === 'object' ? possiblyLocalized.default : possiblyLocalized
+  typeof possiblyLocalized === 'object' && !possiblyLocalized.length
+    ? possiblyLocalized.default
+    : possiblyLocalized
 
 export default SurveyResults
