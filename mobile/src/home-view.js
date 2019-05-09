@@ -247,9 +247,7 @@ class HomeView extends PureComponent {
 }
 
 const getDefaultLocale = possiblyLocalized =>
-  typeof possiblyLocalized === 'object' && !possiblyLocalized.length
-    ? possiblyLocalized.default
-    : possiblyLocalized
+  possiblyLocalized.default ? possiblyLocalized.default : possiblyLocalized
 
 const fontSize = 18
 const s = StyleSheet.create({
