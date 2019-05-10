@@ -11,9 +11,9 @@
     "react-dom": "^16.4.2",
     "react-scripts": "^3.0.0",
     "react-surveyjs-vas-widget": "^1.0.1",
-    "survey-knockout": "^1.0.48",
-    "survey-react": "^1.0.42",
-    "surveyjs-widgets": "^1.0.42"
+    "survey-knockout": "^1.0.84",
+    "survey-react": "^1.0.84",
+    "surveyjs-widgets": "^1.0.84"
   },
   "scripts": {
     "start": "react-scripts start",
