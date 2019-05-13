@@ -116,9 +116,10 @@ class SurveyResults extends Component {
     const parsedResults = []
     // This new variable is to take into account question keys so that we can properly parse duplicate questions in a survey
     const idExists = results.every(item => item.schemaVersion > 2)
+    const title = getDefaultLocale(JSON.parse(this.props.config).title)
     results.forEach(item => {
       const newItem = {
-        surveyTitle: JSON.parse(this.props.config).title,
+        surveyTitle: title,
         firstName: item.creator.firstName,
         lastName: item.creator.lastName,
         email: item.email,
@@ -174,13 +175,14 @@ class SurveyResults extends Component {
     const idExists = results.every(item => item.schemaVersion > 2)
     if (idExists) {
       let origQuestions = []
-      JSON.parse(this.props.config).pages.forEach(
-        page => (origQuestions = origQuestions.concat(page.elements)),
-      )
+      JSON.parse(this.props.config).pages.forEach(page => {
+        if (page.elements) origQuestions = origQuestions.concat(page.elements)
+      })
       origQuestions.forEach(question => {
         const name = question.name.replace(/\.$/, '')
+        const title = getDefaultLocale(question.title || question.name)
         headers.push({
-          label: question.title ? question.title.trim() : question.name.trim(),
+          label: title.trim(),
           key: name.trim(),
         })
       })
@@ -190,12 +192,15 @@ class SurveyResults extends Component {
   }
 
   prepareCsv = results => {
-    const attendeeClickPromises = results.map(result =>
-      this.props.client
-        .getAttendee(result.creator.id)
-        .then(attendee => ({ ...result, ...attendee }))
-        .catch(err => result),
-    )
+    const attendeeClickPromises = results.map(result => {
+      if (result.creator.id) {
+        return this.props.client
+          .getAttendee(result.creator.id)
+          .then(attendee => ({ ...result, ...attendee }))
+          .catch(err => result)
+      }
+      return result
+    })
 
     Promise.all(attendeeClickPromises).then(newResults => {
       // Build CSV and trigger download...
@@ -223,5 +228,8 @@ function stringifyForCsv(obj) {
     .map(([key, val]) => `${key}: ${val}`)
     .join('; ')
 }
+
+export const getDefaultLocale = possiblyLocalized =>
+  possiblyLocalized && possiblyLocalized.default ? possiblyLocalized.default : possiblyLocalized
 
 export default SurveyResults
