@@ -88,8 +88,8 @@ class SurveyEditor extends Component {
         showEmbededSurveyTab: false,
         showPropertyGrid: this.state.showControls,
         showPagesToolbox: true,
-        useTabsInElementEditor: this.state.showControls,
-        showJSONEditorTab: true,
+        useTabsInElementEditor: true,
+        showJSONEditorTab: this.state.showControls,
         questionTypes: [
           'text',
           'checkbox',
