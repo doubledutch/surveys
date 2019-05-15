@@ -170,8 +170,8 @@ class HomeView extends PureComponent {
           return name === item.replace('-Comment', '')
         })
         if (question) {
-          const answer = JSON.stringify(getDefaultLocale(origResults[item]))
-          let questionTitle = getDefaultLocale(question.title || question.name)
+          const answer = JSON.stringify(getDefaultLocale(origResults[item], config.locale))
+          let questionTitle = getDefaultLocale(question.title || question.name, config.locale)
           questionTitle = question.label ? question.label : questionTitle
           newResults.push({
             question: questionTitle,
@@ -206,7 +206,7 @@ class HomeView extends PureComponent {
 
   selectSurvey = item => {
     const parsedInfo = JSON.parse(item.info)
-    if (parsedInfo.title.default) parsedInfo.locale = locale.language
+    if (parsedInfo.title.default && !parsedInfo.locale) parsedInfo.locale = locale.language
     parsedInfo.pages.forEach(page => {
       if (page.elements) {
         page.elements.forEach(question => {
@@ -246,8 +246,20 @@ class HomeView extends PureComponent {
   }
 }
 
-const getDefaultLocale = possiblyLocalized =>
-  possiblyLocalized && possiblyLocalized.default ? possiblyLocalized.default : possiblyLocalized
+// const getDefaultLocale = possiblyLocalized =>
+//   possiblyLocalized && possiblyLocalized.default ? possiblyLocalized.default : possiblyLocalized
+
+const getDefaultLocale = (possiblyLocalized, locale) => {
+  // check if locale is set on survey instead of default
+  if (typeof possiblyLocalized === 'object') {
+    // if (possiblyLocalized.default) return possiblyLocalized.default
+    if (locale && possiblyLocalized[locale]) {
+      return possiblyLocalized[locale]
+    }
+    return possiblyLocalized.default
+  }
+  return possiblyLocalized
+}
 
 const fontSize = 18
 const s = StyleSheet.create({

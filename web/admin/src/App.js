@@ -246,7 +246,7 @@ class App extends PureComponent {
             onClick={event => this.loadConfig(event, a.key, a.info, a.allowAnom)}
           >
             <p className={a.key === this.state.configKey ? 'grayButtonCell' : 'buttonCell'}>
-              {getDefaultLocale(parsedData.title)}
+              {getDefaultLocale(parsedData.title, parsedData.locale)}
             </p>
             {publishedVersion && (
               <input
@@ -366,11 +366,10 @@ class App extends PureComponent {
     const allowAnom = survey.allowAnom || false
     const state = isPublished ? t('unpublish') : t('publish')
     const name = JSON.parse(info).title
-    const nameCanPublish = typeof name === 'object' ? !!name.default : !!name
     const isDup = this.state.surveysDraft.find(
       item => JSON.parse(item.info).title === name && survey.key !== item.key,
     )
-    if (!canPublish || !nameCanPublish) {
+    if (!canPublish) {
       window.alert(t('blank_alert'))
     } else if (isDup && !isPublished) {
       window.alert(t('dup_alert'))
