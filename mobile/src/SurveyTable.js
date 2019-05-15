@@ -134,7 +134,9 @@ export default class SurveyTable extends Component {
     const { title } = parsedData
     if (typeof title === 'object') {
       const localLang = locale.language
+      // check if local language survey title exists, then if the survey has a set locale and data for it exists then otherwise default to the defaule
       if (title[localLang]) return title[localLang]
+      if (parsedData.locale && title[parsedData.locale]) return title[parsedData.locale]
       return title.default
     }
     return title
