@@ -229,7 +229,13 @@ function stringifyForCsv(obj) {
     .join('; ')
 }
 
-export const getDefaultLocale = possiblyLocalized =>
-  possiblyLocalized && possiblyLocalized.default ? possiblyLocalized.default : possiblyLocalized
+export const getDefaultLocale = possiblyLocalized => {
+  if (typeof possiblyLocalized === 'object') {
+    return possiblyLocalized.default
+      ? possiblyLocalized.default
+      : 'No default title provided. Please specify before publishing'
+  }
+  return possiblyLocalized
+}
 
 export default SurveyResults
