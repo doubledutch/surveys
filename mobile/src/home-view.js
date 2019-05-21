@@ -206,7 +206,8 @@ class HomeView extends PureComponent {
 
   selectSurvey = item => {
     const parsedInfo = JSON.parse(item.info)
-    if (parsedInfo.title.default && !parsedInfo.locale) parsedInfo.locale = locale.language
+    // Check if survey exists in local language before setting locale
+    if (parsedInfo.title[locale.language]) parsedInfo.locale = locale.language
     parsedInfo.pages.forEach(page => {
       if (page.elements) {
         page.elements.forEach(question => {
@@ -246,13 +247,9 @@ class HomeView extends PureComponent {
   }
 }
 
-// const getDefaultLocale = possiblyLocalized =>
-//   possiblyLocalized && possiblyLocalized.default ? possiblyLocalized.default : possiblyLocalized
-
 const getDefaultLocale = (possiblyLocalized, locale) => {
   // check if locale is set on survey instead of default
   if (typeof possiblyLocalized === 'object') {
-    // if (possiblyLocalized.default) return possiblyLocalized.default
     if (locale && possiblyLocalized[locale]) {
       return possiblyLocalized[locale]
     }
