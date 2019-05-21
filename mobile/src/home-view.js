@@ -249,7 +249,7 @@ class HomeView extends PureComponent {
 
 const getDefaultLocale = (possiblyLocalized, locale) => {
   // check if locale is set on survey instead of default
-  if (typeof possiblyLocalized === 'object') {
+  if (typeof possiblyLocalized === 'object' && !possiblyLocalized.length) {
     if (locale && possiblyLocalized[locale]) {
       return possiblyLocalized[locale]
     }
