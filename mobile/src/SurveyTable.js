@@ -147,7 +147,7 @@ export default class SurveyTable extends Component {
     const queryResult = []
     if (queryText.length > 0) {
       this.props.surveys.forEach(content => {
-        const { title } = JSON.parse(content.info)
+        const title = this.returnName(content)
         if (title && content.isViewable) {
           if (title.toLowerCase().indexOf(queryText) !== -1) {
             queryResult.push(content)
