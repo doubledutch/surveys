@@ -317,7 +317,7 @@ class App extends PureComponent {
     const filteredSurveys = []
     surveys.forEach(survey => {
       const parsedData = JSON.parse(survey.info)
-      const title = parsedData.title
+      const title = getDefaultLocale(parsedData.title, parsedData.locale)
       if (title.toLowerCase().indexOf(search.toLowerCase().trim()) !== -1) {
         filteredSurveys.push(survey)
       }
