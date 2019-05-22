@@ -26,8 +26,6 @@ import {
   KeyboardAvoidingView,
 } from 'react-native'
 import { Color, translate as t, locale } from '@doubledutch/rn-client'
-import { getDefaultLocale } from '../../web/admin/src/SurveyResults'
-import console = require('console');
 
 export default class SurveyTable extends Component {
   constructor(props) {
@@ -149,7 +147,7 @@ export default class SurveyTable extends Component {
     const queryResult = []
     if (queryText.length > 0) {
       this.props.surveys.forEach(content => {
-        const title = returnName(content)
+        const title = this.returnName(content)
         if (title && content.isViewable) {
           if (title.toLowerCase().indexOf(queryText) !== -1) {
             queryResult.push(content)
