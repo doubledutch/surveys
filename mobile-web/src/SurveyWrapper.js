@@ -45,11 +45,17 @@ class SurveyWrapper extends React.Component {
     window.postMessage(JSON.stringify(result.valuesHash))
   }
 
+  onKeyPress(event) {
+    if (event.target.type != 'textarea' && event.which === 13 /* Enter */) {
+      event.preventDefault();
+    }
+}
+
   render() {  
     const model = new Survey.Model(this.props.survey ? this.props.survey : "");
     return (
       <div>
-        <div className="surveyjs">
+        <div className="surveyjs" onKeyPress={this.onKeyPress}>
           <Survey.Survey model={model} onComplete={this.onComplete}/>        
         </div>        
       </div>)
