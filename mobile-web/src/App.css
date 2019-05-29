@@ -14,8 +14,7 @@
  * limitations under the License.
  */
 
-
-sv_qstn, .sv_q_title {
+.sv_qstn, .sv_q_title {
   font-size: 18px !important;
 }
 
@@ -25,6 +24,10 @@ sv_qstn, .sv_q_title {
   align-self: center !important;
   font-size: 18px !important;
   font-weight: 300 !important;
+}
+
+.small {
+  word-wrap: normal !important;
 }
 
 .sv_next_btn {
