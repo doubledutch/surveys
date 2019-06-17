@@ -11,9 +11,6 @@
     "@doubledutch/rn-client": "^5.0.1",
     "react": "16.8.3",
     "react-native": "0.59.4",
-    "react-native-camera": "2.5.0",
-    "react-native-video": "4.4.1",
-    "react-native-youtube": "1.1.0",
     "rn-fetch-blob": "0.10.15"
   },
   "devDependencies": {
