@@ -253,7 +253,7 @@ const getDefaultLocale = (possiblyLocalized, locale) => {
     if (locale && possiblyLocalized[locale]) {
       return possiblyLocalized[locale]
     }
-    return possiblyLocalized.default
+    if (possiblyLocalized.default) return possiblyLocalized.default
   }
   return possiblyLocalized
 }
