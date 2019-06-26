@@ -152,7 +152,7 @@ class HomeView extends PureComponent {
   }
 
   saveResults = (resultsString, selectedSurvey, takeAnom) => {
-    const origResults = resultsString
+    const origResults = JSON.parse(resultsString)
     const resultsKeys = Object.keys(origResults)
     const { surveyId } = this.props
     const key = surveyId && this.state.origPropLaunch ? surveyId : this.state.origSurvey.key
@@ -189,7 +189,7 @@ class HomeView extends PureComponent {
         .child(key)
         .push({
           newResults,
-          rawResults: origResults,
+          rawResults: resultsString,
           creator: takeAnom
             ? { firstName: '', lastName: 'Anonymous', email: '', id: '' }
             : this.state.currentUser,
