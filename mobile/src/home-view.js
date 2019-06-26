@@ -152,7 +152,7 @@ class HomeView extends PureComponent {
   }
 
   saveResults = (resultsString, selectedSurvey, takeAnom) => {
-    const origResults = JSON.parse(resultsString)
+    const origResults = resultsString
     const resultsKeys = Object.keys(origResults)
     const { surveyId } = this.props
     const key = surveyId && this.state.origPropLaunch ? surveyId : this.state.origSurvey.key
