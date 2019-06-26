@@ -189,7 +189,7 @@ class HomeView extends PureComponent {
         .child(key)
         .push({
           newResults,
-          rawResults: origResults,
+          rawResults: resultsString,
           creator: takeAnom
             ? { firstName: '', lastName: 'Anonymous', email: '', id: '' }
             : this.state.currentUser,
