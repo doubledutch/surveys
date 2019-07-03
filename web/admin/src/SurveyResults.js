@@ -116,9 +116,10 @@ class SurveyResults extends Component {
     const parsedResults = []
     // This new variable is to take into account question keys so that we can properly parse duplicate questions in a survey
     const idExists = results.every(item => item.schemaVersion > 2)
+    const config = JSON.parse(this.props.config)
     const title = getDefaultLocale(
-      JSON.parse(this.props.config).title,
-      JSON.parse(this.props.config).locale,
+      config.title,
+      config.locale,
     )
     results.forEach(item => {
       const newItem = {
@@ -129,7 +130,7 @@ class SurveyResults extends Component {
         timeTaken: new Date(item.timeTaken).toDateString(),
       }
       item.newResults.forEach((data, i) => {
-        const title = data.question
+        const questionTitle = getDefaultLocale(data.question, config.locale)
         let answer = ''
         const origAnswer = getAnswer(item.schemaVersion, data)
         if (typeof origAnswer === 'object' && !origAnswer.length) {
@@ -145,7 +146,7 @@ class SurveyResults extends Component {
         } else {
           answer = origAnswer.toString()
         }
-        let adjustedTitleForExport = title.replace(/\./g, ' ')
+        let adjustedTitleForExport = questionTitle.replace(/\./g, ' ')
         adjustedTitleForExport = newItem[adjustedTitleForExport]
           ? `${adjustedTitleForExport}-Question:${i}`
           : adjustedTitleForExport
@@ -178,14 +179,15 @@ class SurveyResults extends Component {
     const idExists = results.every(item => item.schemaVersion > 2)
     if (idExists) {
       let origQuestions = []
-      JSON.parse(this.props.config).pages.forEach(page => {
+      const config = JSON.parse(this.props.config)
+      config.pages.forEach(page => {
         if (page.elements) origQuestions = origQuestions.concat(page.elements)
       })
       origQuestions.forEach(question => {
         const name = question.name.replace(/\.$/, '')
         const title = getDefaultLocale(
           question.title || question.name,
-          JSON.parse(this.props.config).title,
+          config.locale,
         )
         headers.push({
           label: title.trim(),
