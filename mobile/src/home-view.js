@@ -152,7 +152,7 @@ class HomeView extends PureComponent {
   }
 
   saveResults = (resultsString, selectedSurvey, takeAnom) => {
-    const origResults = resultsString
+    const origResults = JSON.parse(resultsString)
     const resultsKeys = Object.keys(origResults)
     const { surveyId } = this.props
     const key = surveyId && this.state.origPropLaunch ? surveyId : this.state.origSurvey.key
@@ -164,9 +164,9 @@ class HomeView extends PureComponent {
     const newResults = []
     if (resultsKeys.length) {
       resultsKeys.forEach(item => {
-        const question = newQuestionsArray.find(question => {
+        const question = newQuestionsArray.find(questionInfo => {
           // check if key incorrectly has period at end which will be filtered out by surveyjs
-          const name = question.name.replace(/\.$/, '')
+          const name = questionInfo.name.replace(/\.$/, '')
           return name === item.replace('-Comment', '')
         })
         if (question) {

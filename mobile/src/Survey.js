@@ -34,12 +34,11 @@ import surveyViewHtml from './surveyViewHtml'
 export default class Survey extends PureComponent {
   state = {
     surveyLoading: true,
-    containsMatrix: false,
     takeAnom: false,
   }
 
   render() {
-    const { surveyLoading, containsMatrix, takeAnom } = this.state
+    const { surveyLoading, takeAnom } = this.state
     const htmlSource = { html: surveyViewHtml }
     if (Platform.OS == 'android') {
       htmlSource.baseUrl = 'file:///android_asset'
@@ -54,14 +53,6 @@ export default class Survey extends PureComponent {
     return (
       <KeyboardAvoidingView style={s.container}>
         {surveyLoading && <Loading />}
-        {containsMatrix && !showSurveyResultsOption && !surveyResults && (
-          <View style={{ backgroundColor: 'white' }}>
-            <Text>
-              *Note: This survey contains questions that may require horizontal scrolling to
-              complete
-            </Text>
-          </View>
-        )}
         <View style={surveyLoading ? s.webHidden : s.web}>
           <WebView
             useWebKit
@@ -103,15 +94,10 @@ export default class Survey extends PureComponent {
   sendInfo = selectedSurvey => {
     const origConfig = JSON.parse(selectedSurvey.config)
     if (origConfig.pages) {
-      const containsMatrix = !!origConfig.pages.find(page => {
-        if (page.elements)
-          return page.elements.find(item => item.type === 'matrixdynamic' || item.type === 'matrix')
-      })
       const config = JSON.stringify({
         survey: selectedSurvey.config,
         color: this.props.primaryColor,
       })
-      this.setState({ containsMatrix })
       this.webview.postMessage(config)
     }
   }
