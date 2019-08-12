@@ -134,6 +134,7 @@ export default class Survey extends PureComponent {
         return `${data.question}: ${answer}\n`
       })
       .join('\n\n')
+    this.props.closeSurveyModal()
     Share.share({ message, title: t('exported_results'), subject: t('exported_results') }, {})
   }
 
