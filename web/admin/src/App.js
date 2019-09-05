@@ -18,8 +18,11 @@ import React, { PureComponent } from 'react'
 import './App.css'
 import moment from 'moment'
 import client, { translate as t, useStrings } from '@doubledutch/admin-client'
-import { provideFirebaseConnectorToReactComponent } from '@doubledutch/firebase-connector'
-import { mapPerUserPrivateAdminablePushedDataToObjectOfStateObjects } from '@doubledutch/firebase-connector'
+import {
+  provideFirebaseConnectorToReactComponent,
+  mapPerUserPrivateAdminablePushedDataToObjectOfStateObjects,
+} from '@doubledutch/firebase-connector'
+
 import { HashRouter as Router, Redirect, Route } from 'react-router-dom'
 import i18n from './i18n'
 import 'react-tabs/style/react-tabs.css'
@@ -364,7 +367,8 @@ class App extends PureComponent {
     const info = survey.info
     const publishDate = survey.publishDate || new Date().getTime()
     const allowAnom = survey.allowAnom || false
-    const state = isPublished ? t('unpublish') : t('publish')
+    const publishStatus = isViewable ? 'publish' : 'publish_hidden'
+    const state = isPublished ? t('unpublish') : t(publishStatus)
     const name = JSON.parse(info).title
     const isDup = this.state.surveysDraft.find(
       item => JSON.parse(item.info).title === name && survey.key !== item.key,
