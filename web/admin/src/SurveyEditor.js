@@ -215,9 +215,10 @@ class SurveyEditor extends Component {
 
   saveMySurvey = () => {
     const survey = JSON.parse(this.editor.text)
-    if (DOMPurify.sanitize(survey.completedHtml) !== survey.completedHtml)
+    if (DOMPurify.sanitize(survey.completedHtml) !== survey.completedHtml && survey.completedHtml)
       window.alert(t('XSSAlert'))
-    if (DOMPurify.sanitize(survey.loadingHtml) !== survey.loadingHtml) window.alert(t('XSSAlert'))
+    if (DOMPurify.sanitize(survey.loadingHtml) !== survey.loadingHtml && survey.loadingHtml)
+      window.alert(t('XSSAlert'))
     const { allowAnom } = this.state
     this.props.saveConfig(this.editor.text, allowAnom, this.state.currentTime)
   }
