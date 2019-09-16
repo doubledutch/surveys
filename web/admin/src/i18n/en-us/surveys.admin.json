@@ -24,5 +24,6 @@
   "no_survey_select_message": "Please build a survey to access response section",
   "allow_anom": "Allow Attendees to take Survey Anonymously",
   "allow_controls": "View additional survey controls",
-  "publish_time": "Set Publish Time"
+  "publish_time": "Set Publish Time",
+  "XSSAlert": "ALERT: YOUR CURRENT CUSTOM HTML CONTAINS TAGS WHICH COULD LEAVE YOUR COMPUTER VULNERABLE TO CROSS SITE SCRIPTS. PLEASE DOUBLECHECK YOUR HTML BEFORE PRECEEDING FURTHER"
 }

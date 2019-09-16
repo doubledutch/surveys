@@ -1,6 +1,6 @@
 {
   "name": "surveys",
-  "version": "1.4.11",
+  "version": "1.4.12",
   "baseBundleVersion": "0.59.3",
   "private": true,
   "scripts": {

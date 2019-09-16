@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import { translate as t } from '@doubledutch/admin-client'
 import * as SurveyJSCreator from 'survey-creator'
 import * as SurveyKo from 'survey-knockout'
+import DOMPurify from 'dompurify'
 import 'surveyjs-editor/surveyeditor.css'
 import 'jquery-ui/themes/base/all.css'
 import 'select2/dist/css/select2.css'
@@ -213,6 +214,11 @@ class SurveyEditor extends Component {
   }
 
   saveMySurvey = () => {
+    const survey = JSON.parse(this.editor.text)
+    if (DOMPurify.sanitize(survey.completedHtml) !== survey.completedHtml && survey.completedHtml)
+      window.alert(t('XSSAlert'))
+    if (DOMPurify.sanitize(survey.loadingHtml) !== survey.loadingHtml && survey.loadingHtml)
+      window.alert(t('XSSAlert'))
     const { allowAnom } = this.state
     this.props.saveConfig(this.editor.text, allowAnom, this.state.currentTime)
   }
