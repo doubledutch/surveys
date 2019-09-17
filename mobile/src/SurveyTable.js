@@ -33,8 +33,7 @@ export default class SurveyTable extends Component {
     this.state = {
       color: 'white',
       borderColor: '#EFEFEF',
-      search: false,
-      survey: '',
+      search: '',
       newList: [],
       inputHeight: 0,
     }
@@ -71,13 +70,13 @@ export default class SurveyTable extends Component {
     const colorStyle = {
       backgroundColor: newColor,
     }
-    let surveys = this.props.surveys.filter(item => item.isViewable)
-    if (this.state.search) {
-      surveys = this.state.newList
-    }
+
+    const surveys = this.updateList()
+
     const surveysCompleted = surveys.filter(item => this.hasCompleted(item.key))
     const surveysNotCompleted = surveys.filter(item => !this.hasCompleted(item.key))
     const surveysOrdered = surveysNotCompleted.concat(surveysCompleted)
+
     return (
       <KeyboardAvoidingView style={{ flex: 1, backgroundColor: '#EFEFEF' }}>
         {this.renderModalHeader()}
@@ -142,20 +141,22 @@ export default class SurveyTable extends Component {
     return title
   }
 
-  updateList = value => {
-    const queryText = value.toLowerCase()
-    const queryResult = []
+  updateList = () => {
+    const surveys = this.props.surveys.filter(item => item.isViewable)
+    const queryText = this.state.search.toLowerCase().trim()
     if (queryText.length > 0) {
-      this.props.surveys.forEach(content => {
+      const queryResult = []
+      surveys.forEach(content => {
         const title = this.returnName(content)
-        if (title && content.isViewable) {
+        if (title) {
           if (title.toLowerCase().indexOf(queryText) !== -1) {
             queryResult.push(content)
           }
         }
       })
-      this.setState({ search: true, newList: queryResult, survey: value })
-    } else this.setState({ search: false, survey: value })
+      return queryResult
+    }
+    return surveys
   }
 
   renderModalHeader = () => {
@@ -204,8 +205,8 @@ export default class SurveyTable extends Component {
                   android: [newStyle, androidStyle],
                 })}
                 placeholder={t('search')}
-                value={this.state.survey}
-                onChangeText={survey => this.updateList(survey)}
+                value={this.state.search}
+                onChangeText={search => this.setState({ search })}
                 maxLength={25}
                 placeholderTextColor="#9B9B9B"
               />
@@ -230,7 +231,7 @@ export default class SurveyTable extends Component {
   }
 
   resetSearch = () => {
-    this.setState({ survey: '', search: false })
+    this.setState({ search: '' })
   }
 }
 
