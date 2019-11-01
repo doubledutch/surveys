@@ -71,6 +71,14 @@ export default class Survey extends PureComponent {
             <Text>{t('submitAnom')}</Text>
           </View>
         )}
+        {showSurveyResultsOption && surveyResults && (
+          <TouchableOpacity
+            style={[s.backButton, { backgroundColor: primaryColor }]}
+            onPress={() => this.exportResults(surveyResults)}
+          >
+            <Text style={s.closeText}>Exports Results</Text>
+          </TouchableOpacity>
+        )}
         {!surveyLoading && (
           <TouchableOpacity
             style={[s.backButton, { backgroundColor: primaryColor }]}
