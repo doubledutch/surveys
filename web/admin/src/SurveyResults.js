@@ -56,13 +56,14 @@ class SurveyResults extends Component {
       ? Object.values(this.props.results[this.props.configKey])
       : []
     results = results.filter(item => typeof item === 'object')
-    const newResults = []
+    let newResults = []
     results.forEach(item => {
       const items = Object.values(item)
       items.forEach(response => {
         if (typeof response === 'object') newResults.push(response)
       })
     })
+    newResults = newResults.sort(sortUsers)
     return (
       <div>
         <ul className="surveyTable">
@@ -117,10 +118,7 @@ class SurveyResults extends Component {
     // This new variable is to take into account question keys so that we can properly parse duplicate questions in a survey
     const idExists = results.every(item => item.schemaVersion > 2)
     const config = JSON.parse(this.props.config)
-    const title = getDefaultLocale(
-      config.title,
-      config.locale,
-    )
+    const title = getDefaultLocale(config.title, config.locale)
     results.forEach(item => {
       const newItem = {
         surveyTitle: title,
@@ -185,10 +183,7 @@ class SurveyResults extends Component {
       })
       origQuestions.forEach(question => {
         const name = question.name.replace(/\.$/, '')
-        const title = getDefaultLocale(
-          question.title || question.name,
-          config.locale,
-        )
+        const title = getDefaultLocale(question.title || question.name, config.locale)
         headers.push({
           label: title.trim(),
           key: name.trim(),
@@ -235,6 +230,15 @@ function stringifyForCsv(obj) {
   return Object.entries(obj)
     .map(([key, val]) => `${key}: ${val}`)
     .join('; ')
+}
+
+function sortUsers(a, b) {
+  const aFirst = a.creator.firstName.toLowerCase()
+  const bFirst = b.creator.firstName.toLowerCase()
+  const aLast = a.creator.lastName.toLowerCase()
+  const bLast = b.creator.firstName.toLowerCase()
+  if (aFirst !== bFirst) return aFirst < bFirst ? -1 : 1
+  return aLast < bLast ? -1 : 1
 }
 
 export const getDefaultLocale = (possiblyLocalized, locale) => {
