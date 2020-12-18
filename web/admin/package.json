@@ -11,7 +11,7 @@
     "@doubledutch/react-csv": "^1.1.2",
     "ace-builds": "^1.4.3",
     "bootstrap": "^4.3.1",
-    "dompurify": "^1.0.11",
+    "dompurify": "^2.0.17",
     "jquery": "^3.3.1",
     "jquery-bar-rating": "^1.2.2",
     "knockout": "^3.5.0",
